@@ -1,0 +1,11 @@
+# 文件以及目录过滤
+# 过滤library目录
+BehaviourTreeForLua/Library/
+# 过滤.vs目录
+BehaviourTreeForLua/.vs/
+# 过滤Temp目录
+BehaviourTreeForLua/Temp/
+# 过滤obj目录
+BehaviourTreeForLua/obj/
+# 过滤Log目录
+BehaviourTreeForLua/Log/
