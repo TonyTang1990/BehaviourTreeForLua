@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTNodeEditor.cs
  * Author:                  TANGHUAN
  * Create Date:             2020/08/12
@@ -10,37 +10,37 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// ĞĞÎªÊ÷½Úµã±à¼­Æ÷
+/// è¡Œä¸ºæ ‘èŠ‚ç‚¹ç¼–è¾‘å™¨
 /// </summary>
 public class BTNodeEditor : EditorWindow
 {
     /// <summary>
-    /// ½Úµã´´½¨ĞÅÏ¢³éÏó
+    /// èŠ‚ç‚¹åˆ›å»ºä¿¡æ¯æŠ½è±¡
     /// </summary>
     public class CreateNodeInfo
     {
-        /// <summary> ¸¸½Úµã /// </summary>
+        /// <summary> çˆ¶èŠ‚ç‚¹ /// </summary>
         public BTNode ParentNode
         {
             get;
             set;
         }
 
-        /// <summary> ´´½¨µÄ½ÚµãÃû /// </summary>
+        /// <summary> åˆ›å»ºçš„èŠ‚ç‚¹å /// </summary>
         public string CreateNodeName
         {
             get;
             set;
         }
 
-        /// <summary> ´´½¨µÄ½ÚµãÀàĞÍ /// </summary>
+        /// <summary> åˆ›å»ºçš„èŠ‚ç‚¹ç±»å‹ /// </summary>
         public EBTNodeType CreateNodeType
         {
             get;
             set;
         }
 
-        /// <summary> ´´½¨µÄ½ÚµãËùÔÚ×Ó½ÚµãË÷Òı /// </summary>
+        /// <summary> åˆ›å»ºçš„èŠ‚ç‚¹æ‰€åœ¨å­èŠ‚ç‚¹ç´¢å¼• /// </summary>
         public int CreateNodeChildIndex
         {
             get;
@@ -62,49 +62,89 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// µ±Ç°Ñ¡ÔñµÄĞĞÎªÊ÷½Úµã
+    /// å½“å‰é€‰æ‹©çš„è¡Œä¸ºæ ‘èŠ‚ç‚¹
     /// </summary>
     private BTNode mCurrentSelectionBTNode;
 
     /// <summary>
-    /// µ±Ç°´°¿Ú¹ö¶¯Î»ÖÃ
+    /// å½“å‰çª—å£æ»šåŠ¨ä½ç½®
     /// </summary>
     private Vector2 mWindowScrollPos;
 
     /// <summary>
-    /// ĞĞÎªÊ÷²Ëµ¥Ã¶¾ÙÀàĞÍ
+    /// è¡Œä¸ºæ ‘èœå•æšä¸¾ç±»å‹
     /// </summary>
     public enum EBTMenuType
     {
-        EmptyAreaMenu = 1,             // ´´½¨½Úµã²Ëµ¥(µã»÷ÔÚ¿ÕÇøÓòÊ±µÄ²Ëµ¥)
-        RootNodeAreaMenu,              // ¸ù½Úµã²Ëµ¥(µã»÷¸ù½ÚµãÊ±µÄ²Ëµ¥)
-        ChildNodeAreaMenu,             // ×Ó½Úµã²Ëµ¥(µã»÷×Ó½ÚµãÊ±µÄ²Ëµ¥)
+        EmptyAreaMenu = 1,             // ä¸»èœå•(ç‚¹å‡»åœ¨ç©ºåŒºåŸŸæ—¶çš„èœå•)
+        RootNodeAreaMenu,              // æ ¹èŠ‚ç‚¹èœå•(ç‚¹å‡»æ ¹èŠ‚ç‚¹æ—¶çš„èœå•)
+        ChildNodeAreaMenu,             // å­èŠ‚ç‚¹èœå•(ç‚¹å‡»å­èŠ‚ç‚¹æ—¶çš„èœå•)
     }
 
     /// <summary>
-    /// ½Úµã²Ëµ¥Ó³ÉäMap(KeyÎª²Ëµ¥ÀàĞÍ£¬ValueÎª¶ÔÓ¦²Ëµ¥)
+    /// èŠ‚ç‚¹èœå•æ˜ å°„Map(Keyä¸ºèœå•ç±»å‹ï¼ŒValueä¸ºå¯¹åº”èœå•)
     /// </summary>
     private Dictionary<EBTMenuType, GenericMenu> mNodeMenuMap;
 
     /// <summary>
-    /// ¿Õ°×ÇøÓòµã»÷²Ëµ¥
+    /// èŠ‚ç‚¹ç±»å‹å¯¹åº”é¢œè‰²Mapï¼ŒKeyä¸ºèŠ‚ç‚¹ç±»å‹ï¼ŒValueä¸ºèŠ‚ç‚¹é¢œè‰²
+    /// </summary>
+    private Dictionary<EBTNodeType, Color> mNodeTypeColorMap;
+
+    /// <summary>
+    /// èŠ‚ç‚¹ç±»å‹å¯¹åº”åå­—Mapï¼ŒKeyä¸ºèŠ‚ç‚¹ç±»å‹ï¼ŒValueä¸ºèŠ‚ç‚¹åå­—
+    /// </summary>
+    private Dictionary<EBTNodeType, string> mNodeTypeNameMap;
+
+    /// <summary>
+    /// ç©ºç™½åŒºåŸŸç‚¹å‡»èœå•
     /// </summary>
     private GenericMenu mEmptyAreaMenu;
 
     /// <summary>
-    /// ¸ù½ÚµãÇøÓòµã»÷²Ëµ¥
+    /// æ ¹èŠ‚ç‚¹åŒºåŸŸç‚¹å‡»èœå•
     /// </summary>
     private GenericMenu mRootNodeAreaMenu;
 
     /// <summary>
-    /// ×Ó½ÚµãÇøÓòµã»÷²Ëµ¥
+    /// å­èŠ‚ç‚¹åŒºåŸŸç‚¹å‡»èœå•
     /// </summary>
     private GenericMenu mChildNodeAreaMenu;
 
     /// <summary>
-    /// µ±Ç°µã»÷µÄ½Úµã
+    /// å½“å‰ç‚¹å‡»çš„èŠ‚ç‚¹
     /// </summary>
     private BTNode mCurrentClickNode;
+
+    /// <summary>
+    /// æ™®é€šæ›²çº¿é¢œè‰²
+    /// </summary>
+    private Color mNormalCurveColor;
+
+    /// <summary>
+    /// è¿è¡Œæ›²çº¿é¢œè‰²
+    /// </summary>
+    private Color mRunningCurveColor;
+
+    /// <summary>
+    /// Lableçš„Style
+    /// </summary>
+    private GUIStyle mLableStyle;
+
+    /// <summary>
+    /// èŠ‚ç‚¹çª—å£å¯æ‹–æ‹½åŒºåŸŸ
+    /// </summary>
+    private Rect NodeWindowDragableRect;
+
+    /// <summary>
+    /// èŠ‚ç‚¹çª—å£å®½åº¦
+    /// </summary>
+    private const float NodeWindowWidth = 250.0f;
+
+    /// <summary>
+    /// èŠ‚ç‚¹çª—å£é«˜åº¦
+    /// </summary>
+    private const float NodeWindowHeight = 250.0f;
 
     [MenuItem("TonyTang/AI/BTNodeEditor")]
     static void ShowEditor()
@@ -116,15 +156,49 @@ public class BTNodeEditor : EditorWindow
 
     private void Init()
     {
-        // ´´½¨Ò»¸öÄ¬ÈÏµÄ¿ÕµÄBTNode
-        //mCurrentSelectionBTNode = new BTNode();
+        // åˆ›å»ºä¸€ä¸ªé»˜è®¤çš„ç©ºçš„BTNode
+        mCurrentSelectionBTNode = new BTNode(GetNodeRect(new Vector2(100f,100f)), 0, "Root", EBTNodeType.NoneNodeType);
+    }
+
+    /// <summary>
+    /// æ ¹æ®ä½ç½®è·å–èŠ‚ç‚¹Rect
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    private Rect GetNodeRect(Vector2 pos)
+    {
+        var rect = new Rect();
+        rect.x = pos.x;
+        rect.y = pos.y;
+        rect.width = NodeWindowWidth;
+        rect.height = NodeWindowHeight;
+        return rect;
     }
 
     private void OnEnable()
     {
+        Debug.Log($"BTNodeEditor:OnEnable()");
         InitMenu();
+        mNodeTypeColorMap = new Dictionary<EBTNodeType, Color>();
+        mNodeTypeColorMap.Add(EBTNodeType.NoneNodeType, Color.white);
+        mNodeTypeColorMap.Add(EBTNodeType.ActionNodeType, Color.red);
+        mNodeTypeColorMap.Add(EBTNodeType.CompositeNodeType, Color.blue);
+        mNodeTypeColorMap.Add(EBTNodeType.ConditionNodeType, Color.yellow);
+        mNodeTypeColorMap.Add(EBTNodeType.DecorationNodeType, Color.cyan);
+        mNodeTypeNameMap = new Dictionary<EBTNodeType, string>();
+        mNodeTypeNameMap.Add(EBTNodeType.NoneNodeType, "æ ¹èŠ‚ç‚¹");
+        mNodeTypeNameMap.Add(EBTNodeType.ActionNodeType, "è¡Œä¸ºèŠ‚ç‚¹");
+        mNodeTypeNameMap.Add(EBTNodeType.CompositeNodeType, "ç»„åˆèŠ‚ç‚¹");
+        mNodeTypeNameMap.Add(EBTNodeType.ConditionNodeType, "æ¡ä»¶ç‚¹");
+        mNodeTypeNameMap.Add(EBTNodeType.DecorationNodeType, "è£…é¥°èŠ‚ç‚¹");
+        NodeWindowDragableRect = new Rect(0, 0, NodeWindowWidth, NodeWindowHeight);
+        mNormalCurveColor = Color.blue;
+        mRunningCurveColor = Color.green;
     }
 
+    /// <summary>
+    /// é€‰ä¸­Assetå˜åŒ–å“åº”
+    /// </summary>
     private void OnSelectionChange()
     {
         if(Selection.objects.Length > 0)
@@ -132,7 +206,7 @@ public class BTNodeEditor : EditorWindow
             var selectionasset = Selection.objects[0] as TextAsset;
             if(selectionasset == null)
             {
-                Debug.Log($"Ñ¡ÖĞµÄÊÇ·ÇTextAsset£¬²»´¦Àí!");
+                Debug.Log($"é€‰ä¸­çš„æ˜¯éTextAssetï¼Œä¸å¤„ç†!");
                 return;
             }
             else
@@ -140,9 +214,10 @@ public class BTNodeEditor : EditorWindow
                 var btnodedata = JsonUtility.FromJson<BTNode>(selectionasset.text);
                 if(btnodedata == null)
                 {
-                    Debug.Log($"Ñ¡ÖĞµÄÊÇ·ÇBTNodeµÄJsonÊı¾İ£¬²»´¦Àí!");
+                    Debug.Log($"é€‰ä¸­çš„æ˜¯éBTNodeçš„Jsonæ•°æ®ï¼Œä¸å¤„ç†!");
                     return;
                 }
+                Debug.Log($"é€‰ä¸­çš„Asset:{Selection.objects[0].name}!");
                 mCurrentSelectionBTNode = btnodedata;
             }
         }
@@ -150,12 +225,13 @@ public class BTNodeEditor : EditorWindow
 
     private void OnGUI()
     {
+        mLableStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
         HandleInteraction();
         DrawBTNode();
     }
 
     /// <summary>
-    /// ´¦Àí½»»¥
+    /// å¤„ç†äº¤äº’
     /// </summary>
     private void HandleInteraction()
     {
@@ -164,9 +240,23 @@ public class BTNodeEditor : EditorWindow
             if (Event.current.type == EventType.ContextClick)
             {
                 mCurrentClickNode = GetClickNode(Event.current.mousePosition + mWindowScrollPos);
-                if(mCurrentClickNode == null && mCurrentSelectionBTNode != null)
+                if(mCurrentClickNode == null)
                 {
-
+                    Debug.Log($"æ˜¾ç¤ºç©ºç™½åŒºåŸŸèœå•!");
+                    var menu = GetNodeTypeMenu(EBTMenuType.EmptyAreaMenu);
+                    menu.ShowAsContext();
+                }
+                else if(mCurrentClickNode != null && mCurrentClickNode.IsRootNode())
+                {
+                    Debug.Log($"æ˜¾ç¤ºæ ¹èŠ‚ç‚¹åŒºåŸŸèœå•!");
+                    var menu = GetNodeTypeMenu(EBTMenuType.RootNodeAreaMenu);
+                    menu.ShowAsContext();
+                }
+                else
+                {
+                    Debug.Log($"æ˜¾ç¤ºå­èŠ‚ç‚¹åŒºåŸŸèœå•!");
+                    var menu = GetNodeTypeMenu(EBTMenuType.ChildNodeAreaMenu);
+                    menu.ShowAsContext();
                 }
                 Event.current.Use();
             }
@@ -174,45 +264,146 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// »ñÈ¡µã»÷Ñ¡ÖĞµÄBTNode
+    /// ç»˜åˆ¶è¡Œä¸ºæ ‘èŠ‚ç‚¹
+    /// </summary>
+    private void DrawBTNode()
+    {
+        mWindowScrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), mWindowScrollPos, new Rect(0, 0, 2000, 2000));
+        if(mCurrentSelectionBTNode != null)
+        {
+            DrawNodeCurves(mCurrentSelectionBTNode);
+            BeginWindows();
+            DrawNodes(mCurrentSelectionBTNode);
+            EndWindows();
+        }
+        GUI.EndScrollView();
+    }
+
+    /// <summary>
+    /// ç»˜åˆ¶èŠ‚ç‚¹æ‰€æœ‰ç›¸å…³è¿çº¿
+    /// </summary>
+    /// <param name="node"></param>
+    private void DrawNodeCurves(BTNode node)
+    {
+        for(int i = 0; i < node.ChildNodesList.Count; i++)
+        {
+            DrawCurve(node.NodeDisplayRect, node.ChildNodesList[i].NodeDisplayRect);
+            DrawNodeCurves(node.ChildNodesList[i]);
+        }
+    }
+
+    /// <summary>
+    /// ç»˜åˆ¶è¿çº¿
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    private void DrawCurve(Rect start, Rect end)
+    {
+        Vector3 startpos = new Vector3(start.x + start.width / 2, start.y, 0);
+        Vector3 endpos = new Vector3(end.x + end.width / 2, end.y + end.height, 0);
+        Vector3 starttangent = startpos + Vector3.left;
+        Vector3 endtangent = endpos + Vector3.right;
+        Handles.DrawBezier(startpos, endpos, starttangent, endtangent, mNormalCurveColor, null, 2);
+    }
+
+    /// <summary>
+    /// ç»˜åˆ¶èŠ‚ç‚¹
+    /// </summary>
+    /// <param name="node"></param>
+    private void DrawNodes(BTNode node)
+    {
+        var title = node.IsRootNode() ? "Root" : $"No.{node.NodeIndex}";
+        GUI.color = GetNodeTypeColor((EBTNodeType)node.NodeType);
+        node.NodeDisplayRect = GUI.Window(node.UID, node.NodeDisplayRect, DrawNodeWindow, new GUIContent(title));
+        GUI.color = Color.white;
+        for (int i = 0; i < node.ChildNodesList.Count; ++i)
+        {
+            DrawNodes(node.ChildNodesList[i]);
+        }
+    }
+
+    /// <summary>
+    /// ç»˜åˆ¶èŠ‚ç‚¹çª—å£
+    /// </summary>
+    /// <param name="uid"></param>
+    private void DrawNodeWindow(int uid)
+    {
+        var btnode = BTUtilities.FindByUID(mCurrentSelectionBTNode, uid);
+        if(btnode == null)
+        {
+            return;
+        }
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField($"{btnode.NodeName}", mLableStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}", mLableStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+        EditorGUILayout.EndVertical();
+        GUI.DragWindow(NodeWindowDragableRect);
+    }
+
+    /// <summary>
+    /// è·å–æŒ‡å®šèŠ‚ç‚¹èœå•ç±»å‹çš„èœå•
+    /// </summary>
+    /// <param name="menutype"></param>
+    /// <returns></returns>
+    private GenericMenu GetNodeTypeMenu(EBTMenuType menutype)
+    {
+        return mNodeMenuMap[menutype];
+    }
+
+    /// <summary>
+    /// è·å–æŒ‡å®šèŠ‚ç‚¹ç±»å‹çš„é¢œè‰²
+    /// </summary>
+    /// <param name="nodetype"></param>
+    /// <returns></returns>
+    private Color GetNodeTypeColor(EBTNodeType nodetype)
+    {
+        return mNodeTypeColorMap[nodetype];
+    }
+
+    /// <summary>
+    /// è·å–æŒ‡å®šèŠ‚ç‚¹ç±»å‹çš„åå­—
+    /// </summary>
+    /// <param name="nodetype"></param>
+    /// <returns></returns>
+    private string GetNodeTypeName(EBTNodeType nodetype)
+    {
+        return mNodeTypeNameMap[nodetype];
+    }
+
+    /// <summary>
+    /// è·å–ç‚¹å‡»é€‰ä¸­çš„BTNode
     /// </summary>
     /// <param name="mouseposition"></param>
     private BTNode GetClickNode(Vector2 mouseposition)
     {
-        return null;
+        return BTUtilities.FindNodeByMousePos(mCurrentSelectionBTNode, mouseposition);
     }
 
+    #region èœå•éƒ¨åˆ†
     /// <summary>
-    /// »æÖÆĞĞÎªÊ÷½Úµã
-    /// </summary>
-    private void DrawBTNode()
-    {
-
-    }
-
-    #region ²Ëµ¥²¿·Ö
-    /// <summary>
-    /// ³õÊ¼»¯²Ëµ¥
+    /// åˆå§‹åŒ–èœå•
     /// </summary>
     private void InitMenu()
     {
         mNodeMenuMap = new Dictionary<EBTMenuType, GenericMenu>();
 
         mEmptyAreaMenu = new GenericMenu();
-        mEmptyAreaMenu.AddItem(new GUIContent("´´½¨¸ù½Úµã"), false, OnCreateBTRootNode, null);
+        mEmptyAreaMenu.AddItem(new GUIContent("å¯¼å‡ºAIé…ç½®"), false, OnExportBTNode, null);
         mRootNodeAreaMenu = new GenericMenu();
-        mRootNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/ĞĞÎª½Úµã"), false, OnCreateBTActionNode, null);
-        mRootNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/×éºÏ½Úµã"), false, OnCreateBTCompositeNode, null);
-        mRootNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/Ìõ¼ş½Úµã"), false, OnCreateBTConditionNode, null);
-        mRootNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/×°ÊÎ½Úµã"), false, OnCreateBTDecorationNode, null);
+        mRootNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/è¡Œä¸ºèŠ‚ç‚¹"), false, OnCreateBTActionNode, mCurrentClickNode);
+        mRootNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/ç»„åˆèŠ‚ç‚¹"), false, OnCreateBTCompositeNode, mCurrentClickNode);
+        mRootNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/æ¡ä»¶èŠ‚ç‚¹"), false, OnCreateBTConditionNode, mCurrentClickNode);
+        mRootNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/è£…é¥°èŠ‚ç‚¹"), false, OnCreateBTDecorationNode, mCurrentClickNode);
         mChildNodeAreaMenu = new GenericMenu();
-        mChildNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/ĞĞÎª½Úµã"), false, OnCreateBTActionNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/×éºÏ½Úµã"), false, OnCreateBTCompositeNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/Ìõ¼ş½Úµã"), false, OnCreateBTConditionNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("Ìí¼Ó×Ó½Úµã/×°ÊÎ½Úµã"), false, OnCreateBTDecorationNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("ÏòÇ°ÒÆ¶¯½Úµã"), false, OnMoveForwardBTNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("ÏòºóÒÆ¶¯½Úµã"), false, OnMoveBackwardBTNode, null);
-        mChildNodeAreaMenu.AddItem(new GUIContent("É¾³ı½Úµã"), false, OnDeleteBTNode, null);
+        mChildNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/è¡Œä¸ºèŠ‚ç‚¹"), false, OnCreateBTActionNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/ç»„åˆèŠ‚ç‚¹"), false, OnCreateBTCompositeNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/æ¡ä»¶èŠ‚ç‚¹"), false, OnCreateBTConditionNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("æ·»åŠ å­èŠ‚ç‚¹/è£…é¥°èŠ‚ç‚¹"), false, OnCreateBTDecorationNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("å‘å‰ç§»åŠ¨èŠ‚ç‚¹"), false, OnMoveForwardBTNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("å‘åç§»åŠ¨èŠ‚ç‚¹"), false, OnMoveBackwardBTNode, mCurrentClickNode);
+        mChildNodeAreaMenu.AddItem(new GUIContent("åˆ é™¤èŠ‚ç‚¹"), false, OnDeleteBTNode, mCurrentClickNode);
 
         mNodeMenuMap.Add(EBTMenuType.EmptyAreaMenu, mEmptyAreaMenu);
         mNodeMenuMap.Add(EBTMenuType.RootNodeAreaMenu, mRootNodeAreaMenu);
@@ -220,19 +411,19 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏìÓ¦´´½¨ĞĞÎªÊ÷¸ù½Úµã
+    /// å“åº”å¯¼å‡ºAIé…ç½®
     /// </summary>
-    /// <param name="nodeinfo">ĞĞÎªÊ÷½Úµã</param>
-    private void OnCreateBTRootNode(object nodeinfo)
+    /// <param name="rootnode">è¡Œä¸ºæ ‘è·ŸèŠ‚ç‚¹</param>
+    private void OnExportBTNode(object rootnode)
     {
-        var createnodeinfo = nodeinfo as CreateNodeInfo;
-        Debug.Log($"OnCreateBTRootNode({createnodeinfo.CreateNodeName})");
+        var rtnode = rootnode as BTNode;
+        Debug.Log($"OnExportBTNode({rtnode.NodeName})");
     }
 
     /// <summary>
-    /// ÏìÓ¦´´½¨ĞĞÎª½Úµã
+    /// å“åº”åˆ›å»ºè¡Œä¸ºèŠ‚ç‚¹
     /// </summary>
-    /// <param name="nodeinfo">´´½¨½ÚµãĞÅÏ¢</param>
+    /// <param name="nodeinfo">åˆ›å»ºèŠ‚ç‚¹ä¿¡æ¯</param>
     private void OnCreateBTActionNode(object nodeinfo)
     {
         var createnodeinfo = nodeinfo as CreateNodeInfo;
@@ -240,9 +431,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏìÓ¦´´½¨×éºÏ½Úµã
+    /// å“åº”åˆ›å»ºç»„åˆèŠ‚ç‚¹
     /// </summary>
-    /// <param name="nodeinfo">´´½¨½ÚµãĞÅÏ¢</param>
+    /// <param name="nodeinfo">åˆ›å»ºèŠ‚ç‚¹ä¿¡æ¯</param>
     private void OnCreateBTCompositeNode(object nodeinfo)
     {
         var createnodeinfo = nodeinfo as CreateNodeInfo;
@@ -250,9 +441,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏìÓ¦´´½¨Ìõ¼ş½Úµã
+    /// å“åº”åˆ›å»ºæ¡ä»¶èŠ‚ç‚¹
     /// </summary>
-    /// <param name="nodeinfo">´´½¨½ÚµãĞÅÏ¢</param>
+    /// <param name="nodeinfo">åˆ›å»ºèŠ‚ç‚¹ä¿¡æ¯</param>
     private void OnCreateBTConditionNode(object nodeinfo)
     {
         var createnodeinfo = nodeinfo as CreateNodeInfo;
@@ -260,9 +451,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏìÓ¦´´½¨ĞŞÊÎ½Úµã
+    /// å“åº”åˆ›å»ºä¿®é¥°èŠ‚ç‚¹
     /// </summary>
-    /// <param name="nodeinfo">´´½¨½ÚµãĞÅÏ¢</param>
+    /// <param name="nodeinfo">åˆ›å»ºèŠ‚ç‚¹ä¿¡æ¯</param>
     private void OnCreateBTDecorationNode(object nodeinfo)
     {
         var createnodeinfo = nodeinfo as CreateNodeInfo;
@@ -270,9 +461,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏòÇ°ÒÆ¶¯½ÚµãË³Ğò
+    /// å‘å‰ç§»åŠ¨èŠ‚ç‚¹é¡ºåº
     /// </summary>
-    /// <param name="movebackwardnode">ĞèÒªÏòÇ°ÒÆ¶¯µÄ½Úµã</param>
+    /// <param name="movebackwardnode">éœ€è¦å‘å‰ç§»åŠ¨çš„èŠ‚ç‚¹</param>
     private void OnMoveForwardBTNode(object moveforwardnode)
     {
         var node = moveforwardnode as BTNode;
@@ -280,9 +471,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏòºóÒÆ¶¯½ÚµãË³Ğò
+    /// å‘åç§»åŠ¨èŠ‚ç‚¹é¡ºåº
     /// </summary>
-    /// <param name="movebackwardnode">ĞèÒªÏòºóÒÆ¶¯µÄ½Úµã</param>
+    /// <param name="movebackwardnode">éœ€è¦å‘åç§»åŠ¨çš„èŠ‚ç‚¹</param>
     private void OnMoveBackwardBTNode(object movebackwardnode)
     {
         var node = movebackwardnode as BTNode;
@@ -290,9 +481,9 @@ public class BTNodeEditor : EditorWindow
     }
 
     /// <summary>
-    /// ÏìÓ¦É¾³ıĞĞÎªÊ÷Ö¸¶¨½Úµã
+    /// å“åº”åˆ é™¤è¡Œä¸ºæ ‘æŒ‡å®šèŠ‚ç‚¹
     /// </summary>
-    /// <param name="deletednode">ĞèÒªÉ¾³ıµÄĞĞÎªÊ÷½Úµã</param>
+    /// <param name="deletednode">éœ€è¦åˆ é™¤çš„è¡Œä¸ºæ ‘èŠ‚ç‚¹</param>
     private void OnDeleteBTNode(object deletednode)
     {
         var node = deletednode as BTNode;
