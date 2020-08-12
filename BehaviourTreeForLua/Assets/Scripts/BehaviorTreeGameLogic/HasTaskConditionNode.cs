@@ -28,7 +28,7 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            var hastask = BTOwner.BTBlackBoard.GetData<bool>(GameLauncher.TaskKey);
+            var hastask = BTOwner.BTBlackBoard.GetData<bool>(GameLauncherCS.TaskKey);
             if(hastask)
             {
                 //Debug.Log("满足有工作任务要求!");

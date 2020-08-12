@@ -31,7 +31,7 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            GameLauncher.Singleton.PlayerTxt.text = "完成打游戏";
+            GameLauncherCS.Singleton.PlayerTxt.text = "完成打游戏";
             Debug.Log("完成打游戏");
             return ENodeRunningState.Success;
         }

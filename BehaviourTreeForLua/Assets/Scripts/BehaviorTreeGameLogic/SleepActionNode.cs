@@ -37,10 +37,10 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            if (Vector3.Distance(GameLauncher.Singleton.Player.transform.position, GameLauncher.Singleton.Home.position) > 0.5f)
+            if (Vector3.Distance(GameLauncherCS.Singleton.Player.transform.position, GameLauncherCS.Singleton.Home.position) > 0.5f)
             {
-                GameLauncher.Singleton.PlayerTxt.text = "回家路上";
-                GameLauncher.Singleton.Player.destination = GameLauncher.Singleton.Home.position;
+                GameLauncherCS.Singleton.PlayerTxt.text = "回家路上";
+                GameLauncherCS.Singleton.Player.destination = GameLauncherCS.Singleton.Home.position;
                 return ENodeRunningState.Running;
             }
             else
@@ -48,13 +48,13 @@ namespace Game.BT
                 mSleepTimeCount += Time.deltaTime;
                 if (mSleepTimeCount > 3.0f)
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达家,完成睡觉";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达家,完成睡觉";
                     Debug.Log("抵达家,完成睡觉");
                     return ENodeRunningState.Success;
                 }
                 else
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达家,完成睡觉中";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达家,完成睡觉中";
                     return ENodeRunningState.Running;
                 }
             }

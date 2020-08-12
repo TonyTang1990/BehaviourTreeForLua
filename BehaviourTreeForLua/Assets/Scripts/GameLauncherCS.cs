@@ -1,6 +1,6 @@
 ﻿/*
  * Description:             游戏入口
- * Author:                  tanghuan
+ * Author:                  GameLauncherCS
  * Create Date:             2018/03/12
  */
 
@@ -15,12 +15,12 @@ using Game.BT;
 /// <summary>
 /// 游戏入口
 /// </summary>
-public class GameLauncher : MonoBehaviour {
+public class GameLauncherCS : MonoBehaviour {
 
     /// <summary>
     /// 单例方便访问
     /// </summary>
-    public static GameLauncher Singleton;
+    public static GameLauncherCS Singleton;
 
     #region 行为树部分
     /// <summary>
@@ -104,7 +104,7 @@ public class GameLauncher : MonoBehaviour {
     }
 
     private void Start () {
-        Debug.Log("GameLauncher:Start()");
+        Debug.Log("GameLauncherCS:Start()");
         TestBehaviorTree();
     }
 

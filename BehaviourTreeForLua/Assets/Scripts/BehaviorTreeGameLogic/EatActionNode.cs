@@ -37,10 +37,10 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            if (Vector3.Distance(GameLauncher.Singleton.Player.transform.position, GameLauncher.Singleton.ShoppingMall.position) > 0.5f)
+            if (Vector3.Distance(GameLauncherCS.Singleton.Player.transform.position, GameLauncherCS.Singleton.ShoppingMall.position) > 0.5f)
             {
-                GameLauncher.Singleton.PlayerTxt.text = "去商场路上";
-                GameLauncher.Singleton.Player.destination = GameLauncher.Singleton.ShoppingMall.position;
+                GameLauncherCS.Singleton.PlayerTxt.text = "去商场路上";
+                GameLauncherCS.Singleton.Player.destination = GameLauncherCS.Singleton.ShoppingMall.position;
                 return ENodeRunningState.Running;
             }
             else
@@ -48,13 +48,13 @@ namespace Game.BT
                 mEatTimeCount += Time.deltaTime;
                 if (mEatTimeCount > 3.0f)
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达商场,完成吃饭";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达商场,完成吃饭";
                     Debug.Log("抵达商场,完成吃饭");
                     return ENodeRunningState.Success;
                 }
                 else
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达商场,完成吃饭中";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达商场,完成吃饭中";
                     return ENodeRunningState.Running;
                 }
             }

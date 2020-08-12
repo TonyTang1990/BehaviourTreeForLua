@@ -27,10 +27,10 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            var money = BTOwner.BTBlackBoard.GetData<int>(GameLauncher.MoneyKey);
+            var money = BTOwner.BTBlackBoard.GetData<int>(GameLauncherCS.MoneyKey);
             if (money > 0)
             {
-                GameLauncher.Singleton.PlayerTxt.text = "";
+                GameLauncherCS.Singleton.PlayerTxt.text = "";
                 //Debug.Log("满足钱 > 0要求!");
                 return ENodeRunningState.Success;
             }

@@ -37,10 +37,10 @@ namespace Game.BT
 
         protected override ENodeRunningState OnExecute()
         {
-            if(Vector3.Distance(GameLauncher.Singleton.Player.transform.position, GameLauncher.Singleton.Company.position) > 0.5f)
+            if(Vector3.Distance(GameLauncherCS.Singleton.Player.transform.position, GameLauncherCS.Singleton.Company.position) > 0.5f)
             {
-                GameLauncher.Singleton.PlayerTxt.text = "去公司路上";
-                GameLauncher.Singleton.Player.destination = GameLauncher.Singleton.Company.position;
+                GameLauncherCS.Singleton.PlayerTxt.text = "去公司路上";
+                GameLauncherCS.Singleton.Player.destination = GameLauncherCS.Singleton.Company.position;
                 return ENodeRunningState.Running;
             }
             else
@@ -48,13 +48,13 @@ namespace Game.BT
                 mStudyTimeCount += Time.deltaTime;
                 if(mStudyTimeCount > 3.0f)
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达公司,完成学习";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达公司,完成学习";
                     Debug.Log("抵达公司,完成学习");
                     return ENodeRunningState.Success;
                 }
                 else
                 {
-                    GameLauncher.Singleton.PlayerTxt.text = "抵达公司,学习中";
+                    GameLauncherCS.Singleton.PlayerTxt.text = "抵达公司,学习中";
                     return ENodeRunningState.Running;
                 }
             }
