@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTUtilities.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/13
@@ -10,13 +10,13 @@ using UnityEngine;
 
 /// <summary>
 /// BTUtilities.cs
-/// ĞĞÎªÊ÷¾²Ì¬¹¤¾ßÀà
+/// è¡Œä¸ºæ ‘é™æ€å·¥å…·ç±»
 /// </summary>
 public static class BTUtilities
 {
-    #region ¾²Ì¬·½·¨
+    #region é™æ€æ–¹æ³•
     /// <summary>
-    /// ¸ù¾İuidÕÒµ½¶ÔÓ¦µÄĞĞÎªÊ÷½Úµã
+    /// æ ¹æ®uidæ‰¾åˆ°å¯¹åº”çš„è¡Œä¸ºæ ‘èŠ‚ç‚¹
     /// </summary>
     /// <param name="node"></param>
     /// <param name="uid"></param>
@@ -33,7 +33,7 @@ public static class BTUtilities
     }
 
     /// <summary>
-    /// ¸ù¾İÊó±êÎ»ÖÃ»ñÈ¡¶ÔÓ¦²Ù×÷µÄĞĞÎª½Úµã
+    /// æ ¹æ®é¼ æ ‡ä½ç½®è·å–å¯¹åº”æ“ä½œçš„è¡Œä¸ºèŠ‚ç‚¹
     /// </summary>
     /// <param name="node"></param>
     /// <param name="mpos"></param>
@@ -50,7 +50,7 @@ public static class BTUtilities
     }
 
     /// <summary>
-    /// »ñÈ¡ËùÓĞ½Úµã
+    /// è·å–æ‰€æœ‰èŠ‚ç‚¹
     /// </summary>
     /// <param name="node"></param>
     /// <param name="allnodes"></param>

@@ -139,12 +139,12 @@ public class BTNodeEditor : EditorWindow
     /// <summary>
     /// 节点窗口宽度
     /// </summary>
-    private const float NodeWindowWidth = 250.0f;
+    private const float NodeWindowWidth = 150.0f;
 
     /// <summary>
     /// 节点窗口高度
     /// </summary>
-    private const float NodeWindowHeight = 250.0f;
+    private const float NodeWindowHeight = 150.0f;
 
     [MenuItem("TonyTang/AI/BTNodeEditor")]
     static void ShowEditor()
