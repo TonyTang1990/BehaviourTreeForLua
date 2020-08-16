@@ -58,6 +58,16 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
     /// </summary>
     private Action<float> mLuaFixedUpdate = null;
 
+    /// <summary>
+    /// Lua测CreateLuaBehaviourTree方法绑定
+    /// </summary>
+    public Func<TBehaviourTree, TLuaBehaviourTree> mLuaCreateLuaBehaviourTree = null;
+
+    /// <summary>
+    /// 编辑器注册回调
+    /// </summary>
+    public static Action<LuaEnv> EditorHookCallBack;
+
     private void Start()
     {
         Debug.Log($"XLuaManager:Start()");
@@ -76,7 +86,12 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         mLuaUpdate = mLuaEnv.Global.Get<Action<float, float>>("Update");
         mLuaLateUpdate = mLuaEnv.Global.Get<Action>("LateUpdate");
         mLuaFixedUpdate = mLuaEnv.Global.Get<Action<float>>("FixedUpdate");
+        mLuaCreateLuaBehaviourTree = mLuaEnv.Global.Get<Func<TBehaviourTree, TLuaBehaviourTree>>("CreateLuaBehaviourTree");
         mLuaGameStart();
+        if(EditorHookCallBack != null)
+        {
+            EditorHookCallBack(mLuaEnv);
+        }
     }
 
     public LuaEnv GetLuaEnv()
@@ -97,7 +112,7 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         byte[] bytes = null;
         if(!mAssetsLuaCaching.TryGetValue(luaname, out bytes))
         {
-            var luafilefullpath = $"{Application.dataPath}/Resources/{LuaScriptsFolder}/{luaname}.lua";
+            var luafilefullpath = $"{Application.dataPath}/Resources/{LuaScriptsFolder}/{filepath}.lua";
             bytes = File.ReadAllBytes(luafilefullpath);
             if(bytes == null)
             {
@@ -149,6 +164,7 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         mLuaUpdate = null;
         mLuaLateUpdate = null;
         mLuaFixedUpdate = null;
+        mLuaCreateLuaBehaviourTree = null;
         StopLuaEnv();
     }
 

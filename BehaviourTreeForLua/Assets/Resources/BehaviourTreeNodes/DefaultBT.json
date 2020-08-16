@@ -1,0 +1,163 @@
+﻿{
+    "BTFileName": "DefaultBT",
+    "RootNode": {
+        "UID": 1762232960,
+        "NodeDisplayRect": {
+            "serializedVersion": "2",
+            "x": 526.0,
+            "y": 33.0,
+            "width": 150.0,
+            "height": 150.0
+        },
+        "NodeIndex": 0,
+        "NodeName": "Root",
+        "NodeParams": "test1",
+        "NodeType": 1,
+        "ParentNodeUID": 0,
+        "ChildNodesUIDList": [
+            -1504874240,
+            -1015569280
+        ]
+    },
+    "AllNodesList": [
+        {
+            "UID": 1762232960,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 526.0,
+                "y": 33.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "Root",
+            "NodeParams": "test1",
+            "NodeType": 1,
+            "ParentNodeUID": 0,
+            "ChildNodesUIDList": [
+                -1504874240,
+                -1015569280
+            ]
+        },
+        {
+            "UID": -1504874240,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 276.0,
+                "y": 228.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "SelectorNode",
+            "NodeParams": "",
+            "NodeType": 3,
+            "ParentNodeUID": 1762232960,
+            "ChildNodesUIDList": [
+                -1486552320,
+                -1783827200
+            ]
+        },
+        {
+            "UID": -1015569280,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 822.0,
+                "y": 222.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "SeqeunceNode",
+            "NodeParams": "",
+            "NodeType": 3,
+            "ParentNodeUID": 1762232960,
+            "ChildNodesUIDList": [
+                -1469408896,
+                -1036496000
+            ]
+        },
+        {
+            "UID": -1783827200,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 415.0,
+                "y": 431.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": -1504874240,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -1469408896,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 684.0,
+                "y": 430.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "ActiveSelfCondition",
+            "NodeParams": "",
+            "NodeType": 4,
+            "ParentNodeUID": -1015569280,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -1036496000,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 963.0,
+                "y": 429.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": -1015569280,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -1486552320,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 154.0,
+                "y": 436.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "InverseDecoration",
+            "NodeParams": "",
+            "NodeType": 5,
+            "ParentNodeUID": -1504874240,
+            "ChildNodesUIDList": [
+                -147490816
+            ]
+        },
+        {
+            "UID": -147490816,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 155.0,
+                "y": 637.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "ActiveSelfCondition",
+            "NodeParams": "",
+            "NodeType": 4,
+            "ParentNodeUID": -1486552320,
+            "ChildNodesUIDList": []
+        }
+    ]
+}
