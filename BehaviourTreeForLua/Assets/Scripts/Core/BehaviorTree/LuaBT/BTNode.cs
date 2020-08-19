@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 行为树节点类型
+/// 行为树节点类型枚举
 /// </summary>
 public enum EBTNodeType
 {
@@ -21,11 +21,32 @@ public enum EBTNodeType
 }
 
 /// <summary>
+/// 行为树节点运行状态枚举
+/// </summary>
+public enum EBTNodeRunningState
+{
+    Invalide = 1,           // 无效状态
+    Running,                // 运行中
+    Success,                // 成功
+    Failed,                 // 失败
+}
+
+/// <summary>
+/// 节点打断类型
+/// </summary>
+public enum EBTNodeAbortType
+{
+    AbortAll = 1,                   // 打断所有
+    NoAbort,                        // 不能被打断
+}
+
+/// <summary>
 /// 行为树节点抽象
 /// </summary>
 [Serializable]
 public class BTNode
 {
+    #region 序列化存储部分
     /// <summary>
     /// 节点UID
     /// </summary>
@@ -65,11 +86,68 @@ public class BTNode
     /// 子节点UID列表
     /// </summary>
     public List<int> ChildNodesUIDList;
+    #endregion
 
-    private BTNode()
+    #region 运行时部分
+    /// <summary>
+    /// 行为树节点所属行为树
+    /// </summary>
+    public TBehaviourTree OwnerBT
+    {
+        get;
+        private set;
+    }
+
+    /// <summary>
+    /// Lua测对应的行为树节点
+    /// </summary>
+    protected LuaBTNode LuaNode;
+
+    /// <summary>
+    /// 节点运行状态
+    /// </summary>
+    public EBTNodeRunningState NodeRunningState
+    {
+        get;
+        protected set;
+    }
+    
+    /// <summary>
+    /// 是否处于运行中
+    /// </summary>
+    public bool IsRunning
+    {
+        get
+        {
+            return NodeRunningState == EBTNodeRunningState.Running;
+        }
+    }
+
+    /// <summary>
+    /// 是否终止
+    /// </summary>
+    public bool IsTerminated
+    {
+        get
+        {
+            return NodeRunningState == EBTNodeRunningState.Success || NodeRunningState == EBTNodeRunningState.Failed;
+        }
+    }
+    #endregion
+
+    public BTNode()
     {
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="noderect">节点编辑器显示Rect</param>
+    /// <param name="nodeindex">节点索引</param>
+    /// <param name="nodename">节点名字</param>
+    /// <param name="nodetype">节点类型</param>
+    /// <param name="parentnode">父节点</param>
+    /// <param name="btowner">行为树节点所属行为树</param>
     public BTNode(Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode = null)
     {
         UID = GetHashCode();
@@ -79,8 +157,76 @@ public class BTNode
         NodeType = (int)nodetype;
         ParentNodeUID = parentnode != null ? parentnode.UID : 0;
         ChildNodesUIDList = new List<int>();
+        NodeRunningState = EBTNodeRunningState.Invalide;
     }
 
+    #region 运行时部分
+    public BTNode(BTNode node, TBehaviourTree btowner)
+    {
+        UID = node.UID;
+        NodeIndex = node.NodeIndex;
+        NodeName = node.NodeName;
+        NodeType = (int)node.NodeType;
+        ParentNodeUID = node.ParentNodeUID;
+        ChildNodesUIDList = new List<int>();
+        NodeRunningState = EBTNodeRunningState.Invalide;
+        OwnerBT = btowner;
+    }
+
+    /// <summary>
+    /// 节点更新
+    /// </summary>
+    /// <returns></returns>
+    public EBTNodeRunningState Update()
+    {
+        if (NodeRunningState == EBTNodeRunningState.Invalide)
+        {
+            OnEnter();
+        }
+        NodeRunningState = OnExecute();
+        var tempstate = NodeRunningState;
+        if (IsTerminated)
+        {
+            OnExit();
+        }
+        return tempstate;
+    }
+
+    /// <summary>
+    /// 重置节点状态
+    /// </summary>
+    public virtual void Reset()
+    {
+        Debug.Log(string.Format("重置节点:{0}", NodeName));
+        NodeRunningState = EBTNodeRunningState.Invalide;
+    }
+
+    /// <summary>
+    /// 进入节点
+    /// </summary>
+    protected virtual void OnEnter()
+    {
+        NodeRunningState = EBTNodeRunningState.Running;
+    }
+
+    /// <summary>
+    /// 执行节点
+    /// </summary>
+    protected virtual EBTNodeRunningState OnExecute()
+    {
+        return EBTNodeRunningState.Success;
+    }
+
+    /// <summary>
+    /// 退出节点
+    /// </summary>
+    protected virtual void OnExit()
+    {
+        // 节点判定完成(成功或失败)时做一些事情
+    }
+    #endregion
+
+    #region 编辑器部分
     /// <summary>
     /// 添加子节点
     /// </summary>
@@ -123,6 +269,51 @@ public class BTNode
     }
 
     /// <summary>
+    /// 更新子节点顺序
+    /// </summary>
+    /// <param name="graph"></param>
+    public void UpdateChildNodeIndex(BTGraph graph)
+    {
+        for (int i = 0, length = ChildNodesUIDList.Count; i < length; i++)
+        {
+            var node = graph.FindNodeByUID(ChildNodesUIDList[i]);
+            node.NodeIndex = i;
+        }
+    }
+
+    /// <summary>
+    /// 判定位置是否在指定节点区域内
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public bool UnderRectArea(Vector2 pos)
+    {
+        return NodeDisplayRect.Contains(pos);
+    }
+
+    /// <summary>
+    /// 节点移动
+    /// </summary>
+    /// <param name="graph"></param>
+    /// <param name="offset"></param>
+    /// <param name="recursive"></param>
+    public void Move(BTGraph graph, Vector2 offset, bool recursive = false)
+    {
+        NodeDisplayRect.x = NodeDisplayRect.x + offset.x;
+        NodeDisplayRect.y = NodeDisplayRect.y + offset.y;
+        if (recursive)
+        {
+            for (int i = 0, length = ChildNodesUIDList.Count; i < length; i++)
+            {
+                var childnode = graph.FindNodeByUID(ChildNodesUIDList[i]);
+                childnode.Move(graph, offset, recursive);
+            }
+        }
+    }
+    #endregion
+
+    #region 通用部分
+    /// <summary>
     /// 是否是根节点
     /// </summary>
     /// <returns></returns>
@@ -157,27 +348,5 @@ public class BTNode
     {
         return NodeType == (int)EBTNodeType.ConditionNodeType;
     }
-
-    /// <summary>
-    /// 更新子节点顺序
-    /// </summary>
-    /// <param name="graph"></param>
-    public void UpdateChildNodeIndex(BTGraph graph)
-    {
-        for(int i = 0, length = ChildNodesUIDList.Count; i < length; i++)
-        {
-            var node = graph.FindNodeByUID(ChildNodesUIDList[i]);
-            node.NodeIndex = i;
-        }
-    }
-
-    /// <summary>
-    /// 判定位置是否在指定节点区域内
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    public bool UnderRectArea(Vector2 pos)
-    {
-        return NodeDisplayRect.Contains(pos);
-    }
+    #endregion
 }

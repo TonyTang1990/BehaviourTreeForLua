@@ -21,23 +21,14 @@ public class TBehaviourTree : MonoBehaviour
     public TextAsset BTGraphAsset;
 
     /// <summary>
-    /// 行为树图对象
+    /// 运行时的行为树图数据(根据反序列化数据构建而成)
     /// </summary>
-    public BTGraph BTGraphData
+    public BTGraph BTRunningGraphData
     {
         get;
         private set;
     }
-
-    /// <summary>
-    /// Lua测行为树对象
-    /// </summary>
-    public TLuaBehaviourTree LuaBehaviourTree
-    {
-        get;
-        private set;
-    }
-
+    
     /// <summary>
     /// 行为树是否开启
     /// </summary>
@@ -46,6 +37,11 @@ public class TBehaviourTree : MonoBehaviour
         get;
         private set;
     }
+
+    /// <summary>
+    /// 行为树图对象(反序列化)
+    /// </summary>
+    private BTGraph mBTGraphData;
 
     private void Start()
     {
@@ -79,6 +75,6 @@ public class TBehaviourTree : MonoBehaviour
     public void LoadBTGraphAsset(string assetname)
     {
         BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}.json");
-        BTGraphData = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
+        mBTGraphData = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
     }
 }

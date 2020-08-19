@@ -24,12 +24,12 @@ function FixedUpdate()
     ---print("Lua FixedUpdate()")
 end
 
---- 创建Lua测行为树
----@param csbehaviourtree CS.TBehaviourTree @CS测的行为树
----@return LuaBehaviourTree @Lua测行为树对象
-function CreateLuaBehaviourTree(csbehaviourtree)
-    print("CreateLuaBehaviourTree()")
-    local luabehaviourtreeinstance = _G.LuaBehaviourTree.New(csbehaviourtree)
-    luabehaviourtreeinstance:Init(csbehaviourtree)
-    return luabehaviourtreeinstance
+--- 创建Lua测行为树节点
+---@param btnode CS.BTNode @CS测的行为树对应的节点
+---@return LuaBTNode @Lua测行为树节点对象
+function CreateLuaBTnode(btnode)
+    print("CreateLuaBTnode()")
+    local luabtnodeinstance = _G.LuaBTNode.New(btnode)
+    luabtnodeinstance:Init(btnode)
+    return luabtnodeinstance
 end

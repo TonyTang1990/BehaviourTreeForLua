@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTGraph.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/16
@@ -9,25 +9,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// Luaè¡Œä¸ºæ ‘è®¾è®¡:
+/// ç»„åˆèŠ‚ç‚¹å’Œè£…é¥°èŠ‚ç‚¹åœ¨CSæµ‹
+/// è¡Œä¸ºèŠ‚ç‚¹å’Œæ¡ä»¶èŠ‚ç‚¹é€šè¿‡ç»Ÿä¸€CSèŠ‚ç‚¹æ˜ å°„åˆ°Luaæµ‹å®ç°è‡ªå®šä¹‰Luaæ¡ä»¶å’Œè¡Œä¸ºèŠ‚ç‚¹
+
 /// <summary>
 /// BTGraph.cs
-/// ĞĞÎªÊ÷Í¼³éÏó
+/// è¡Œä¸ºæ ‘å›¾æŠ½è±¡
 /// </summary>
 [Serializable]
 public class BTGraph
 {
     /// <summary>
-    /// ĞĞÎªÊ÷µ¼³öÎÄ¼şÃû(Ö»ÓĞ¸ù½ÚµãÓĞ)
+    /// è¡Œä¸ºæ ‘å¯¼å‡ºæ–‡ä»¶å(åªæœ‰æ ¹èŠ‚ç‚¹æœ‰)
     /// </summary>
     public string BTFileName;
 
     /// <summary>
-    /// ĞĞÎªÊ÷¸ù½ÚµãÊı¾İ
+    /// è¡Œä¸ºæ ‘æ ¹èŠ‚ç‚¹æ•°æ®
     /// </summary>
     public BTNode RootNode;
 
     /// <summary>
-    /// ËùÓĞµÄ½ÚµãÊı¾İ
+    /// æ‰€æœ‰çš„èŠ‚ç‚¹æ•°æ®
     /// </summary>
     public List<BTNode> AllNodesList;
 
@@ -39,7 +43,7 @@ public class BTGraph
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="btfilename">ĞĞÎªÊ÷ÎÄ¼şÃû</param>
+    /// <param name="btfilename">è¡Œä¸ºæ ‘æ–‡ä»¶å</param>
     /// <param name="rootnode"></param>
     public BTGraph(string btfilename, BTNode rootnode)
     {
@@ -49,8 +53,30 @@ public class BTGraph
         AllNodesList.Add(RootNode);
     }
 
+    #region è¿è¡Œæ—¶éƒ¨åˆ†
+
+    #endregion
+
+    #region é€šç”¨éƒ¨åˆ†
     /// <summary>
-    /// Ìí¼Ó½Úµã
+    /// æ ¹æ®uidæ‰¾åˆ°å¯¹åº”çš„è¡Œä¸ºæ ‘èŠ‚ç‚¹
+    /// </summary>
+    /// <param name="btgraph"></param>
+    /// <param name="uid"></param>
+    /// <returns></returns>
+    public BTNode FindNodeByUID(int uid)
+    {
+        var findnode = AllNodesList.Find((btnode) =>
+        {
+            return btnode.UID == uid;
+        });
+        return findnode;
+    }
+    #endregion
+
+    #region ç¼–è¾‘å™¨éƒ¨åˆ†
+    /// <summary>
+    /// æ·»åŠ èŠ‚ç‚¹
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
@@ -63,34 +89,34 @@ public class BTGraph
         }
         else
         {
-            Debug.Log($"²»ÔÊĞíÌí¼Ó¿Õ»òÖØ¸´½Úµã!");
+            Debug.Log($"ä¸å…è®¸æ·»åŠ ç©ºæˆ–é‡å¤èŠ‚ç‚¹!");
             return false;
         }
     }
 
     /// <summary>
-    /// É¾³ı½Úµã
+    /// åˆ é™¤èŠ‚ç‚¹
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
     public bool DeleteNode(BTNode node)
     {
-        if(node.Equals(RootNode) == false)
+        if (node.Equals(RootNode) == false)
         {
-            if(AllNodesList.Remove(node))
+            if (AllNodesList.Remove(node))
             {
-                if(node.ChildNodesUIDList.Count > 0)
+                if (node.ChildNodesUIDList.Count > 0)
                 {
-                    for(int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
+                    for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
                     {
                         var childnode = FindNodeByUID(node.ChildNodesUIDList[i]);
                         DeleteNode(childnode);
                     }
                     node.DeleteAllChildNodes();
                 }
-                // ÈÃ½ÚµãµÄ¸¸½ÚµãÉ¾³ı¸Ã×Ó½Úµã²¢ÖØĞÂÅÅ½ÚµãË³Ğò
+                // è®©èŠ‚ç‚¹çš„çˆ¶èŠ‚ç‚¹åˆ é™¤è¯¥å­èŠ‚ç‚¹å¹¶é‡æ–°æ’èŠ‚ç‚¹é¡ºåº
                 var parentnode = FindNodeByUID(node.ParentNodeUID);
-                if(parentnode != null)
+                if (parentnode != null)
                 {
                     parentnode.DeleteChildNode(node.UID);
                     parentnode.UpdateChildNodeIndex(this);
@@ -104,28 +130,13 @@ public class BTGraph
         }
         else
         {
-            Debug.Log($"²»ÔÊĞíÉ¾³ı¸ù½Úµã!");
+            Debug.Log($"ä¸å…è®¸åˆ é™¤æ ¹èŠ‚ç‚¹!");
             return false;
         }
     }
 
     /// <summary>
-    /// ¸ù¾İuidÕÒµ½¶ÔÓ¦µÄĞĞÎªÊ÷½Úµã
-    /// </summary>
-    /// <param name="btgraph"></param>
-    /// <param name="uid"></param>
-    /// <returns></returns>
-    public BTNode FindNodeByUID(int uid)
-    {
-        var findnode = AllNodesList.Find((btnode) =>
-        {
-            return btnode.UID == uid;
-        });
-        return findnode;
-    }
-
-    /// <summary>
-    /// ¸ù¾İÊó±êÎ»ÖÃ»ñÈ¡¶ÔÓ¦²Ù×÷µÄĞĞÎª½Úµã
+    /// æ ¹æ®é¼ æ ‡ä½ç½®è·å–å¯¹åº”æ“ä½œçš„è¡Œä¸ºèŠ‚ç‚¹
     /// </summary>
     /// <param name="btgraph"></param>
     /// <param name="mpos"></param>
@@ -140,7 +151,7 @@ public class BTGraph
     }
 
     /// <summary>
-    /// ÏòÇ°ÒÆ¶¯Ö¸¶¨×Ó½Úµã
+    /// å‘å‰ç§»åŠ¨æŒ‡å®šå­èŠ‚ç‚¹
     /// </summary>
     /// <param name="parentnodeuid"></param>
     /// <param name="childnodeuid"></param>
@@ -162,23 +173,29 @@ public class BTGraph
                 childnode.NodeIndex = childnodeindex - 1;
                 parentnode.ChildNodesUIDList[childnodeindex] = forwardchild.UID;
                 forwardchild.NodeIndex = childnodeindex;
+                var moveoffset = Vector2.zero;
+                moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                // ç§»åŠ¨å½“å‰ä¸¤ä¸ªèŠ‚ç‚¹åŠå…¶æ‰€æœ‰å­èŠ‚ç‚¹
+                childnode.Move(this, moveoffset, true);
+                forwardchild.Move(this, -moveoffset, true);
                 return true;
             }
             else
             {
-                Debug.LogWarning($"½ÚµãÃû:{parentnode.NodeName}µÄUID:{childnodeuid}×Ó½ÚµãÒÑ¾­ÊÇµÚÒ»¸ö×Ó½Úµã,ÎŞ·¨ÔÙÏòÇ°ÒÆ¶¯!");
+                Debug.LogWarning($"èŠ‚ç‚¹å:{parentnode.NodeName}çš„UID:{childnodeuid}å­èŠ‚ç‚¹å·²ç»æ˜¯ç¬¬ä¸€ä¸ªå­èŠ‚ç‚¹,æ— æ³•å†å‘å‰ç§»åŠ¨!");
                 return false;
             }
         }
         else
         {
-            Debug.LogError($"½ÚµãÃû:{parentnode.NodeName}ÕÒ²»µ½UID:{childnodeuid}µÄ×Ó½Úµã,ÏòÇ°ÒÆ¶¯Ê§°Ü!");
+            Debug.LogError($"èŠ‚ç‚¹å:{parentnode.NodeName}æ‰¾ä¸åˆ°UID:{childnodeuid}çš„å­èŠ‚ç‚¹,å‘å‰ç§»åŠ¨å¤±è´¥!");
             return false;
         }
     }
 
     /// <summary>
-    /// ÏòºóÒÆ¶¯Ö¸¶¨×Ó½Úµã
+    /// å‘åç§»åŠ¨æŒ‡å®šå­èŠ‚ç‚¹
     /// </summary>
     /// <param name="parentnodeuid"></param>
     /// <param name="childnodeuid"></param>
@@ -200,18 +217,25 @@ public class BTGraph
                 childnode.NodeIndex = childnodeindex + 1;
                 parentnode.ChildNodesUIDList[childnodeindex] = backwardchild.UID;
                 backwardchild.NodeIndex = childnodeindex;
+                var moveoffset = Vector2.zero;
+                moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                // ç§»åŠ¨å½“å‰ä¸¤ä¸ªèŠ‚ç‚¹åŠå…¶æ‰€æœ‰å­èŠ‚ç‚¹
+                childnode.Move(this, moveoffset, true);
+                backwardchild.Move(this, -moveoffset, true);
                 return true;
             }
             else
             {
-                Debug.LogWarning($"½ÚµãÃû:{parentnode.NodeName}µÄUID:{childnodeuid}×Ó½ÚµãÒÑ¾­ÊÇ×îºóÒ»¸ö×Ó½Úµã,ÎŞ·¨ÔÙÏòºóÒÆ¶¯!");
+                Debug.LogWarning($"èŠ‚ç‚¹å:{parentnode.NodeName}çš„UID:{childnodeuid}å­èŠ‚ç‚¹å·²ç»æ˜¯æœ€åä¸€ä¸ªå­èŠ‚ç‚¹,æ— æ³•å†å‘åç§»åŠ¨!");
                 return false;
             }
         }
         else
         {
-            Debug.LogError($"½ÚµãÃû:{parentnode.NodeName}ÕÒ²»µ½UID:{childnodeuid}µÄ×Ó½Úµã,ÏòÇ°ÒÆ¶¯Ê§°Ü!");
+            Debug.LogError($"èŠ‚ç‚¹å:{parentnode.NodeName}æ‰¾ä¸åˆ°UID:{childnodeuid}çš„å­èŠ‚ç‚¹,å‘å‰ç§»åŠ¨å¤±è´¥!");
             return false;
         }
     }
+    #endregion
 }

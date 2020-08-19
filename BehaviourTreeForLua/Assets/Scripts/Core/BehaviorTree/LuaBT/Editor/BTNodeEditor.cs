@@ -279,7 +279,7 @@ public class BTNodeEditor : EditorWindow
         mToolBarRect = new Rect(0, 0, ToolBarWidth, ToolBarHeight);
         mToolBarSelectIndex = 0;
         mInspectorRect = new Rect(0, ToolBarHeight, InspectorWindowWidth, InspectorWindowHeight);
-        mNodeWindowDragableRect = new Rect(0, 0, NodeWindowWidth, NodeWindowHeight);
+        mNodeWindowDragableRect = new Rect(0, 0, NodeWindowWidth, 20f);
         mNormalCurveColor = Color.blue;
         mRunningCurveColor = Color.green;
         InitMenu();
@@ -419,16 +419,23 @@ public class BTNodeEditor : EditorWindow
     private void OnGUI()
     {
         mLableAlignMiddleStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-        mLableAlignLeftStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperLeft };        
+        mLableAlignLeftStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperLeft };
         //if (CurrentLuaEnvInstance == null)
         //{
         //    DrawWaitTips();
         //}
         //else
         //{
+        if(mCurrentSelectionBTGraph != null)
+        {
             HandleInteraction();
             DrawOperationPanel();
             DrawBTNode();
+        }
+        else
+        {
+            EditorGUILayout.LabelField("未选中有效行为树节点或文件!", mLableAlignMiddleStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+        }
         //}
     }
 
@@ -679,7 +686,11 @@ public class BTNodeEditor : EditorWindow
         EditorGUILayout.LabelField($"节点参数:", mLableAlignLeftStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
         GUILayout.Label($"{btnode.NodeParams}", "textarea", GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(40.0f));
         EditorGUILayout.EndVertical();
-        GUI.DragWindow(mNodeWindowDragableRect);
+        // 仅Editor非运行时允许拖拽
+        if(Application.isPlaying == false)
+        {
+            GUI.DragWindow(mNodeWindowDragableRect);
+        }
     }
 
     /// <summary>
