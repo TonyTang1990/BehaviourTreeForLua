@@ -8,14 +8,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// BTDecorationNode.cs
-/// 修饰节点
-/// </summary>
-public class BTDecorationNode : BTNode
+namespace LuaBehaviourTree
 {
-    public BTDecorationNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+    /// <summary>
+    /// BTDecorationNode.cs
+    /// 修饰节点
+    /// </summary>
+    public class BTDecorationNode : BTNode
     {
+        /// <summary>
+        /// 装饰的子节点
+        /// </summary>
+        public BTNode ChildNode;
 
+        public BTDecorationNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+        {
+
+        }
     }
 }

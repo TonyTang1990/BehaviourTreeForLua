@@ -8,11 +8,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// BTActionNode.cs
-/// 行为节点
-/// </summary>
-public class BTActionNode : BTNode
+namespace LuaBehaviourTree
 {
+    /// <summary>
+    /// BTActionNode.cs
+    /// 行为节点
+    /// </summary>
+    public class BTActionNode : BTNode
+    {
+        #region 运行时部分
+        public BTActionNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+        {
 
+        }
+        #endregion
+    }
 }

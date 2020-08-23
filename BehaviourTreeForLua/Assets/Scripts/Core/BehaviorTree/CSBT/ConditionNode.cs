@@ -9,6 +9,7 @@ using System;
 namespace BehaviorTree
 {
     /// <summary>
+    /// ConditionNode.cs
     /// 条件节点基类
     /// Note:
     /// 条件节点不允许返回Running状态，只允许Success或者Failed

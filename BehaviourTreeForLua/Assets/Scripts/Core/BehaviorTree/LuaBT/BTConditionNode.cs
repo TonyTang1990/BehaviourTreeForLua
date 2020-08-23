@@ -8,11 +8,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// BTConditionNode.cs
-/// 条件节点
-/// </summary>
-public class BTConditionNode : BTNode
+namespace LuaBehaviourTree
 {
+    /// <summary>
+    /// BTConditionNode.cs
+    /// 条件节点
+    /// </summary>
+    public class BTConditionNode : BTNode
+    {
+        public BTConditionNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+        {
 
+        }
+    }
 }

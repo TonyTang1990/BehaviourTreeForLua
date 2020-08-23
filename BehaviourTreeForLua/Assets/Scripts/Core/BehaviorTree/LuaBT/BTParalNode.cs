@@ -8,15 +8,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// BTParalNode.cs
-/// 并发节点
-/// </summary>
-public class BTParalNode : BTCompositionNode
+namespace LuaBehaviourTree
 {
-    public BTParalNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+    /// <summary>
+    /// BTParalNode.cs
+    /// 并发节点
+    /// </summary>
+    public class BTParalNode : BTCompositionNode
     {
+        public BTParalNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+        {
 
+        }
     }
-
 }

@@ -95,6 +95,7 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTConditionNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTData.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTDecorationNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTEntryNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTGraph.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTParalNode.cs" />

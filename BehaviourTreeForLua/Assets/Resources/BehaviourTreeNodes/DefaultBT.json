@@ -1,50 +1,48 @@
 ﻿{
     "BTFileName": "DefaultBT",
     "RootNode": {
-        "UID": 1762232960,
+        "UID": -852594688,
         "NodeDisplayRect": {
             "serializedVersion": "2",
-            "x": 542.0,
-            "y": 27.0,
+            "x": 601.0,
+            "y": 19.0,
             "width": 150.0,
             "height": 150.0
         },
         "NodeIndex": 0,
         "NodeName": "Root",
-        "NodeParams": "test1",
+        "NodeParams": "",
         "NodeType": 1,
         "ParentNodeUID": 0,
         "ChildNodesUIDList": [
-            -1504874240,
-            -1015569280
+            1969312128
         ]
     },
     "AllNodesList": [
         {
-            "UID": 1762232960,
+            "UID": -852594688,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 526.0,
-                "y": 33.0,
+                "x": 601.0,
+                "y": 19.0,
                 "width": 150.0,
                 "height": 150.0
             },
             "NodeIndex": 0,
             "NodeName": "Root",
-            "NodeParams": "test1",
+            "NodeParams": "",
             "NodeType": 1,
             "ParentNodeUID": 0,
             "ChildNodesUIDList": [
-                -1504874240,
-                -1015569280
+                1969312128
             ]
         },
         {
-            "UID": -1504874240,
+            "UID": 1969312128,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 291.0,
-                "y": 221.0,
+                "x": 602.0,
+                "y": 196.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -52,85 +50,56 @@
             "NodeName": "SelectorNode",
             "NodeParams": "",
             "NodeType": 3,
-            "ParentNodeUID": 1762232960,
+            "ParentNodeUID": -852594688,
             "ChildNodesUIDList": [
-                -1486552320,
-                -1783827200
+                -686395264,
+                1368637952
             ]
         },
         {
-            "UID": -1015569280,
+            "UID": -686395264,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 822.0,
-                "y": 222.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 1,
-            "NodeName": "SeqeunceNode",
-            "NodeParams": "",
-            "NodeType": 3,
-            "ParentNodeUID": 1762232960,
-            "ChildNodesUIDList": [
-                -1469408896,
-                -1036496000
-            ]
-        },
-        {
-            "UID": -1783827200,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 414.0,
-                "y": 431.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 1,
-            "NodeName": "LogAction",
-            "NodeParams": "",
-            "NodeType": 2,
-            "ParentNodeUID": -1504874240,
-            "ChildNodesUIDList": []
-        },
-        {
-            "UID": -1469408896,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 684.0,
-                "y": 430.0,
+                "x": 406.0,
+                "y": 374.0,
                 "width": 150.0,
                 "height": 150.0
             },
             "NodeIndex": 0,
-            "NodeName": "ActiveSelfCondition",
+            "NodeName": "SeqeunceNode",
             "NodeParams": "",
-            "NodeType": 4,
-            "ParentNodeUID": -1015569280,
-            "ChildNodesUIDList": []
+            "NodeType": 3,
+            "ParentNodeUID": 1969312128,
+            "ChildNodesUIDList": [
+                787810816,
+                -851449088
+            ]
         },
         {
-            "UID": -1036496000,
+            "UID": 1368637952,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 963.0,
-                "y": 429.0,
+                "x": 828.0,
+                "y": 371.0,
                 "width": 150.0,
                 "height": 150.0
             },
             "NodeIndex": 1,
-            "NodeName": "LogAction",
+            "NodeName": "SelectorNode",
             "NodeParams": "",
-            "NodeType": 2,
-            "ParentNodeUID": -1015569280,
-            "ChildNodesUIDList": []
+            "NodeType": 3,
+            "ParentNodeUID": 1969312128,
+            "ChildNodesUIDList": [
+                642604032,
+                -1692593152
+            ]
         },
         {
-            "UID": -1486552320,
+            "UID": 787810816,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 154.0,
-                "y": 436.0,
+                "x": 239.0,
+                "y": 540.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -138,17 +107,17 @@
             "NodeName": "InverseDecoration",
             "NodeParams": "",
             "NodeType": 5,
-            "ParentNodeUID": -1504874240,
+            "ParentNodeUID": -686395264,
             "ChildNodesUIDList": [
-                -147490816
+                401398656
             ]
         },
         {
-            "UID": -147490816,
+            "UID": 401398656,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 155.0,
-                "y": 637.0,
+                "x": 239.0,
+                "y": 704.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -156,7 +125,55 @@
             "NodeName": "ActiveSelfCondition",
             "NodeParams": "",
             "NodeType": 4,
-            "ParentNodeUID": -1486552320,
+            "ParentNodeUID": 787810816,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -851449088,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 538.0,
+                "y": 544.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": -686395264,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": 642604032,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 721.0,
+                "y": 549.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": 1368637952,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -1692593152,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 947.0,
+                "y": 550.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": 1368637952,
             "ChildNodesUIDList": []
         }
     ]

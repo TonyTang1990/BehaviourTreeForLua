@@ -8,14 +8,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// BTSequenceNode.cs
-/// 顺序节点
-/// </summary>
-public class BTSequenceNode : BTCompositionNode
+namespace LuaBehaviourTree
 {
-    public BTSequenceNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+    /// <summary>
+    /// BTSequenceNode.cs
+    /// 顺序节点
+    /// </summary>
+    public class BTSequenceNode : BTCompositionNode
     {
+        public BTSequenceNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+        {
 
+        }
     }
 }
