@@ -73,13 +73,13 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="btgraph">行为树数据</param>
         /// <param name="btowner"></param>
-        public BTGraph(BTGraph btgraph, TBehaviourTree btowner)
+        public BTGraph(TBehaviourTree btowner)
         {
             // 通过编辑器构建的行为树图数据构建一颗运行时的行为树图数据
-            BTFileName = btgraph.BTFileName;
+            BTFileName = btowner.BTOriginalGraph.BTFileName;
             OwnerBT = btowner;
             AllNodesList = new List<BTNode>();
-            RootNode = BTUtilities.CreateRunningNodeByNode(btgraph.RootNode, btowner);
+            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner);
         }
         #endregion
 

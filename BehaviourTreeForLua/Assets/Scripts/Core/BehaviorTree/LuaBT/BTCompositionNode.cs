@@ -30,6 +30,59 @@ namespace LuaBehaviourTree
         {
             ChildNodes = new List<BTNode>();
             NodeAbortType = aborttype;
+            for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
+            {
+                var originalchildnode = OwnerBT.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[i]);
+                var runningchildnode  = BTUtilities.CreateRunningNodeByNode(originalchildnode, OwnerBT);
+                ChildNodes.Add(runningchildnode);
+            }
+        }
+
+        /// <summary>
+        /// 退出节点
+        /// </summary>
+        protected override void OnExit()
+        {
+            base.OnExit();
+            // 节点判定完成(成功或失败)时做一些事情
+            Reset();
+        }
+
+        /// <summary>
+        /// 重置节点状态
+        /// </summary>
+        public override void Reset()
+        {
+            // 避免重复reset
+            if (NodeRunningState != EBTNodeRunningState.Invalide)
+            {
+                base.Reset();
+                // 符合节点完成后需要重置之前运行的所有节点状态，确保下一次再次进入正常运行
+                foreach (var childnode in ChildNodes)
+                {
+                    childnode.Reset();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 是否应该打断执行
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool ShouldAbortRunning()
+        {
+            if (NodeAbortType == EBTNodeAbortType.AbortAll)
+            {
+                return true;
+            }
+            else if (NodeAbortType == EBTNodeAbortType.NoAbort)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

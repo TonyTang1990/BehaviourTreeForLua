@@ -83,7 +83,7 @@ namespace LuaBehaviourTree
             BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}.json");
             BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
             // TODO: 根据原始数据构建运行时BTGraph数据
-            BTRunningGraph = new BTGraph(BTOriginalGraph, this);
+            BTRunningGraph = new BTGraph(this);
         }
     }
 }
