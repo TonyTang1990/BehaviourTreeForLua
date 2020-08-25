@@ -24,6 +24,6 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 组合节点名数据
         /// </summary>
-        public static string[] BTCompositeNodeNameArray = { "SelectorNode", "SeqeunceNode", "ParalNode" };
+        public static string[] BTCompositeNodeNameArray = { "SelectorNode", "SeqeunceNode", "ParalAllSuccessNode", "ParalOneSuccessNode" };
     }
 }

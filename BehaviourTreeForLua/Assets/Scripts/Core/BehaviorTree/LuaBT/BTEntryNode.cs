@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Description:             BTEntryNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/23
@@ -12,12 +12,12 @@ namespace LuaBehaviourTree
 {
     /// <summary>
     /// BTEntryNode.cs
-    /// ��ڽڵ�
+    /// 入口节点
     /// </summary>
     public class BTEntryNode : BTNode
     {
         /// <summary>
-        /// �ӽڵ�
+        /// 子节点
         /// </summary>
         public BTNode ChildNode;
 

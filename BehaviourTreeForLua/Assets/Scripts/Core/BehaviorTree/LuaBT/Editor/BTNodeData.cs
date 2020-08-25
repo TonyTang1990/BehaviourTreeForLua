@@ -19,7 +19,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 组合节点名数据
         /// </summary>
-        public static string[] BTCompositeNodeNameArray = { BTData.BTCompositeNodeNameArray[0], BTData.BTCompositeNodeNameArray[1], BTData.BTCompositeNodeNameArray[2] };
+        public static string[] BTCompositeNodeNameArray = BTData.BTCompositeNodeNameArray;
 
         /// <summary>
         /// 行为节点名数据

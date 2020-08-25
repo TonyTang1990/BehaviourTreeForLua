@@ -91,6 +91,7 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\CSBT\SelectorNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\CSBT\SequenceNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTActionNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTBaseParalNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCompositionNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTConditionNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTData.cs" />
@@ -98,7 +99,8 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTEntryNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTGraph.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTNode.cs" />
-    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTParalNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTParalAllSuccessNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTParalOneSuccessNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTSelectorNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTSequenceNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTUtilities.cs" />

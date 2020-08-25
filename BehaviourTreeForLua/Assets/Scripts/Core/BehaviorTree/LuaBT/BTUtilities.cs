@@ -83,43 +83,7 @@ namespace LuaBehaviourTree
                     return null;
             }
         }
-
-        /// <summary>
-        /// 创建选择节点
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="btowner"></param>
-        /// <param name="aborttype"></param>
-        /// <returns></returns>
-        public static BTSelectorNode CreateSelectorNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
-        {
-            return new BTSelectorNode(node, btowner, aborttype);
-        }
-
-        /// <summary>
-        /// 创建顺序节点
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="btowner"></param>
-        /// <param name="aborttype"></param>
-        /// <returns></returns>
-        public static BTSequenceNode CreateSequenceNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
-        {
-            return new BTSequenceNode(node, btowner, aborttype);
-        }
-
-        /// <summary>
-        /// 创建并发节点
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="btowner"></param>
-        /// <param name="aborttype"></param>
-        /// <returns></returns>
-        public static BTParalNode CreateParalNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
-        {
-            return new BTParalNode(node, btowner, aborttype);
-        }
-
+        
         /// <summary>
         /// 创建组合节点
         /// </summary>
@@ -139,7 +103,11 @@ namespace LuaBehaviourTree
             }
             else if(node.NodeName == BTData.BTCompositeNodeNameArray[2])
             {
-                return new BTParalNode(node, btowner, aborttype);
+                return new BTParalAllSuccessNode(node, btowner, aborttype);
+            }
+            else if (node.NodeName == BTData.BTCompositeNodeNameArray[3])
+            {
+                return new BTParalOneSuccessNode(node, btowner, aborttype);
             }
             else
             {

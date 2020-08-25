@@ -33,8 +33,8 @@ namespace LuaBehaviourTree
                 set;
             }
 
-            /// <summary> 父节点 /// </summary>
-            public BTNode ParentNode
+            /// <summary> 操作节点 /// </summary>
+            public BTNode OperateNode
             {
                 get;
                 set;
@@ -52,10 +52,10 @@ namespace LuaBehaviourTree
 
             }
 
-            public CreateNodeInfo(BTGraph graph, BTNode parentnode, string nodename)
+            public CreateNodeInfo(BTGraph graph, BTNode operatenode, string nodename)
             {
                 Graph = graph;
-                ParentNode = parentnode;
+                OperateNode = operatenode;
                 CreateNodeName = nodename;
             }
         }
@@ -742,15 +742,17 @@ namespace LuaBehaviourTree
             mEmptyAreaMenu = new GenericMenu();
             mEmptyAreaMenu.AddItem(new GUIContent("待添加"), false, null, mCurrentSelectionBTGraph);
             mRootNodeAreaMenu = new GenericMenu();
-            AddAllAvalibleBTNodeMenu(mRootNodeAreaMenu, mCurrentClickNode);
+            AddAllAvalibleAddBTNodeMenu(mRootNodeAreaMenu, mCurrentClickNode);
 
             mChildNodeAreaMenu = new GenericMenu();
-            AddAllAvalibleBTNodeMenu(mChildNodeAreaMenu, mCurrentClickNode);
+            AddAllAvalibleAddBTNodeMenu(mChildNodeAreaMenu, mCurrentClickNode);
+            AddAllAvalibleReplaceBTNodeMenu(mChildNodeAreaMenu, mCurrentClickNode);
             mChildNodeAreaMenu.AddItem(new GUIContent("向前移动节点"), false, OnMoveForwardBTNode, mCurrentClickNode);
             mChildNodeAreaMenu.AddItem(new GUIContent("向后移动节点"), false, OnMoveBackwardBTNode, mCurrentClickNode);
             mChildNodeAreaMenu.AddItem(new GUIContent("删除节点"), false, OnDeleteBTNode, mCurrentClickNode);
 
             mLeafNodeAreaMenu = new GenericMenu();
+            AddAllAvalibleReplaceBTNodeMenu(mLeafNodeAreaMenu, mCurrentClickNode);
             mLeafNodeAreaMenu.AddItem(new GUIContent("向前移动节点"), false, OnMoveForwardBTNode, mCurrentClickNode);
             mLeafNodeAreaMenu.AddItem(new GUIContent("向后移动节点"), false, OnMoveBackwardBTNode, mCurrentClickNode);
             mLeafNodeAreaMenu.AddItem(new GUIContent("删除节点"), false, OnDeleteBTNode, mCurrentClickNode);
@@ -767,7 +769,7 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="menu"></param>
         /// <param name="operationnode"></param>
-        private void AddAllAvalibleBTNodeMenu(GenericMenu menu, BTNode operationnode)
+        private void AddAllAvalibleAddBTNodeMenu(GenericMenu menu, BTNode operationnode)
         {
             foreach (var actionnodename in BTNodeData.BTActionNodeNameArray)
             {
@@ -792,40 +794,80 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 添加所有可替换的行为树节点菜单
+        /// </summary>
+        /// <param name="menu"></param>
+        /// <param name="operationnode"></param>
+        private void AddAllAvalibleReplaceBTNodeMenu(GenericMenu menu, BTNode operationnode)
+        {
+            // 替换节点只允许替换同类型节点
+            string validereplacetypename = "";
+            string[] validereplacenodenamearray = null;
+            if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
+            {
+                validereplacetypename = "行为节点";
+                validereplacenodenamearray = BTNodeData.BTActionNodeNameArray;
+            }
+            else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
+            {
+                validereplacetypename = "组合节点";
+                validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
+            }
+            else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
+            {
+                validereplacetypename = "条件节点";
+                validereplacenodenamearray = BTNodeData.BTConditionNodeNameArray;
+            }
+            else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
+            {
+                validereplacetypename = "装饰节点";
+                validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
+            }
+            if (string.IsNullOrEmpty(validereplacetypename) == false)
+            {
+                foreach (var nodename in validereplacenodenamearray)
+                {
+                    var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
+                    menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);
+                }
+            }
+        }
+
+        /// <summary>
         /// 响应创建行为节点
         /// </summary>
         /// <param name="createnodeinfo">创建节点信息</param>
         private void OnCreateBTActionNode(object createnodeinfo)
         {
             var nodeinfo = createnodeinfo as CreateNodeInfo;
-                        if (nodeinfo.ParentNode.IsDecorationNode() && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+                        if (nodeinfo.OperateNode.IsDecorationNode() && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"装饰节点只允许创建一个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            else if (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"根节点不允许创建多个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == false || (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count == 0))
+            else if (nodeinfo.OperateNode.IsRootNode() == false || (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count == 0))
             {
-                var childnodeposx = nodeinfo.ParentNode.NodeDisplayRect.x;
-                if (nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+                var childnodeposx = nodeinfo.OperateNode.NodeDisplayRect.x;
+                if (nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
                 {
-                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.ParentNode.ChildNodesUIDList[nodeinfo.ParentNode.ChildNodesUIDList.Count - 1]);
+                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.OperateNode.ChildNodesUIDList[nodeinfo.OperateNode.ChildNodesUIDList.Count - 1]);
                     childnodeposx = lastchildnode.NodeDisplayRect.x + NodeWindowWidth;
                 }
                 var childnode = new BTNode(
-                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.ParentNode.NodeDisplayRect.y + NodeWindowHeight)),
-                    nodeinfo.ParentNode.ChildNodesUIDList.Count,
+                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.OperateNode.NodeDisplayRect.y + NodeWindowHeight)),
+                    nodeinfo.OperateNode.ChildNodesUIDList.Count,
                     nodeinfo.CreateNodeName,
                     EBTNodeType.ActionNodeType,
-                    nodeinfo.ParentNode);
-                if (nodeinfo.ParentNode.AddChildNode(childnode.UID))
+                    nodeinfo.OperateNode);
+                if (nodeinfo.OperateNode.AddChildNode(childnode.UID))
                 {
                     mCurrentSelectionBTGraph.AddNode(childnode);
                 }
                 Debug.Log($"OnCreateBTActionNode()");
-                Debug.Log($"ParentNodeName:{nodeinfo.ParentNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
+                Debug.Log($"ParentNodeName:{nodeinfo.OperateNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
             }
             else
             {
@@ -840,34 +882,34 @@ namespace LuaBehaviourTree
         private void OnCreateBTCompositeNode(object createnodeinfo)
         {
             var nodeinfo = createnodeinfo as CreateNodeInfo;
-            if (nodeinfo.ParentNode.IsDecorationNode() && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            if (nodeinfo.OperateNode.IsDecorationNode() && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"装饰节点只允许创建一个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            else if (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"根节点不允许创建多个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == false || (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count == 0))
+            else if (nodeinfo.OperateNode.IsRootNode() == false || (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count == 0))
             {
-                var childnodeposx = nodeinfo.ParentNode.NodeDisplayRect.x;
-                if (nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+                var childnodeposx = nodeinfo.OperateNode.NodeDisplayRect.x;
+                if (nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
                 {
-                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.ParentNode.ChildNodesUIDList[nodeinfo.ParentNode.ChildNodesUIDList.Count - 1]);
+                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.OperateNode.ChildNodesUIDList[nodeinfo.OperateNode.ChildNodesUIDList.Count - 1]);
                     childnodeposx = lastchildnode.NodeDisplayRect.x + NodeWindowWidth;
                 }
                 var childnode = new BTNode(
-                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.ParentNode.NodeDisplayRect.y + NodeWindowHeight)),
-                    nodeinfo.ParentNode.ChildNodesUIDList.Count,
+                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.OperateNode.NodeDisplayRect.y + NodeWindowHeight)),
+                    nodeinfo.OperateNode.ChildNodesUIDList.Count,
                     nodeinfo.CreateNodeName,
                     EBTNodeType.CompositeNodeType,
-                    nodeinfo.ParentNode);
-                if (nodeinfo.ParentNode.AddChildNode(childnode.UID))
+                    nodeinfo.OperateNode);
+                if (nodeinfo.OperateNode.AddChildNode(childnode.UID))
                 {
                     mCurrentSelectionBTGraph.AddNode(childnode);
                 }
                 Debug.Log($"OnCreateBTCompositeNode()");
-                Debug.Log($"ParentNodeName:{nodeinfo.ParentNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
+                Debug.Log($"ParentNodeName:{nodeinfo.OperateNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
             }
             else
             {
@@ -882,34 +924,34 @@ namespace LuaBehaviourTree
         private void OnCreateBTConditionNode(object createnodeinfo)
         {
             var nodeinfo = createnodeinfo as CreateNodeInfo;
-            if (nodeinfo.ParentNode.IsDecorationNode() && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            if (nodeinfo.OperateNode.IsDecorationNode() && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"装饰节点只允许创建一个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            else if (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"根节点不允许创建多个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == false || (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count == 0))
+            else if (nodeinfo.OperateNode.IsRootNode() == false || (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count == 0))
             {
-                var childnodeposx = nodeinfo.ParentNode.NodeDisplayRect.x;
-                if (nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+                var childnodeposx = nodeinfo.OperateNode.NodeDisplayRect.x;
+                if (nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
                 {
-                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.ParentNode.ChildNodesUIDList[nodeinfo.ParentNode.ChildNodesUIDList.Count - 1]);
+                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.OperateNode.ChildNodesUIDList[nodeinfo.OperateNode.ChildNodesUIDList.Count - 1]);
                     childnodeposx = lastchildnode.NodeDisplayRect.x + NodeWindowWidth;
                 }
                 var childnode = new BTNode(
-                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.ParentNode.NodeDisplayRect.y + NodeWindowHeight)),
-                    nodeinfo.ParentNode.ChildNodesUIDList.Count,
+                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.OperateNode.NodeDisplayRect.y + NodeWindowHeight)),
+                    nodeinfo.OperateNode.ChildNodesUIDList.Count,
                     nodeinfo.CreateNodeName,
                     EBTNodeType.ConditionNodeType,
-                    nodeinfo.ParentNode);
-                if (nodeinfo.ParentNode.AddChildNode(childnode.UID))
+                    nodeinfo.OperateNode);
+                if (nodeinfo.OperateNode.AddChildNode(childnode.UID))
                 {
                     mCurrentSelectionBTGraph.AddNode(childnode);
                 }
                 Debug.Log($"OnCreateBTConditionNode()");
-                Debug.Log($"ParentNodeName:{nodeinfo.ParentNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
+                Debug.Log($"ParentNodeName:{nodeinfo.OperateNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
             }
             else
             {
@@ -924,39 +966,50 @@ namespace LuaBehaviourTree
         private void OnCreateBTDecorationNode(object createnodeinfo)
         {
             var nodeinfo = createnodeinfo as CreateNodeInfo;
-            if (nodeinfo.ParentNode.IsDecorationNode() && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            if (nodeinfo.OperateNode.IsDecorationNode() && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"装饰节点只允许创建一个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+            else if (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
             {
                 Debug.LogError($"根节点不允许创建多个子节点!");
             }
-            else if (nodeinfo.ParentNode.IsRootNode() == false || (nodeinfo.ParentNode.IsRootNode() == true && nodeinfo.ParentNode.ChildNodesUIDList.Count == 0))
+            else if (nodeinfo.OperateNode.IsRootNode() == false || (nodeinfo.OperateNode.IsRootNode() == true && nodeinfo.OperateNode.ChildNodesUIDList.Count == 0))
             {
-                var childnodeposx = nodeinfo.ParentNode.NodeDisplayRect.x;
-                if (nodeinfo.ParentNode.ChildNodesUIDList.Count > 0)
+                var childnodeposx = nodeinfo.OperateNode.NodeDisplayRect.x;
+                if (nodeinfo.OperateNode.ChildNodesUIDList.Count > 0)
                 {
-                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.ParentNode.ChildNodesUIDList[nodeinfo.ParentNode.ChildNodesUIDList.Count - 1]);
+                    var lastchildnode = nodeinfo.Graph.FindNodeByUID(nodeinfo.OperateNode.ChildNodesUIDList[nodeinfo.OperateNode.ChildNodesUIDList.Count - 1]);
                     childnodeposx = lastchildnode.NodeDisplayRect.x + NodeWindowWidth;
                 }
                 var childnode = new BTNode(
-                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.ParentNode.NodeDisplayRect.y + NodeWindowHeight)),
-                    nodeinfo.ParentNode.ChildNodesUIDList.Count,
+                    GetNodeRect(new Vector2(childnodeposx, nodeinfo.OperateNode.NodeDisplayRect.y + NodeWindowHeight)),
+                    nodeinfo.OperateNode.ChildNodesUIDList.Count,
                     nodeinfo.CreateNodeName,
                     EBTNodeType.DecorationNodeType,
-                    nodeinfo.ParentNode);
-                if (nodeinfo.ParentNode.AddChildNode(childnode.UID))
+                    nodeinfo.OperateNode);
+                if (nodeinfo.OperateNode.AddChildNode(childnode.UID))
                 {
                     mCurrentSelectionBTGraph.AddNode(childnode);
                 }
                 Debug.Log($"OnCreateBTDecorationNode()");
-                Debug.Log($"ParentNodeName:{nodeinfo.ParentNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
+                Debug.Log($"ParentNodeName:{nodeinfo.OperateNode.NodeName} ChildNodeName:{nodeinfo.CreateNodeName}");
             }
             else
             {
                 Debug.LogError($"未支持的创建情况!");
             }
+        }
+
+        /// <summary>
+        /// 响应替换节点
+        /// </summary>
+        /// <param name="createnodeinfo">替换节点信息</param>
+        private void OnReplaceBTNode(object createnodeinfo)
+        {
+            var nodeinfo = createnodeinfo as CreateNodeInfo;
+            Debug.Log($"节点名:{nodeinfo.OperateNode.NodeName}替换为:{nodeinfo.CreateNodeName}");
+            nodeinfo.OperateNode.NodeName = nodeinfo.CreateNodeName;
         }
 
         /// <summary>

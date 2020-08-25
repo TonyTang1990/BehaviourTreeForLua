@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTConditionNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/19
@@ -12,7 +12,7 @@ namespace LuaBehaviourTree
 {
     /// <summary>
     /// BTConditionNode.cs
-    /// Ìõ¼ş½Úµã
+    /// æ¡ä»¶èŠ‚ç‚¹
     /// </summary>
     public class BTConditionNode : BTNode
     {
