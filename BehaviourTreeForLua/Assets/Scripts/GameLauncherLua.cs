@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using Game.BT;
+using LuaBehaviourTree;
 
 /// <summary>
 /// 游戏入口
@@ -64,6 +65,11 @@ public class GameLauncherLua : MonoBehaviour {
     /// 家
     /// </summary>
     public Transform Home;
+
+    /// <summary>
+    /// 玩家行为树组件
+    /// </summary>
+    private TBehaviourTree mPlayerBT;
     #endregion
 
     private void Awake()
@@ -85,6 +91,9 @@ public class GameLauncherLua : MonoBehaviour {
 
     private void Start () {
         Debug.Log("GameLauncherLua:Start()");
+        // 测试Lua版行为树
+        mPlayerBT = Player.gameObject.AddComponent<TBehaviourTree>();
+        mPlayerBT.LoadBTGraphAsset("DefaultBT");
     }
 
     private void Update()

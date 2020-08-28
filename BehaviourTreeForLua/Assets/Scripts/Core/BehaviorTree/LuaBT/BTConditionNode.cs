@@ -16,9 +16,52 @@ namespace LuaBehaviourTree
     /// </summary>
     public class BTConditionNode : BTNode
     {
+        /// <summary>
+        /// Lua对应的脚本对象
+        /// </summary>
+        protected LuaBTNode mLuaBTNode;
+
         public BTConditionNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
         {
+            mLuaBTNode = BTUtilities.CreateLuaNode(node);
+        }
 
+        /// <summary>
+        /// 释放
+        /// </summary>
+        public override void Dispose()
+        {
+            base.Dispose();
+            mLuaBTNode.Dispose();
+            mLuaBTNode = null;
+        }
+
+        /// <summary>
+        /// 重置节点状态
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
+            mLuaBTNode.Reset();
+        }
+
+        protected override void OnEnter()
+        {
+            base.OnEnter();
+            mLuaBTNode.OnEnter();
+        }
+
+        protected override EBTNodeRunningState OnExecute()
+        {
+            return mLuaBTNode.OnExecute();
+        }
+
+        /// <summary>
+        /// 退出节点
+        /// </summary>
+        protected override void OnExit()
+        {
+            mLuaBTNode.OnExit();
         }
     }
 }

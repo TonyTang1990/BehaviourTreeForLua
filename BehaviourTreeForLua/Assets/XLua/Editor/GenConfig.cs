@@ -1,4 +1,5 @@
 ﻿//using DG.Tweening.Core.Surrogates;
+using LuaBehaviourTree;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -252,7 +253,11 @@ public static class GenConfig
         typeof(TextMeshProUGUI),
         typeof(AudioRolloffMode),
         #region 自定义类
-
+        typeof(TBehaviourTree),
+        typeof(EBTNodeRunningState),
+        typeof(BTNode),
+        typeof(BTActionNode),
+        typeof(BTConditionNode),
 	    #endregion
 	};
 

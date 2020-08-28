@@ -81,6 +81,31 @@ namespace LuaBehaviourTree
             AllNodesList = new List<BTNode>();
             RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner);
         }
+
+        /// <summary>
+        /// 释放
+        /// </summary>
+        public void Dispose()
+        {
+            OwnerBT = null;
+            for(int i = 0, length = AllNodesList.Count; i < length; i++)
+            {
+                AllNodesList[i].Dispose();
+            }
+            AllNodesList = null;
+            RootNode = null;
+        }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        public void Update()
+        {
+            if (RootNode != null && !RootNode.IsTerminated)
+            {
+                RootNode.Update();
+            }
+        }
         #endregion
 
         #region 通用部分

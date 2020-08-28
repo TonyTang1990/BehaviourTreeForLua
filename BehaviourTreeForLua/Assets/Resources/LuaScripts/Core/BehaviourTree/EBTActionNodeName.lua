@@ -1,6 +1,6 @@
 print("EBTActionNodeName.lua")
 
----@class EBTActionNodeName @行为树行为节点名字
+---@class EBTActionNodeName @行为树行为节点名字(主要用于客户端自己查看)
 local EBTActionNodeNameSource = 
 {
     "LogAction",

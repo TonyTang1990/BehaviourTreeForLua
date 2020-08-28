@@ -177,10 +177,25 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 释放
+        /// </summary>
+        public virtual void Dispose()
+        {
+            UID = 0;
+            NodeIndex = -1;
+            NodeName = null;
+            NodeType = 0;
+            ParentNodeUID = 0;
+            ChildNodesUIDList = null;
+            NodeRunningState = EBTNodeRunningState.Invalide;
+            OwnerBT = null;
+        }
+
+        /// <summary>
         /// 节点更新
         /// </summary>
         /// <returns></returns>
-        public EBTNodeRunningState Update()
+        public virtual EBTNodeRunningState Update()
         {
             if (NodeRunningState == EBTNodeRunningState.Invalide)
             {

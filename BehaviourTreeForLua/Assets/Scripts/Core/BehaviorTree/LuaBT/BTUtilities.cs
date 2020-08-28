@@ -160,6 +160,16 @@ namespace LuaBehaviourTree
         {
             return new BTEntryNode(node, btowner);
         }
+
+        /// <summary>
+        /// 创建绑定指定BTNode的Lua脚本对象
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static LuaBTNode CreateLuaNode(BTNode node)
+        {
+            return XLuaManager.getInstance().LuaCreateLuaBTnode(node);
+        }
         #endregion
     }
 }

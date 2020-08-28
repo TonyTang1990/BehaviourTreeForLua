@@ -25,5 +25,10 @@ namespace LuaBehaviourTree
         /// 组合节点名数据
         /// </summary>
         public static string[] BTCompositeNodeNameArray = { "SelectorNode", "SeqeunceNode", "ParalAllSuccessNode", "ParalOneSuccessNode" };
+
+        /// <summary>
+        /// Lua脚本相对目录
+        /// </summary>
+        public const string BTLuaScriptFolderRelativePath = "LuaScripts/Core/BehaviourTree/";
     }
 }

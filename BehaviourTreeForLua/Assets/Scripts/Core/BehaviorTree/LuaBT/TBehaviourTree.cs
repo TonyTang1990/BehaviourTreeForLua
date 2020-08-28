@@ -66,11 +66,19 @@ namespace LuaBehaviourTree
 
         private void Update()
         {
-
+            if(IsBTEnable)
+            {
+                BTRunningGraph?.Update();
+            }
         }
 
         private void OnDestroy()
         {
+            BTGraphAsset = null;
+            BTOriginalGraph?.Dispose();
+            BTOriginalGraph = null;
+            BTRunningGraph?.Dispose();
+            BTRunningGraph = null;
             IsBTEnable = false;
         }
 
@@ -80,7 +88,7 @@ namespace LuaBehaviourTree
         /// <param name="assetname"></param>
         public void LoadBTGraphAsset(string assetname)
         {
-            BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}.json");
+            BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
             BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
             // TODO: 根据原始数据构建运行时BTGraph数据
             BTRunningGraph = new BTGraph(this);

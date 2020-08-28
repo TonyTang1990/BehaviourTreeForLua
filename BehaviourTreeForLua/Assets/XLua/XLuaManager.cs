@@ -62,7 +62,7 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
     /// <summary>
     /// Lua测CreateLuaLuaBTNode方法绑定
     /// </summary>
-    public Func<BTNode, LuaBTNode> mLuaCreateLuaBTnode = null;
+    public Func<BTNode, LuaBTNode> LuaCreateLuaBTnode = null;
 
     /// <summary>
     /// 编辑器注册回调
@@ -87,7 +87,7 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         mLuaUpdate = mLuaEnv.Global.Get<Action<float, float>>("Update");
         mLuaLateUpdate = mLuaEnv.Global.Get<Action>("LateUpdate");
         mLuaFixedUpdate = mLuaEnv.Global.Get<Action<float>>("FixedUpdate");
-        mLuaCreateLuaBTnode = mLuaEnv.Global.Get<Func<BTNode, LuaBTNode>>("CreateLuaBTnode");
+        LuaCreateLuaBTnode = mLuaEnv.Global.Get<Func<BTNode, LuaBTNode>>("CreateLuaBTnode");
         mLuaGameStart();
         if(EditorHookCallBack != null)
         {
@@ -165,7 +165,7 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         mLuaUpdate = null;
         mLuaLateUpdate = null;
         mLuaFixedUpdate = null;
-        mLuaCreateLuaBTnode = null;
+        LuaCreateLuaBTnode = null;
         StopLuaEnv();
     }
 
