@@ -23,6 +23,12 @@ namespace LuaBehaviourTree
         public TextAsset BTGraphAsset;
 
         /// <summary>
+        /// 当行为树完成时重新开始判定
+        /// </summary>
+        [Header("完成时重新开启判定(每帧判定)")]
+        public bool RestartWhenComplete = false;
+
+        /// <summary>
         /// 运行时的行为树图数据(根据反序列化数据构建而成)
         /// </summary>
         public BTGraph BTRunningGraph
@@ -41,6 +47,15 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 是否暂停
+        /// </summary>
+        public bool IsPaused
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 行为树图原始数据对象(反序列化)
         /// </summary>
         public BTGraph BTOriginalGraph
@@ -51,7 +66,8 @@ namespace LuaBehaviourTree
 
         private void Start()
         {
-
+            IsPaused = false;
+            TBehaviourTreeManager.getInstance().RegisterTBehaviourTree(this);
         }
 
         private void OnEnable()
@@ -64,16 +80,20 @@ namespace LuaBehaviourTree
             IsBTEnable = false;
         }
 
-        private void Update()
+        /// <summary>
+        /// 触发行为树更新
+        /// </summary>
+        public void OnUpdate()
         {
-            if(IsBTEnable)
+            if(IsBTEnable && !IsPaused)
             {
-                BTRunningGraph?.Update();
+                BTRunningGraph?.OnUpdate();
             }
         }
 
         private void OnDestroy()
         {
+            TBehaviourTreeManager.getInstance().UnregisterTBhaviourTree(this);
             BTGraphAsset = null;
             BTOriginalGraph?.Dispose();
             BTOriginalGraph = null;
@@ -93,6 +113,22 @@ namespace LuaBehaviourTree
             // TODO: 根据原始数据构建运行时BTGraph数据
             BTRunningGraph = new BTGraph();
             BTRunningGraph.SetBTOwner(this);
+        }
+
+        /// <summary>
+        /// 暂停
+        /// </summary>
+        public void Pause()
+        {
+            IsPaused = false;
+        }
+
+        /// <summary>
+        /// 继续
+        /// </summary>
+        public void Resume()
+        {
+            IsPaused = true;
         }
     }
 }

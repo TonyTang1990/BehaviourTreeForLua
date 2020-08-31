@@ -21,11 +21,11 @@ namespace LuaBehaviourTree
         /// </summary>
         public BTNode ChildNode;
 
-        public BTEntryNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+        public BTEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
         {
             if(node.ChildNodesUIDList.Count > 0)
             {
-                ChildNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]), btowner);
+                ChildNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]), btowner, this);
             }
         }
 
@@ -33,17 +33,20 @@ namespace LuaBehaviourTree
         /// 节点更新
         /// </summary>
         /// <returns></returns>
-        public override EBTNodeRunningState Update()
+        public override EBTNodeRunningState OnUpdate()
         {
+            // 入口节点强制进入Enter，为了将根节点添加到执行节点里
+            OnEnter();
             EBTNodeRunningState result = EBTNodeRunningState.Invalide;
             if (ChildNode != null)
             {
-                result =  ChildNode.Update();
+                result =  ChildNode.OnUpdate();
             }
             else
             {
                 result = EBTNodeRunningState.Success;
             }
+            NodeRunningState = result;
             return result;
         }
 

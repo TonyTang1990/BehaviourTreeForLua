@@ -21,7 +21,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected int mCurrentNodeIndex;
 
-        public BTSequenceNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+        public BTSequenceNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode, aborttype)
         {
             mCurrentNodeIndex = 0;
         }
@@ -44,7 +44,7 @@ namespace LuaBehaviourTree
                         return EBTNodeRunningState.Failed;
                     }
 
-                    var childstate = ChildNodes[mCurrentNodeIndex].Update();
+                    var childstate = ChildNodes[mCurrentNodeIndex].OnUpdate();
                     if (childstate == EBTNodeRunningState.Failed)
                     {
                         return EBTNodeRunningState.Failed;

@@ -24,7 +24,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 行为节点名数据
         /// </summary>
-        public static string[] BTActionNodeNameArray = { "LogAction" };
+        public static string[] BTActionNodeNameArray = { "LogAction", "MoveToPostion" };
 
         /// <summary>
         /// 条件节点名数据

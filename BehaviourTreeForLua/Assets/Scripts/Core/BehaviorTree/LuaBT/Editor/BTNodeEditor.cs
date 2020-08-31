@@ -133,7 +133,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 节点窗口高度
         /// </summary>
-        private const float NodeWindowHeight = 250.0f;
+        private const float NodeWindowHeight = 150.0f;
 
         /// <summary>
         /// 默认行为树文件名
@@ -550,43 +550,65 @@ namespace LuaBehaviourTree
                 EditorGUILayout.BeginHorizontal();
                 if (mCurrentSelectionBTGraphAsset != null)
                 {
-                    if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                    if (Application.isPlaying == false)
                     {
-                        var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                        var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                        var assetfullpath = $"{savefolderfullpath}{mCurrentSelectionBTGraph.BTFileName}.json";
-                        File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                        Debug.Log($"assetfullpath:{assetfullpath}");
-                        AssetDatabase.SaveAssets();
-                        AssetDatabase.Refresh();
+                        if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                        {
+                            // 检查行为树的有效性
+                            if (IsValideTree())
+                            {
+                                var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                                var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
+                                var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
+                                File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
+                                Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
+                                AssetDatabase.SaveAssets();
+                                AssetDatabase.Refresh();
+                            }
+                            else
+                            {
+                                Debug.LogError($"行为树有不符合条件的节点设定,保存失败!");
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                    if (Application.isPlaying == false)
                     {
-                        if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
+                        if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
                         {
-                            var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                            var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                            Debug.Log($"savefolderfullpath:{savefolderfullpath}");
-                            if (Directory.Exists(savefolderfullpath) == false)
+                            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
                             {
-                                Directory.CreateDirectory(savefolderfullpath);
+                                // 检查行为树的有效性
+                                if (IsValideTree())
+                                {
+                                    var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                                    var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
+                                    Debug.Log($"savefolderfullpath:{savefolderfullpath}");
+                                    if (Directory.Exists(savefolderfullpath) == false)
+                                    {
+                                        Directory.CreateDirectory(savefolderfullpath);
+                                    }
+                                    var assetfullpath = $"{savefolderfullpath}{mCurrentSelectionBTGraph.BTFileName}.json";
+                                    File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
+                                    Debug.Log($"导出成功:/nassetfullpath:{assetfullpath}");
+                                    AssetDatabase.SaveAssets();
+                                    AssetDatabase.Refresh();
+                                }
+                                else
+                                {
+                                    Debug.LogError($"行为树有不符合条件的节点设定,导出失败!");
+                                }
                             }
-                            var assetfullpath = $"{savefolderfullpath}{mCurrentSelectionBTGraph.BTFileName}.json";
-                            File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                            Debug.Log($"assetfullpath:{assetfullpath}");
-                            AssetDatabase.SaveAssets();
-                            AssetDatabase.Refresh();
-                        }
-                        else
-                        {
-                            Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                            else
+                            {
+                                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                            }
                         }
                     }
-                }
-                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndHorizontal();
                 EditorGUILayout.EndVertical();
             }
             else if (mToolBarSelectIndex == 1)
@@ -610,6 +632,29 @@ namespace LuaBehaviourTree
                     EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                     EditorGUILayout.EndVertical();
                 }
+            }
+        }
+
+        /// <summary>
+        /// 检查是否是有效行为树
+        /// </summary>
+        /// <returns></returns>
+        private bool IsValideTree()
+        {
+            if(mCurrentSelectionBTGraph != null)
+            {
+                foreach (var btnode in mCurrentSelectionBTGraph.AllNodesList)
+                {
+                    if(btnode.IsValideNode() == false)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -720,25 +765,10 @@ namespace LuaBehaviourTree
             EditorGUILayout.LabelField($"{btnode.NodeName}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}-状态:{btnode.NodeRunningState.ToString()}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField($"{btnode.UID}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.BeginVertical("box");
-            var runningresult = "无";
-            if (btgraph != null)
-            {
-                if (btgraph.IsNodeRunning(btnode.UID))
-                {
-                    runningresult = "是";
-                }
-                else
-                {
-                    runningresult = "否";
-                }
-            }
-            EditorGUILayout.LabelField($"是否运行中:{runningresult}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField($"UID:{btnode.UID}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField($"节点参数:", mLableAlignLeftStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
@@ -768,7 +798,15 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         private Color GetNodeTypeColor(EBTNodeType nodetype)
         {
-            return mNodeTypeColorMap[nodetype];
+            if(mNodeTypeColorMap.ContainsKey(nodetype))
+            {
+                return mNodeTypeColorMap[nodetype];
+            }
+            else
+            {
+                // 意外情况处理
+                return Color.white;
+            }
         }
 
         /// <summary>

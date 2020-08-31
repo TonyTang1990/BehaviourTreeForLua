@@ -95,7 +95,7 @@ namespace LuaBehaviourTree
             BTFileName = btowner.BTOriginalGraph.BTFileName;
             AllNodesList = new List<BTNode>();
             OwnerBT = btowner;
-            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner);
+            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null);
         }
 
         /// <summary>
@@ -164,11 +164,21 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 更新
         /// </summary>
-        public void Update()
+        public void OnUpdate()
         {
-            if (RootNode != null && !RootNode.IsTerminated)
+            if (RootNode != null)
             {
-                RootNode.Update();
+                if (!RootNode.IsTerminated)
+                {
+                    RootNode.OnUpdate();
+                }
+                else
+                {
+                    if(OwnerBT.RestartWhenComplete)
+                    {
+                        RootNode.OnUpdate();
+                    }
+                }
             }
         }
 

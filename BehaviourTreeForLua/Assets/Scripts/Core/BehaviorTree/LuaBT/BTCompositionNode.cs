@@ -26,14 +26,14 @@ namespace LuaBehaviourTree
         /// </summary>
         public EBTNodeAbortType NodeAbortType;
 
-        public BTCompositionNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner)
+        public BTCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode)
         {
             ChildNodes = new List<BTNode>();
             NodeAbortType = aborttype;
             for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
             {
                 var originalchildnode = OwnerBT.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[i]);
-                var runningchildnode  = BTUtilities.CreateRunningNodeByNode(originalchildnode, OwnerBT);
+                var runningchildnode  = BTUtilities.CreateRunningNodeByNode(originalchildnode, OwnerBT, this);
                 ChildNodes.Add(runningchildnode);
             }
         }

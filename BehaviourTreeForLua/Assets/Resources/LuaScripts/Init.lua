@@ -1,6 +1,7 @@
 print("Init.lua")
 
 require "Core.Utils.Debug"
+require "Core.Utils.StringUtil"
 require "Core.BaseClass"
 require "Core.Utils.ClassUtils"
 require "Core.Utils.OtherUtils"

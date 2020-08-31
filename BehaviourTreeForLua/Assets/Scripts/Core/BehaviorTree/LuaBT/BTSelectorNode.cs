@@ -21,7 +21,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected int mCurrentNodeIndex;
 
-        public BTSelectorNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, aborttype)
+        public BTSelectorNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode, aborttype)
         {
             mCurrentNodeIndex = 0;
         }
@@ -42,7 +42,7 @@ namespace LuaBehaviourTree
                 {
                     // 选择节点类型默认是选择第一个成功的，所以不会使用条件节点去判定
                     // 所以无需判定符合节点的终止类型去判定是否需要打断
-                    var childstate = ChildNodes[mCurrentNodeIndex].Update();
+                    var childstate = ChildNodes[mCurrentNodeIndex].OnUpdate();
                     if (childstate != EBTNodeRunningState.Failed)
                     {
                         return childstate;

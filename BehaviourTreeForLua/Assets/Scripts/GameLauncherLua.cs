@@ -88,6 +88,10 @@ public class GameLauncherLua : MonoBehaviour {
 
         var xluamanager = gameObject.AddComponent<XLuaManager>();
         xluamanager.setInstance(xluamanager);
+
+        var tbtmananger = new GameObject("TBehaviourManager").AddComponent<TBehaviourTreeManager>();
+        tbtmananger.setInstance(tbtmananger);
+        DontDestroyOnLoad(tbtmananger.gameObject);
     }
 
     private void Start () {

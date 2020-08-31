@@ -23,13 +23,14 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <returns></returns>
-        public static BTNode CreateRunningNodeByNode(BTNode node, TBehaviourTree btowner)
+        public static BTNode CreateRunningNodeByNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
             switch ((EBTNodeType)node.NodeType)
             {
                 case EBTNodeType.ActionNodeType:
-                    var actionnode = CreateActionNode(node, btowner);
+                    var actionnode = CreateActionNode(node, btowner, parentnode);
                     if(btowner.BTRunningGraph.AddNode(actionnode))
                     {
                         return actionnode;
@@ -39,7 +40,7 @@ namespace LuaBehaviourTree
                         return null;
                     }
                 case EBTNodeType.ConditionNodeType:
-                    var conditionnode = CreateConditionNode(node, btowner);
+                    var conditionnode = CreateConditionNode(node, btowner, parentnode);
                     if (btowner.BTRunningGraph.AddNode(conditionnode))
                     {
                         return conditionnode;
@@ -49,7 +50,7 @@ namespace LuaBehaviourTree
                         return null;
                     }
                 case EBTNodeType.CompositeNodeType:
-                    var compositenode = CreateCompositionNode(node, btowner);
+                    var compositenode = CreateCompositionNode(node, btowner, parentnode);
                     if (btowner.BTRunningGraph.AddNode(compositenode))
                     {
                         return compositenode;
@@ -59,7 +60,7 @@ namespace LuaBehaviourTree
                         return null;
                     }
                 case EBTNodeType.DecorationNodeType:
-                    var decorationnode = CreateDecorationNode(node, btowner);
+                    var decorationnode = CreateDecorationNode(node, btowner, parentnode);
                     if (btowner.BTRunningGraph.AddNode(decorationnode))
                     {
                         return decorationnode;
@@ -69,7 +70,7 @@ namespace LuaBehaviourTree
                         return null;
                     }
                 case EBTNodeType.EntryNodeType:
-                    var entrynode = CreateEntryNode(node, btowner);
+                    var entrynode = CreateEntryNode(node, btowner, parentnode);
                     if (btowner.BTRunningGraph.AddNode(entrynode))
                     {
                         return entrynode;
@@ -89,25 +90,26 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <param name="aborttype"></param>
         /// <returns></returns>
-        public static BTCompositionNode CreateCompositionNode(BTNode node, TBehaviourTree btowner, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
+        public static BTCompositionNode CreateCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
         {
             if (node.NodeName == BTData.BTCompositeNodeNameArray[0])
             {
-                return new BTSelectorNode(node, btowner, aborttype);
+                return new BTSelectorNode(node, btowner, parentnode, aborttype);
             }
             else if(node.NodeName == BTData.BTCompositeNodeNameArray[1])
             {
-                return new BTSequenceNode(node, btowner, aborttype);
+                return new BTSequenceNode(node, btowner, parentnode, aborttype);
             }
             else if(node.NodeName == BTData.BTCompositeNodeNameArray[2])
             {
-                return new BTParalAllSuccessNode(node, btowner, aborttype);
+                return new BTParalAllSuccessNode(node, btowner, parentnode, aborttype);
             }
             else if (node.NodeName == BTData.BTCompositeNodeNameArray[3])
             {
-                return new BTParalOneSuccessNode(node, btowner, aborttype);
+                return new BTParalOneSuccessNode(node, btowner, parentnode, aborttype);
             }
             else
             {
@@ -121,11 +123,19 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <returns></returns>
-        public static BTDecorationNode CreateDecorationNode(BTNode node, TBehaviourTree btowner)
+        public static BTDecorationNode CreateDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
-            var decorationnode = new BTDecorationNode(node, btowner);
-            return decorationnode;
+            if (node.NodeName == BTData.BTDecorationNodeNameArray[0])
+            {
+                return new BTInverterDecorationNode(node, btowner, parentnode);
+            }
+            else
+            {
+                Debug.LogError($"不支持的修饰节点名:{node.NodeName},创建修饰节点失败!");
+                return null;
+            }
         }
 
         /// <summary>
@@ -133,10 +143,11 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <returns></returns>
-        public static BTConditionNode CreateConditionNode(BTNode node, TBehaviourTree btowner)
+        public static BTConditionNode CreateConditionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
-            return new BTConditionNode(node, btowner);
+            return new BTConditionNode(node, btowner, parentnode);
         }
 
         /// <summary>
@@ -144,10 +155,11 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <returns></returns>
-        public static BTActionNode CreateActionNode(BTNode node, TBehaviourTree btowner)
+        public static BTActionNode CreateActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
-            return new BTActionNode(node, btowner);
+            return new BTActionNode(node, btowner, parentnode);
         }
 
         /// <summary>
@@ -155,10 +167,11 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="node"></param>
         /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
         /// <returns></returns>
-        public static BTEntryNode CreateEntryNode(BTNode node, TBehaviourTree btowner)
+        public static BTEntryNode CreateEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode = null)
         {
-            return new BTEntryNode(node, btowner);
+            return new BTEntryNode(node, btowner, parentnode);
         }
 
         /// <summary>

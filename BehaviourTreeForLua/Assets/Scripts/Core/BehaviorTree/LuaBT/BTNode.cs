@@ -101,6 +101,15 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 父节点
+        /// </summary>
+        public BTNode ParentNode
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Lua测对应的行为树节点
         /// </summary>
         protected LuaBTNode LuaNode;
@@ -156,6 +165,7 @@ namespace LuaBehaviourTree
             NodeDisplayRect = noderect;
             NodeIndex = nodeindex;
             NodeName = nodename;
+            NodeParams = string.Empty;
             NodeType = (int)nodetype;
             ParentNodeUID = parentnode != null ? parentnode.UID : 0;
             ChildNodesUIDList = new List<int>();
@@ -163,17 +173,19 @@ namespace LuaBehaviourTree
         }
 
         #region 运行时部分
-        public BTNode(BTNode node, TBehaviourTree btowner)
+        public BTNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
             UID = node.UID;
             NodeDisplayRect = node.NodeDisplayRect;
             NodeIndex = node.NodeIndex;
             NodeName = node.NodeName;
+            NodeParams = node.NodeParams;
             NodeType = (int)node.NodeType;
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
             NodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = btowner;
+            ParentNode = parentnode;
         }
 
         /// <summary>
@@ -189,6 +201,7 @@ namespace LuaBehaviourTree
             ChildNodesUIDList = null;
             NodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = null;
+            ParentNode = null;
         }
 
 #if UNITY_EDITOR
@@ -213,7 +226,7 @@ namespace LuaBehaviourTree
         /// 节点更新
         /// </summary>
         /// <returns></returns>
-        public virtual EBTNodeRunningState Update()
+        public virtual EBTNodeRunningState OnUpdate()
         {
             if (NodeRunningState == EBTNodeRunningState.Invalide)
             {
@@ -347,6 +360,42 @@ namespace LuaBehaviourTree
                     var childnode = graph.FindNodeByUID(ChildNodesUIDList[i]);
                     childnode.Move(graph, offset, recursive);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 是否是有效节点
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValideNode()
+        {
+            if(this.NodeType == (int)EBTNodeType.DecorationNodeType)
+            {
+                if(this.ChildNodesUIDList.Count != 1)
+                {
+                    Debug.LogError($"装饰节点UID:{this.UID}有且必须拥有一个子节点!");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else if (this.NodeType == (int)EBTNodeType.CompositeNodeType)
+            {
+                if (this.ChildNodesUIDList.Count == 0)
+                {
+                    Debug.LogError($"组合节点UID:{this.UID}至少要有一个子节点!");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
         #endregion

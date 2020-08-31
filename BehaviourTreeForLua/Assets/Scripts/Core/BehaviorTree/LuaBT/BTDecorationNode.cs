@@ -21,10 +21,10 @@ namespace LuaBehaviourTree
         /// </summary>
         public BTNode ChildNode;
 
-        public BTDecorationNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
+        public BTDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
         {
             var originalchildnode = OwnerBT.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]);
-            var runningchildnode = BTUtilities.CreateRunningNodeByNode(originalchildnode, OwnerBT);
+            var runningchildnode = BTUtilities.CreateRunningNodeByNode(originalchildnode, OwnerBT, this);
             ChildNode = runningchildnode;
         }
 
@@ -57,7 +57,7 @@ namespace LuaBehaviourTree
                 return EBTNodeRunningState.Failed;
             }
 
-            return ChildNode.Update();
+            return ChildNode.OnUpdate();
         }
 
         protected override void OnExit()
