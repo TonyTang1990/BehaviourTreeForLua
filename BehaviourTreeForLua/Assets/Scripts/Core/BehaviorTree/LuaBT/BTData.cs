@@ -19,7 +19,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 行为树节点存储目录相对路径
         /// </summary>
-        public const string BTNodeSaveFolderRelativePath = "BehaviourTreeNodes/";
+        public const string BTNodeSaveFolderRelativePath = "BehaviourTreeNodes";
 
         /// <summary>
         /// 组合节点名数据

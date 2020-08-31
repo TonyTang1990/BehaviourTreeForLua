@@ -23,7 +23,7 @@ namespace LuaBehaviourTree
 
         public BTConditionNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
         {
-            mLuaBTNode = BTUtilities.CreateLuaNode(node);
+            mLuaBTNode = BTUtilities.CreateLuaNode(this);
         }
 
         /// <summary>

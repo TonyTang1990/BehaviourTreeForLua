@@ -69,9 +69,9 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
     /// </summary>
     public static Action<LuaEnv> EditorHookCallBack;
 
-    private void Start()
+    private void Awake()
     {
-        Debug.Log($"XLuaManager:Start()");
+        Debug.Log($"XLuaManager:Awake()");
         mLuaEnv = new LuaEnv();
         if (mLuaEnv != null)
         {

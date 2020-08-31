@@ -1,3 +1,5 @@
+print("LuaBTConditionNode.lua")
+
 -------------------------------------------------------
 -- File Name:       LuaBTConditionNode.lua
 -- Description:     行为树条件节点基类
@@ -10,7 +12,7 @@ local LuaBTConditionNode = _G.BaseClass("LuaBTConditionNode", _G.LuaBTNode)
 
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
 function LuaBTConditionNode:__init(csbtnode)
-
+    print("LuaBTConditionNode:__init()")
 end
 
 --- 执行节点

@@ -86,7 +86,8 @@ public class GameLauncherLua : MonoBehaviour {
         VisibleLogUtility.getInstance().mVisibleLogSwitch = FastUIEntry.LogSwitch;
         Application.logMessageReceived += VisibleLogUtility.getInstance().HandleLog;
 
-        gameObject.AddComponent<XLuaManager>();
+        var xluamanager = gameObject.AddComponent<XLuaManager>();
+        xluamanager.setInstance(xluamanager);
     }
 
     private void Start () {

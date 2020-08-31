@@ -191,6 +191,24 @@ namespace LuaBehaviourTree
             OwnerBT = null;
         }
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// 添加为执行接地那
+        /// </summary>
+        /// <returns></returns>
+        public bool AddAsExecutingNode()
+        {
+            if (OwnerBT.BTRunningGraph != null)
+            {
+                return OwnerBT.BTRunningGraph.AddExecutingNode(this);
+            }
+            else
+            {
+                return false;
+            }
+        }
+#endif
+
         /// <summary>
         /// 节点更新
         /// </summary>
@@ -225,6 +243,9 @@ namespace LuaBehaviourTree
         protected virtual void OnEnter()
         {
             NodeRunningState = EBTNodeRunningState.Running;
+#if UNITY_EDITOR
+            AddAsExecutingNode();
+#endif
         }
 
         /// <summary>

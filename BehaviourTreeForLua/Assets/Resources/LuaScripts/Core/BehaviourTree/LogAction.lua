@@ -1,3 +1,5 @@
+print("LogAction.lua")
+
 -------------------------------------------------------
 -- File Name:       LogAction.lua
 -- Description:     打印Log行为节点
@@ -12,7 +14,7 @@ LogAction.LogContent = nil
 
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
 function LogAction:__init(csbtnode)
-
+    print("LogAction:__init()")
 end
 
 --- 解析参数

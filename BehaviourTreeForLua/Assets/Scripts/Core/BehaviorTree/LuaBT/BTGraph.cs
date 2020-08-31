@@ -38,12 +38,16 @@ namespace LuaBehaviourTree
         /// </summary>
         public List<BTNode> AllNodesList;
 
-        #region 编辑器部分
-        public BTGraph()
+        /// <summary>
+        /// 执行中的节点Map(Key为节点UID，Value为节点Node对象)
+        /// </summary>
+        public Dictionary<int, BTNode> ExecutingNodesMap
         {
-            Debug.Log($"BTGraph()");
+            get;
+            protected set;
         }
 
+        #region 编辑器部分
         /// <summary>
         /// 
         /// </summary>
@@ -55,6 +59,7 @@ namespace LuaBehaviourTree
             RootNode = rootnode;
             AllNodesList = new List<BTNode>();
             AllNodesList.Add(RootNode);
+            ExecutingNodesMap = new Dictionary<int, BTNode>();
         }
         #endregion
 
@@ -73,12 +78,23 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="btgraph">行为树数据</param>
         /// <param name="btowner"></param>
-        public BTGraph(TBehaviourTree btowner)
+        public BTGraph()
         {
+            Debug.Log("BTGraph()");
+            ExecutingNodesMap = new Dictionary<int, BTNode>();
+        }
+
+        /// <summary>
+        /// 设置行为树拥有者
+        /// </summary>
+        /// <param name="btowner"></param>
+        public void SetBTOwner(TBehaviourTree btowner)
+        {
+            Dispose();
             // 通过编辑器构建的行为树图数据构建一颗运行时的行为树图数据
             BTFileName = btowner.BTOriginalGraph.BTFileName;
-            OwnerBT = btowner;
             AllNodesList = new List<BTNode>();
+            OwnerBT = btowner;
             RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner);
         }
 
@@ -88,12 +104,61 @@ namespace LuaBehaviourTree
         public void Dispose()
         {
             OwnerBT = null;
-            for(int i = 0, length = AllNodesList.Count; i < length; i++)
+            for(int i = 0, length = AllNodesList != null ? AllNodesList.Count : 0; i < length; i++)
             {
                 AllNodesList[i].Dispose();
             }
             AllNodesList = null;
             RootNode = null;
+            ClearAllExecutingNodes();
+        }
+
+        /// <summary>
+        /// 添加执行节点
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public bool AddExecutingNode(BTNode node)
+        {
+            if(node != null)
+            {
+                if (!ExecutingNodesMap.ContainsKey(node.UID))
+                {
+                    Debug.Log($"添加UID:{node.UID}的执行节点!");
+                    ExecutingNodesMap.Add(node.UID, node);
+                    return true;
+                }
+                else
+                {
+                    //Debug.LogError($"重复添加UID:{node.UID}的执行节点!");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.LogError("不允许添加空的执行节点!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 节点是否在运行
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public bool IsNodeRunning(int uid)
+        {
+            return ExecutingNodesMap.ContainsKey(uid);
+        }
+
+        /// <summary>
+        /// 清除所有执行节点
+        /// </summary>
+        /// <returns></returns>
+        public void ClearAllExecutingNodes()
+        {
+            Debug.Log("清除所有执行节点!");
+            ExecutingNodesMap.Clear();
         }
 
         /// <summary>
@@ -105,6 +170,13 @@ namespace LuaBehaviourTree
             {
                 RootNode.Update();
             }
+        }
+
+        public void LateUpdate()
+        {
+#if UNITY_EDITOR
+            OwnerBT.BTRunningGraph?.ClearAllExecutingNodes();
+#endif
         }
         #endregion
 

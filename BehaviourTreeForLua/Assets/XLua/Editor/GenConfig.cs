@@ -337,6 +337,12 @@ public static class GenConfig
         typeof(Func<Vector3, Vector3>),
         typeof(Func<Vector3, float>),
         typeof(Action<PointerEventData>),
+
+        #region 自定义类
+        typeof(TBehaviourTree),
+        typeof(LuaBTNode),
+        typeof(EBTNodeRunningState),
+        #endregion
     };
 
     //黑名单

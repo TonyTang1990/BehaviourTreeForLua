@@ -30,7 +30,7 @@ end
 function CreateLuaBTnode(btnode)
     print("创建Lua节点!")
     local luabtnodescriptname = btnode.NodeName
-    local luabtnodescriptfullpath = string.format("%s/.%s", _G.BTData.BTLuaScriptRelativePath, luabtnodescriptname)
+    local luabtnodescriptfullpath = string.format("%s.%s", _G.BTData.BTLuaScriptRelativePath, luabtnodescriptname)
     print("luabtnodescriptname = " .. luabtnodescriptname)
     print("luabtnodescriptfullpath = " .. luabtnodescriptfullpath)
     local luabtnodeinstance = require(luabtnodescriptfullpath).New(btnode)

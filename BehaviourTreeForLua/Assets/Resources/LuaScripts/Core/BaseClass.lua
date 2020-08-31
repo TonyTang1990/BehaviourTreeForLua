@@ -57,7 +57,6 @@ function _G.BaseClass(clsname, super)
                 create(c.super, ...)
             end
 
-            cls.__parame = _G.SafePack(...)
             if c.__init then
                 c.__init(instance, ...)
             end

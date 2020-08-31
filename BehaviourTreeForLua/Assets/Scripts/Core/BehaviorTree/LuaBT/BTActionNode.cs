@@ -24,7 +24,7 @@ namespace LuaBehaviourTree
 
         public BTActionNode(BTNode node, TBehaviourTree btowner) : base(node, btowner)
         {
-            mLuaBTNode = BTUtilities.CreateLuaNode(node);
+            mLuaBTNode = BTUtilities.CreateLuaNode(this);
         }
 
         /// <summary>

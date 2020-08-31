@@ -35,14 +35,18 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public override EBTNodeRunningState Update()
         {
-            if(ChildNode != null)
+            EBTNodeRunningState result = EBTNodeRunningState.Invalide;
+            if (ChildNode != null)
             {
-                return ChildNode.Update();
+                result =  ChildNode.Update();
             }
             else
             {
-                return EBTNodeRunningState.Success;
+                result = EBTNodeRunningState.Success;
             }
+            return result;
         }
+
+
     }
 }

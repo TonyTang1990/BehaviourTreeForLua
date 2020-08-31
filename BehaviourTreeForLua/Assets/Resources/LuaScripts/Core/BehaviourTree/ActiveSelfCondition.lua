@@ -1,3 +1,5 @@
+print("ActiveSelfCondition.lua")
+
 -------------------------------------------------------
 -- File Name:       ActiveSelfCondition.lua
 -- Description:     自身显示条件节点
@@ -12,7 +14,7 @@ ActiveSelfCondition.TargetUID = nil
 
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
 function ActiveSelfCondition:__init(csbtnode)
-
+    print("ActiveSelfCondition:__init()")
 end
 
 --- 解析参数

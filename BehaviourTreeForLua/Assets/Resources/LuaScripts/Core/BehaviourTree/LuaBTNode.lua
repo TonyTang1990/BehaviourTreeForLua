@@ -1,4 +1,4 @@
-print("LuaBTNode")
+print("LuaBTNode.lua")
 
 ---@class LuaBTNode @Lua测行为树节点抽象基类
 ---@field CSBTNode LuaBehaviourTree.BTNode @CS测节点

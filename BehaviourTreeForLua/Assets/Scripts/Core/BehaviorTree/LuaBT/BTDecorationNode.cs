@@ -76,13 +76,18 @@ namespace LuaBehaviourTree
             // 如果是修饰条件判定是否满足打断条件
             if (ChildNode is BTConditionNode)
             {
-                if (ChildNode.Update() == EBTNodeRunningState.Failed)
-                {
-                    Debug.Log(string.Format("修饰节点:{0}的{1}条件节点不满足条件，打断当前装饰节点!", NodeName, ChildNode.NodeName));
-                    return true;
-                }
+                //if (ChildNode.Update() == EBTNodeRunningState.Failed)
+                //{
+                //    Debug.Log(string.Format("修饰节点:{0}的{1}条件节点不满足条件，打断当前装饰节点!", NodeName, ChildNode.NodeName));
+                //    return true;
+                //}
+                return false;
             }
-            return false;
+            else
+            {
+                Debug.LogError($"不支持装饰节点修饰的节点类型:{ChildNode.NodeType}");
+                return true;
+            }
         }
     }
 }

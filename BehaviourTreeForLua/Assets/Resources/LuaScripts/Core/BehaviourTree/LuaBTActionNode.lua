@@ -1,3 +1,5 @@
+print("LuaBTActionNode.lua")
+
 -------------------------------------------------------
 -- File Name:       LuaBTActionNode.lua
 -- Description:     Lua行为树行为节点基类
@@ -10,7 +12,7 @@ local LuaBTActionNode = _G.BaseClass("LuaBTActionNode", _G.LuaBTNode)
 
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
 function LuaBTActionNode:__init(csbtnode)
-
+    print("LuaBTActionNode:__init()")
 end
 
 --- 执行节点

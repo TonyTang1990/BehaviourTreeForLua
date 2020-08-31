@@ -133,7 +133,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 节点窗口高度
         /// </summary>
-        private const float NodeWindowHeight = 150.0f;
+        private const float NodeWindowHeight = 250.0f;
 
         /// <summary>
         /// 默认行为树文件名
@@ -388,32 +388,59 @@ namespace LuaBehaviourTree
         {
             if (Selection.objects.Length > 0)
             {
-                var selectionasset = Selection.objects[0] as TextAsset;
-                if (selectionasset == null)
+                var selectionasset = Selection.objects[0];
+                if(selectionasset is TextAsset)
                 {
-                    Debug.Log($"选中的是非TextAsset，不处理!");
-                    return;
-                }
-                else
-                {
-                    var assetpath = AssetDatabase.GetAssetPath(selectionasset);
+                    var selectiontextasset = selectionasset as TextAsset;
+                    var assetpath = AssetDatabase.GetAssetPath(selectiontextasset);
                     if (assetpath.EndsWith(".json"))
                     {
-                        var btgrapshdata = JsonUtility.FromJson<BTGraph>(selectionasset.text);
+                        var btgrapshdata = JsonUtility.FromJson<BTGraph>(selectiontextasset.text);
                         if (btgrapshdata == null)
                         {
                             Debug.Log($"选中的是非BTGraph的Json数据，不处理!");
                             return;
                         }
                         mCurrentSelectionBTGraph = btgrapshdata;
-                        mCurrentSelectionBTGraphAsset = selectionasset;
-                        var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(selectionasset);
-                        Debug.Log($"选中的Asset:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
+                        mCurrentSelectionBTGraphAsset = selectiontextasset;
+                        var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                        Debug.Log($"非运行时选中的Asset:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
                     }
                     else
                     {
                         Debug.Log($"选中的是非Json数据，不处理!");
                     }
+                }
+                else if(selectionasset is GameObject)
+                {
+                    var selectiongameobject = selectionasset as GameObject;
+                    var tbt = selectiongameobject.GetComponent<TBehaviourTree>();
+                    if (tbt != null && tbt.BTGraphAsset != null)
+                    {
+                        if (tbt.BTRunningGraph != null)
+                        {
+                            mCurrentSelectionBTGraph = tbt.BTRunningGraph;
+                            mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            Debug.Log($"选中运行时有行为树数据对象:{selectiongameobject.name} 行为树AssetPath:{currentselectionbtnodeassetpath}");
+                        }
+                        else
+                        {
+                            mCurrentSelectionBTGraph = tbt.BTOriginalGraph;
+                            mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            Debug.Log($"非运行时选中的场景对象:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log($"未选中有效行为树对象!");
+                    }
+                }
+                else
+                {
+                    Debug.Log($"选中的是非TextAsset也非有效TBehaviourTree，不处理!");
+                    return;
                 }
             }
         }
@@ -609,13 +636,21 @@ namespace LuaBehaviourTree
         /// <param name="node"></param>
         private void DrawNodeCurves(BTGraph btgraph, BTNode node)
         {
-            for (int i = 0; i < node.ChildNodesUIDList.Count; i++)
+            if(node != null && node.ChildNodesUIDList != null)
             {
-                var childnode = btgraph.FindNodeByUID(node.ChildNodesUIDList[i]);
-                if (childnode != null)
+                for (int i = 0; i < node.ChildNodesUIDList.Count; i++)
                 {
-                    DrawCurve(node.NodeDisplayRect, childnode.NodeDisplayRect);
-                    DrawNodeCurves(btgraph, childnode);
+                    var childnode = btgraph.FindNodeByUID(node.ChildNodesUIDList[i]);
+                    if (childnode != null)
+                    {
+                        var curvecolor = mNormalCurveColor;
+                        if(btgraph.IsNodeRunning(node.UID) && btgraph.IsNodeRunning(childnode.UID))
+                        {
+                            curvecolor = mRunningCurveColor;
+                        }
+                        DrawCurve(node.NodeDisplayRect, childnode.NodeDisplayRect, curvecolor);
+                        DrawNodeCurves(btgraph, childnode);
+                    }
                 }
             }
         }
@@ -625,13 +660,14 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        private void DrawCurve(Rect start, Rect end)
+        /// <param name="curvecolor"></param>
+        private void DrawCurve(Rect start, Rect end, Color curvecolor)
         {
             Vector3 startpos = new Vector3(start.x + start.width / 2, start.y + start.height, 0);
             Vector3 endpos = new Vector3(end.x + end.width / 2, end.y, 0);
             Vector3 starttangent = startpos + Vector3.up * 40;
             Vector3 endtangent = endpos + Vector3.down * 40;
-            Handles.DrawBezier(startpos, endpos, starttangent, endtangent, mNormalCurveColor, null, 2);
+            Handles.DrawBezier(startpos, endpos, starttangent, endtangent, curvecolor, null, 2);
         }
 
         /// <summary>
@@ -675,15 +711,35 @@ namespace LuaBehaviourTree
             {
                 return;
             }
+            BTGraph btgraph = null;
+            if(btnode != null && btnode.OwnerBT != null && btnode.OwnerBT.BTRunningGraph != null)
+            {
+                btgraph = btnode.OwnerBT.BTRunningGraph;
+            }
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField($"{btnode.NodeName}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             EditorGUILayout.EndVertical();
-            //EditorGUILayout.BeginVertical("box");
-            //EditorGUILayout.LabelField($"{btnode.UID}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
-            //EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.LabelField($"{btnode.UID}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical("box");
+            var runningresult = "无";
+            if (btgraph != null)
+            {
+                if (btgraph.IsNodeRunning(btnode.UID))
+                {
+                    runningresult = "是";
+                }
+                else
+                {
+                    runningresult = "否";
+                }
+            }
+            EditorGUILayout.LabelField($"是否运行中:{runningresult}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+            EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField($"节点参数:", mLableAlignLeftStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
             GUILayout.Label($"{btnode.NodeParams}", "textarea", GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(40.0f));
