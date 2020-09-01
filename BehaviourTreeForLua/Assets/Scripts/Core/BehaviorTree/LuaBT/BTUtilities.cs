@@ -93,23 +93,23 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <param name="aborttype"></param>
         /// <returns></returns>
-        public static BTCompositionNode CreateCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll)
+        public static BTCompositionNode CreateCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
         {
             if (node.NodeName == BTData.BTCompositeNodeNameArray[0])
             {
-                return new BTSelectorNode(node, btowner, parentnode, aborttype);
+                return new BTSelectorNode(node, btowner, parentnode);
             }
             else if(node.NodeName == BTData.BTCompositeNodeNameArray[1])
             {
-                return new BTSequenceNode(node, btowner, parentnode, aborttype);
+                return new BTSequenceNode(node, btowner, parentnode);
             }
             else if(node.NodeName == BTData.BTCompositeNodeNameArray[2])
             {
-                return new BTParalAllSuccessNode(node, btowner, parentnode, aborttype);
+                return new BTParalAllSuccessNode(node, btowner, parentnode);
             }
             else if (node.NodeName == BTData.BTCompositeNodeNameArray[3])
             {
-                return new BTParalOneSuccessNode(node, btowner, parentnode, aborttype);
+                return new BTParalOneSuccessNode(node, btowner, parentnode);
             }
             else
             {

@@ -21,15 +21,9 @@ namespace LuaBehaviourTree
         /// </summary>
         public List<BTNode> ChildNodes;
 
-        /// <summary>
-        /// 节点打断类型
-        /// </summary>
-        public EBTNodeAbortType NodeAbortType;
-
-        public BTCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode)
+        public BTCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
         {
             ChildNodes = new List<BTNode>();
-            NodeAbortType = aborttype;
             for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
             {
                 var originalchildnode = OwnerBT.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[i]);
@@ -62,26 +56,6 @@ namespace LuaBehaviourTree
                 {
                     childnode.Reset();
                 }
-            }
-        }
-
-        /// <summary>
-        /// 是否应该打断执行
-        /// </summary>
-        /// <returns></returns>
-        protected virtual bool ShouldAbortRunning()
-        {
-            if (NodeAbortType == EBTNodeAbortType.AbortAll)
-            {
-                return true;
-            }
-            else if (NodeAbortType == EBTNodeAbortType.NoAbort)
-            {
-                return false;
-            }
-            else
-            {
-                return false;
             }
         }
     }

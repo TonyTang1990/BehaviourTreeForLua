@@ -21,7 +21,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected int mCurrentNodeIndex;
 
-        public BTSelectorNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode, aborttype)
+        public BTSelectorNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
         {
             mCurrentNodeIndex = 0;
         }

@@ -29,7 +29,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 修饰节点名数据
         /// </summary>
-        public static string[] BTDecorationNodeNameArray = { "InverseDecoration" };
+        public static string[] BTDecorationNodeNameArray = { "InverterDecoration" };
 
         /// <summary>
         /// Lua脚本相对目录

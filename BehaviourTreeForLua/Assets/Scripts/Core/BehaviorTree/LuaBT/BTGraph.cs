@@ -157,7 +157,7 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public void ClearAllExecutingNodes()
         {
-            Debug.Log("清除所有执行节点!");
+            //Debug.Log("清除所有执行节点!");
             ExecutingNodesMap.Clear();
         }
 
@@ -170,25 +170,24 @@ namespace LuaBehaviourTree
             {
                 if (!RootNode.IsTerminated)
                 {
+#if UNITY_EDITOR
+                    ClearAllExecutingNodes();
+#endif
                     RootNode.OnUpdate();
                 }
                 else
                 {
                     if(OwnerBT.RestartWhenComplete)
                     {
+#if UNITY_EDITOR
+                        ClearAllExecutingNodes();
+#endif
                         RootNode.OnUpdate();
                     }
                 }
             }
         }
-
-        public void LateUpdate()
-        {
-#if UNITY_EDITOR
-            OwnerBT.BTRunningGraph?.ClearAllExecutingNodes();
-#endif
-        }
-        #endregion
+#endregion
 
         #region 通用部分
         /// <summary>

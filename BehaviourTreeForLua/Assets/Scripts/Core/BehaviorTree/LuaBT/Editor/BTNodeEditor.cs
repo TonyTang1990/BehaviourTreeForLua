@@ -264,8 +264,6 @@ namespace LuaBehaviourTree
             Debug.Log($"BTNodeEditor:OnEnable()");
             EditorApplication.playModeStateChanged -= OnPlayModeStateChange;
             EditorApplication.playModeStateChanged += OnPlayModeStateChange;
-            //XLuaManager.EditorHookCallBack = OnXLuaInit;
-            //UpdateLuaEnv();
             mNodeTypeColorMap = new Dictionary<EBTNodeType, Color>();
             mNodeTypeColorMap.Add(EBTNodeType.EntryNodeType, Color.white);
             mNodeTypeColorMap.Add(EBTNodeType.ActionNodeType, Color.red);
@@ -290,7 +288,6 @@ namespace LuaBehaviourTree
         private void OnDestroy()
         {
             Debug.Log($"BTNodeEditor:OnDestroy()");
-            //XLuaManager.EditorHookCallBack = null;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChange;
         }
 
@@ -303,49 +300,14 @@ namespace LuaBehaviourTree
             Debug.Log($"PlayModeStateChange:{state}");
             if (state == PlayModeStateChange.ExitingPlayMode)
             {
-                //CurrentLuaEnvInstance = new LuaEnv();
-                //UpdateLuaData();
+
             }
             else if (state == PlayModeStateChange.EnteredPlayMode)
             {
-                //CurrentLuaEnvInstance = null;
-                //XLuaManager.EditorHookCallBack = OnXLuaInit;
-                //if(XLuaManager.getInstance() != null)
-                //{
-                //    Debug.Log($"CurrentLuaEnvInstance = XLuaManager.getInstance().GetLuaEnv();");
-                //    CurrentLuaEnvInstance = XLuaManager.getInstance().GetLuaEnv();
-                //    UpdateLuaData();
-                //}
+
             }
         }
-
-        /// <summary>
-        /// 响应Xlua初始化
-        /// </summary>
-        /// <param name="luaenv"></param>
-        //private static void OnXLuaInit(LuaEnv luaenv)
-        //{
-        //    Debug.Log($"OnXLuaInit()");
-        //    CurrentLuaEnvInstance = luaenv;
-        //    UpdateLuaData();
-        //}
-
-        ///// <summary>
-        ///// 更新Lua相关数据
-        ///// </summary>
-        //private static void UpdateLuaData()
-        //{
-        //    Debug.Log($"UpdateLuaData()");
-        //    //EBTCompositeNodeName = CurrentLuaEnvInstance.DoString("require \"Core/BehaviourTree/EBTCompositeNodeName\"")[0] as LuaTable;
-        //    //EBTCompositeNodeName.ForEach<string, string>(PrintKeyValue);
-        //    //EBTActionNodeName = CurrentLuaEnvInstance.DoString("require \"Core/BehaviourTree/EBTActionNodeName\"")[0] as LuaTable;
-        //    //EBTActionNodeName.ForEach<string, string>(PrintKeyValue);
-        //    //EBTConditionNodeName = CurrentLuaEnvInstance.DoString("require \"Core/BehaviourTree/EBTConditionNodeName\"")[0] as LuaTable;
-        //    //EBTConditionNodeName.ForEach<string, string>(PrintKeyValue);
-        //    //EBTDecorationNodeName = CurrentLuaEnvInstance.DoString("require \"Core/BehaviourTree/EBTDecorationNodeName\"")[0] as LuaTable;
-        //    //EBTDecorationNodeName.ForEach<string, string>(PrintKeyValue);
-        //}
-
+        
         /// <summary>
         /// 打印Key和Value
         /// </summary>
@@ -353,34 +315,7 @@ namespace LuaBehaviourTree
         {
             Debug.Log($"Key:{key} Value:{value}");
         }
-
-        /// <summary>
-        /// 更新LuaEnv
-        /// </summary>
-        /// <param name="state"></param>
-        //private void UpdateLuaEnv()
-        //{
-        //    if(Application.isPlaying)
-        //    {
-        //        if(CurrentLuaEnvInstance != XLuaManager.getInstance().GetLuaEnv())
-        //        {
-        //            CurrentLuaEnvInstance?.Dispose();
-        //            CurrentLuaEnvInstance = XLuaManager.getInstance().GetLuaEnv();
-        //            UpdateLuaData();
-        //            Debug.Log($"当前Lua对象为:XLuaManager.getInstance().GetLuaEnv()");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if(CurrentLuaEnvInstance == null)
-        //        {
-        //            CurrentLuaEnvInstance = new LuaEnv();
-        //            UpdateLuaData();
-        //            Debug.Log($"当前Lua对象为:new LuaEnv()");
-        //        }
-        //    }
-        //}
-
+        
         /// <summary>
         /// 选中Asset变化响应
         /// </summary>
@@ -449,12 +384,6 @@ namespace LuaBehaviourTree
         {
             mLableAlignMiddleStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             mLableAlignLeftStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperLeft };
-            //if (CurrentLuaEnvInstance == null)
-            //{
-            //    DrawWaitTips();
-            //}
-            //else
-            //{
             if (mCurrentSelectionBTGraph != null)
             {
                 HandleInteraction();
@@ -465,7 +394,6 @@ namespace LuaBehaviourTree
             {
                 EditorGUILayout.LabelField("未选中有效行为树节点或文件!", mLableAlignMiddleStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             }
-            //}
         }
 
         /// <summary>

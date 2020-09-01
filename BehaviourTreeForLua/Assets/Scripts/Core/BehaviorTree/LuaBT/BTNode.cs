@@ -32,16 +32,7 @@ namespace LuaBehaviourTree
         Success,                // 成功
         Failed,                 // 失败
     }
-
-    /// <summary>
-    /// 节点打断类型
-    /// </summary>
-    public enum EBTNodeAbortType
-    {
-        AbortAll = 1,                   // 打断所有
-        NoAbort,                        // 不能被打断
-    }
-
+    
     /// <summary>
     /// 行为树节点抽象
     /// </summary>

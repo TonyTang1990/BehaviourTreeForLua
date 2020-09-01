@@ -14,7 +14,7 @@ namespace LuaBehaviourTree
     /// </summary>
     public class BTParalOneSuccessNode : BTBaseParalNode
     {
-        public BTParalOneSuccessNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, EBTNodeAbortType aborttype = EBTNodeAbortType.AbortAll) : base(node, btowner, parentnode, aborttype)
+        public BTParalOneSuccessNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
         {
             ParalPolicy = EBTParalPolicy.OneSuccess;
         }

@@ -4,8 +4,8 @@
         "UID": -852594688,
         "NodeDisplayRect": {
             "serializedVersion": "2",
-            "x": 601.0,
-            "y": 19.0,
+            "x": 832.0,
+            "y": 13.0,
             "width": 150.0,
             "height": 150.0
         },
@@ -41,7 +41,7 @@
             "UID": 1969312128,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 602.0,
+                "x": 831.0,
                 "y": 196.0,
                 "width": 150.0,
                 "height": 150.0
@@ -54,6 +54,7 @@
             "ChildNodesUIDList": [
                 78681088,
                 -686395264,
+                -190033536,
                 1368637952
             ]
         },
@@ -61,8 +62,8 @@
             "UID": -686395264,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 602.0,
-                "y": 383.0,
+                "x": 604.0,
+                "y": 389.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -80,12 +81,12 @@
             "UID": 1368637952,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 1047.0,
-                "y": 375.0,
+                "x": 1458.0,
+                "y": 374.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 2,
+            "NodeIndex": 3,
             "NodeName": "Selector",
             "NodeParams": "",
             "NodeType": 3,
@@ -99,13 +100,13 @@
             "UID": 787810816,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 513.0,
-                "y": 557.0,
+                "x": 525.0,
+                "y": 566.0,
                 "width": 150.0,
                 "height": 150.0
             },
             "NodeIndex": 0,
-            "NodeName": "InverseDecoration",
+            "NodeName": "InverterDecoration",
             "NodeParams": "",
             "NodeType": 5,
             "ParentNodeUID": -686395264,
@@ -117,8 +118,8 @@
             "UID": 401398656,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 513.0,
-                "y": 733.0,
+                "x": 525.0,
+                "y": 739.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -133,8 +134,8 @@
             "UID": 642604032,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 940.0,
-                "y": 553.0,
+                "x": 1364.0,
+                "y": 561.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -149,8 +150,8 @@
             "UID": -1692593152,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 1166.0,
-                "y": 554.0,
+                "x": 1560.0,
+                "y": 557.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -165,8 +166,8 @@
             "UID": 1465611648,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 699.0,
-                "y": 561.0,
+                "x": 709.0,
+                "y": 565.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -223,7 +224,7 @@
                 "height": 150.0
             },
             "NodeIndex": 1,
-            "NodeName": "InverseDecoration",
+            "NodeName": "InverterDecoration",
             "NodeParams": "",
             "NodeType": 5,
             "ParentNodeUID": 78681088,
@@ -261,6 +262,58 @@
             "NodeParams": "",
             "NodeType": 4,
             "ParentNodeUID": -246369536,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": -190033536,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 1067.0,
+                "y": 386.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 2,
+            "NodeName": "ParalOneSuccess",
+            "NodeParams": "",
+            "NodeType": 3,
+            "ParentNodeUID": 1969312128,
+            "ChildNodesUIDList": [
+                1577345280
+            ]
+        },
+        {
+            "UID": 1577345280,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 970.0,
+                "y": 567.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "InverterDecoration",
+            "NodeParams": "",
+            "NodeType": 5,
+            "ParentNodeUID": -190033536,
+            "ChildNodesUIDList": [
+                -582320128
+            ]
+        },
+        {
+            "UID": -582320128,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 970.0,
+                "y": 729.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "ActiveSelfCondition",
+            "NodeParams": "",
+            "NodeType": 4,
+            "ParentNodeUID": 1577345280,
             "ChildNodesUIDList": []
         }
     ]

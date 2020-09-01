@@ -29,7 +29,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 执行节点
         /// </summary>
-        EBTNodeRunningState OnExecute();
+        int OnExecute();
 
         /// <summary>
         /// 退出节点(节点判定完成(成功或失败)时做一些事情)

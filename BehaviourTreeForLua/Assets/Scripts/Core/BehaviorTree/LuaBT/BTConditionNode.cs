@@ -53,7 +53,7 @@ namespace LuaBehaviourTree
 
         protected override EBTNodeRunningState OnExecute()
         {
-            return mLuaBTNode.OnExecute();
+            return (EBTNodeRunningState)mLuaBTNode.OnExecute();
         }
 
         /// <summary>
