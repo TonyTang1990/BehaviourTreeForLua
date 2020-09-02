@@ -38,6 +38,26 @@ public class GameLauncherLua : MonoBehaviour {
     /// 是否拥有任务
     /// </summary>
     public Toggle TgHasTask;
+
+    /// <summary>
+    /// 暂停玩家行为树按钮
+    /// </summary>
+    public Button BtnPausePlayerAI;
+
+    /// <summary>
+    /// 继续玩家行为树按钮
+    /// </summary>
+    public Button BtnResumePlayerAI;
+
+    /// <summary>
+    /// 暂停所有行为树按钮
+    /// </summary>
+    public Button BtnPauseAllAI;
+
+    /// <summary>
+    /// 暂停所有行为树按钮
+    /// </summary>
+    public Button BtnResumeAllAI;
     #endregion
 
     #region 玩家控制表现部分
@@ -80,6 +100,7 @@ public class GameLauncherLua : MonoBehaviour {
         }
 
         DontDestroyOnLoad(this);
+        AddListeners();
 
         VisibleLogUtility visiblelog = gameObject.AddComponent<VisibleLogUtility>();
         visiblelog.setInstance(visiblelog);
@@ -99,6 +120,43 @@ public class GameLauncherLua : MonoBehaviour {
         // 测试Lua版行为树
         mPlayerBT = Player.gameObject.AddComponent<TBehaviourTree>();
         mPlayerBT.LoadBTGraphAsset("DefaultBT");
+    }
+
+    /// <summary>
+    /// 添加监听
+    /// </summary>
+    private void AddListeners()
+    {
+        BtnPausePlayerAI.onClick.AddListener(OnBtnPausePlayerAI);
+        BtnResumePlayerAI.onClick.AddListener(OnBtnResumePlayerAI);
+        BtnPauseAllAI.onClick.AddListener(OnBtnPauseAllAI);
+        BtnResumeAllAI.onClick.AddListener(OnBtnResumeAllAI);
+    }
+
+    private void OnBtnPausePlayerAI()
+    {
+        Debug.Log($"OnBtnPausePlayerAI()");
+        var bt = Player.GetComponent<TBehaviourTree>();
+        bt.Pause();
+    }
+
+    private void OnBtnResumePlayerAI()
+    {
+        Debug.Log($"OnBtnResumePlayerAI()");
+        var bt = Player.GetComponent<TBehaviourTree>();
+        bt.Resume();
+    }
+
+    private void OnBtnPauseAllAI()
+    {
+        Debug.Log($"OnBtnPauseAllAI()");
+        TBehaviourTreeManager.getInstance().PauseAll();
+    }
+
+    private void OnBtnResumeAllAI()
+    {
+        Debug.Log($"OnBtnResumeAllAI()");
+        TBehaviourTreeManager.getInstance().ResumeAll();
     }
 
     private void Update()

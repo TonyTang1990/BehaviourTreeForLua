@@ -29,6 +29,15 @@ namespace LuaBehaviourTree
         public bool RestartWhenComplete = false;
 
         /// <summary>
+        /// 实例对象UID(为了反向查逻辑对象)
+        /// </summary>
+        public int InstanceID
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 运行时的行为树图数据(根据反序列化数据构建而成)
         /// </summary>
         public BTGraph BTRunningGraph
@@ -47,13 +56,18 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 是否暂停
+        /// 是否触发了Start
         /// </summary>
-        public bool IsPaused
+        public bool IsStart
         {
             get;
-            set;
+            private set;
         }
+
+        /// <summary>
+        /// 是否暂停
+        /// </summary>
+        public bool IsPaused;
 
         /// <summary>
         /// 行为树图原始数据对象(反序列化)
@@ -64,9 +78,15 @@ namespace LuaBehaviourTree
             protected set;
         }
 
+        private void Awake()
+        {
+            InstanceID = gameObject.GetInstanceID();
+        }
+
         private void Start()
         {
             IsPaused = false;
+            IsStart = true;
             TBehaviourTreeManager.getInstance().RegisterTBehaviourTree(this);
         }
 
@@ -93,12 +113,7 @@ namespace LuaBehaviourTree
 
         private void OnDestroy()
         {
-            TBehaviourTreeManager.getInstance().UnregisterTBhaviourTree(this);
-            BTGraphAsset = null;
-            BTOriginalGraph?.Dispose();
-            BTOriginalGraph = null;
-            BTRunningGraph?.Dispose();
-            BTRunningGraph = null;
+            ReleaseBTGraphAsset();
             IsBTEnable = false;
         }
 
@@ -108,6 +123,7 @@ namespace LuaBehaviourTree
         /// <param name="assetname"></param>
         public void LoadBTGraphAsset(string assetname)
         {
+            ReleaseBTGraphAsset();
             BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
             BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
             // TODO: 根据原始数据构建运行时BTGraph数据
@@ -116,11 +132,36 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 释放行为树数据
+        /// </summary>
+        /// <returns></returns>
+        public bool ReleaseBTGraphAsset()
+        {
+            if(IsStart)
+            {
+                TBehaviourTreeManager.getInstance().UnregisterTBhaviourTree(this);
+            }
+            if (BTGraphAsset != null)
+            {
+                BTGraphAsset = null;
+                BTOriginalGraph?.Dispose();
+                BTOriginalGraph = null;
+                BTRunningGraph?.Dispose();
+                BTRunningGraph = null;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 暂停
         /// </summary>
         public void Pause()
         {
-            IsPaused = false;
+            IsPaused = true;
         }
 
         /// <summary>
@@ -128,7 +169,7 @@ namespace LuaBehaviourTree
         /// </summary>
         public void Resume()
         {
-            IsPaused = true;
+            IsPaused = false;
         }
     }
 }

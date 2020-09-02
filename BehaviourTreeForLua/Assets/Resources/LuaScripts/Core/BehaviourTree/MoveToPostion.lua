@@ -32,10 +32,10 @@ function MoveToPostion:OnExecute()
     _G.LuaBTActionNode.OnExecute(self)
     print(string.format("MoveToPostion:OnExecute() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
     local distance = CS.UnityEngine.Vector3.Distance(self.Go.transform.position, self.TargetPosition)
-    print(string.format("distance:%s", distance))
+    --print(string.format("distance:%s", distance))
     if distance > 0.5 then
         local targetdir = (self.TargetPosition - self.Go.transform.position).normalized
-        print(string.format("targetdir:%s", targetdir:ToString()))
+        --print(string.format("targetdir:%s", targetdir:ToString()))
         self.Go.transform:Translate(targetdir * CS.UnityEngine.Time.deltaTime)
         return _G.EBTNodeRunningState.Running
     else

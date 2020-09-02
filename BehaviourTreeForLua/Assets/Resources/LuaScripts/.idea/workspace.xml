@@ -2,20 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b8dd6de-53e2-457f-a4fc-4034ab1313c1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Core/Utils/StringUtil.lua" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Assembly-CSharp-Editor.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Assembly-CSharp-Editor.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Assembly-CSharp.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../BehaviourTreeNodes/DefaultBT.json" beforeDir="false" afterPath="$PROJECT_DIR$/../BehaviourTreeNodes/DefaultBT.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Init.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Init.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameMain.lua" beforeDir="false" afterPath="$PROJECT_DIR$/GameMain.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Scenes/GameLauncherLuaScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scenes/GameLauncherLuaScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTNode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/Editor/BTNodeData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/Editor/BTNodeData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/Editor/BTNodeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/Editor/BTNodeEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/TBehaviourTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/TBehaviourTree.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Scripts/GameLauncherLua.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/GameLauncherLua.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../XLua/Editor/GenConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../XLua/Editor/GenConfig.cs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,14 +25,32 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.3851479">
+    <splitter split-orientation="horizontal" split-proportion="0.5292637">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/GameMain.lua">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="429">
+                  <caret line="36" column="85" selection-start-line="36" selection-start-column="85" selection-end-line="36" selection-end-column="85" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BTData.lua">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="209">
+                  <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+                </state>
+              </provider>
+            </entry>
+          </file>
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Init.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="57">
-                  <caret line="3" column="22" lean-forward="true" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
+                <state relative-caret-position="114">
+                  <caret line="6" column="31" selection-start-line="6" selection-start-column="31" selection-end-line="6" selection-end-column="31" />
                 </state>
               </provider>
             </entry>
@@ -42,26 +58,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/ActiveSelfCondition.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="114">
-                  <caret line="9" column="60" selection-start-line="9" selection-start-column="60" selection-end-line="9" selection-end-column="60" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTConditionNode.lua">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="266">
-                  <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Core/Utils/StringUtil.lua">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="57">
-                  <caret line="3" column="25" lean-forward="true" selection-start-line="3" selection-start-column="25" selection-end-line="3" selection-end-column="25" />
+                <state relative-caret-position="494">
+                  <caret line="26" selection-start-line="26" selection-end-line="26" />
                 </state>
               </provider>
             </entry>
@@ -75,7 +73,7 @@
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="741">
-                  <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+                  <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
                 </state>
               </provider>
             </entry>
@@ -83,8 +81,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTNodeRunningState.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="133">
-                  <caret line="7" column="29" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="29" />
+                <state relative-caret-position="324">
+                  <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
                 </state>
               </provider>
             </entry>
@@ -99,10 +97,10 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTActionNode.lua">
+            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTCompositeNodeName.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="8" selection-start-line="8" selection-end-line="8" />
+                <state relative-caret-position="133">
+                  <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
                 </state>
               </provider>
             </entry>
@@ -116,11 +114,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="190">
-                  <caret line="20" column="24" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
+                <state relative-caret-position="305">
+                  <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
                 </state>
               </provider>
             </entry>
@@ -128,7 +126,7 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Init.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="323">
+                <state relative-caret-position="342">
                   <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
                 </state>
               </provider>
@@ -137,17 +135,17 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LogAction.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="120">
+                <state relative-caret-position="494">
                   <caret line="26" selection-end-line="46" selection-end-column="16" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="476">
-                  <caret line="41" column="45" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="45" />
+                <state relative-caret-position="741">
+                  <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
                 </state>
               </provider>
             </entry>
@@ -164,7 +162,7 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/ActiveSelfCondition.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="266">
+                <state relative-caret-position="494">
                   <caret line="26" selection-start-line="26" selection-end-line="26" />
                 </state>
               </provider>
@@ -173,17 +171,17 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTActionNode.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="190">
-                  <caret line="10" column="49" selection-start-line="10" selection-start-column="49" selection-end-line="10" selection-end-column="49" />
+                <state relative-caret-position="380">
+                  <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTConditionNode.lua">
+            <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BehaviourTreeUtil.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="209">
-                  <caret line="11" selection-start-line="11" selection-end-line="11" />
+                <state relative-caret-position="190">
+                  <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
                 </state>
               </provider>
             </entry>
@@ -219,17 +217,17 @@
         <option value="$PROJECT_DIR$/Core/BehaviourTree/LuaBTConditionNode.lua" />
         <option value="$PROJECT_DIR$/Core/BehaviourTree/LogAction.lua" />
         <option value="$PROJECT_DIR$/Core/BehaviourTree/ActiveSelfCondition.lua" />
-        <option value="$PROJECT_DIR$/GameMain.lua" />
         <option value="$PROJECT_DIR$/Core/Utils/StringUtil.lua" />
         <option value="$PROJECT_DIR$/Init.lua" />
-        <option value="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" />
         <option value="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" />
+        <option value="$PROJECT_DIR$/GameMain.lua" />
+        <option value="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="-1928" />
+    <option name="y" value="-106" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
@@ -241,7 +239,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -266,28 +263,18 @@
               <item name="Core" type="462c0819:PsiDirectoryNode" />
               <item name="Utils" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="LuaScripts" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LuaScripts" type="462c0819:PsiDirectoryNode" />
-              <item name="Editor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LuaScripts" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LuaScripts" type="462c0819:PsiDirectoryNode" />
-              <item name="Editor" type="462c0819:PsiDirectoryNode" />
-              <item name="CSLuaAPI" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../../CompanyProjects/Client2/Assets/Resources/LuaScripts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RunDashboard">
@@ -339,10 +326,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-1928" y="-106" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15298508" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15458423" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -397,92 +384,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BehaviourTreeUtil.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Core/BaseClass.lua">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTCompositeNodeName.lua">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameMain.lua">
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTConditionNode.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="30" column="21" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+        <state relative-caret-position="304">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BTData.lua">
+    <entry file="file://$PROJECT_DIR$/Core/Utils/StringUtil.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+        <state relative-caret-position="57">
+          <caret line="3" column="25" selection-start-line="3" selection-start-column="25" selection-end-line="3" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTDecorationNodeName.lua">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTNodeRunningState.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="29" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTActionNodeName.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="14" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTConditionNodeName.lua">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTActionNode.lua">
+    <entry file="file://$PROJECT_DIR$/Init.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="49" selection-start-line="10" selection-start-column="49" selection-end-line="10" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/ActiveSelfCondition.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        <state relative-caret-position="342">
+          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LogAction.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
+        <state relative-caret-position="494">
           <caret line="26" selection-end-line="46" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTConditionNode.lua">
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Init.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="18" column="38" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="20" column="24" selection-start-line="20" selection-start-column="24" selection-end-line="20" selection-end-column="24" />
+        <state relative-caret-position="741">
+          <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -493,17 +435,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/Utils/StringUtil.lua">
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/ActiveSelfCondition.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="3" column="25" lean-forward="true" selection-start-line="3" selection-start-column="25" selection-end-line="3" selection-end-column="25" />
+        <state relative-caret-position="494">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua">
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTActionNode.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="41" column="45" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="45" />
+        <state relative-caret-position="380">
+          <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTNodeRunningState.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BTData.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTActionNodeName.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="14" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTCompositeNodeName.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameMain.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="36" column="85" selection-start-line="36" selection-start-column="85" selection-end-line="36" selection-end-column="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BehaviourTreeUtil.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
         </state>
       </provider>
     </entry>

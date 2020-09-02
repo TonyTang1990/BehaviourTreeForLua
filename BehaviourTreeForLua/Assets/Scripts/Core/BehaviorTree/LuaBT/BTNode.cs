@@ -101,6 +101,15 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 实例对象UID
+        /// </summary>
+        public int InstanceID
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Lua测对应的行为树节点
         /// </summary>
         protected LuaBTNode LuaNode;
@@ -149,10 +158,17 @@ namespace LuaBehaviourTree
         /// <param name="nodename">节点名字</param>
         /// <param name="nodetype">节点类型</param>
         /// <param name="parentnode">父节点</param>
-        /// <param name="btowner">行为树节点所属行为树</param>
-        public BTNode(Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode = null)
+        /// <param name="allusednodeuidmap"></param>
+        public BTNode(Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode, Dictionary<int, int> allusednodeuidmap)
         {
-            UID = GetHashCode();
+            // 确保生成的UID唯一
+            UID = BTUtilities.GetNodeUID();
+            while (allusednodeuidmap.ContainsKey(UID))
+            {
+                UID = BTUtilities.GetNodeUID();
+            }
+            allusednodeuidmap.Add(UID, UID);
+            Debug.Log($"新增使用UID:{UID}");
             NodeDisplayRect = noderect;
             NodeIndex = nodeindex;
             NodeName = nodename;
@@ -164,7 +180,7 @@ namespace LuaBehaviourTree
         }
 
         #region 运行时部分
-        public BTNode(BTNode node, TBehaviourTree btowner, BTNode parentnode)
+        public BTNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
             UID = node.UID;
             NodeDisplayRect = node.NodeDisplayRect;
@@ -177,6 +193,7 @@ namespace LuaBehaviourTree
             NodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = btowner;
             ParentNode = parentnode;
+            InstanceID = instanceid;
         }
 
         /// <summary>

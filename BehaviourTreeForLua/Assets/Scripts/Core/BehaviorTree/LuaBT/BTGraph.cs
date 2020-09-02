@@ -95,7 +95,7 @@ namespace LuaBehaviourTree
             BTFileName = btowner.BTOriginalGraph.BTFileName;
             AllNodesList = new List<BTNode>();
             OwnerBT = btowner;
-            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null);
+            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null, btowner.InstanceID);
         }
 
         /// <summary>
@@ -110,7 +110,9 @@ namespace LuaBehaviourTree
             }
             AllNodesList = null;
             RootNode = null;
+#if UNITY_EDITOR
             ClearAllExecutingNodes();
+#endif
         }
 
         /// <summary>
@@ -142,16 +144,6 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 节点是否在运行
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <returns></returns>
-        public bool IsNodeRunning(int uid)
-        {
-            return ExecutingNodesMap.ContainsKey(uid);
-        }
-
-        /// <summary>
         /// 清除所有执行节点
         /// </summary>
         /// <returns></returns>
@@ -171,17 +163,20 @@ namespace LuaBehaviourTree
                 if (!RootNode.IsTerminated)
                 {
 #if UNITY_EDITOR
-                    ClearAllExecutingNodes();
+                    if(!RootNode.IsRunning)
+                    {
+                        ClearAllExecutingNodes();
+                    }
 #endif
                     RootNode.OnUpdate();
                 }
                 else
                 {
-                    if(OwnerBT.RestartWhenComplete)
-                    {
 #if UNITY_EDITOR
-                        ClearAllExecutingNodes();
+                    ClearAllExecutingNodes();
 #endif
+                    if (OwnerBT.RestartWhenComplete)
+                    {
                         RootNode.OnUpdate();
                     }
                 }
@@ -368,6 +363,16 @@ namespace LuaBehaviourTree
                 Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 节点是否在运行
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public bool IsNodeRunning(int uid)
+        {
+            return ExecutingNodesMap.ContainsKey(uid);
         }
         #endregion
     }

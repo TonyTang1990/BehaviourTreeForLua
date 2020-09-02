@@ -52,8 +52,8 @@
             "NodeType": 3,
             "ParentNodeUID": -852594688,
             "ChildNodesUIDList": [
-                78681088,
                 -686395264,
+                78681088,
                 -190033536,
                 1368637952
             ]
@@ -62,18 +62,18 @@
             "UID": -686395264,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 604.0,
-                "y": 389.0,
+                "x": 189.0,
+                "y": 372.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 1,
+            "NodeIndex": 0,
             "NodeName": "Seqeunce",
             "NodeParams": "",
             "NodeType": 3,
             "ParentNodeUID": 1969312128,
             "ChildNodesUIDList": [
-                787810816,
+                2045324800,
                 1465611648
             ]
         },
@@ -95,40 +95,6 @@
                 642604032,
                 -1692593152
             ]
-        },
-        {
-            "UID": 787810816,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 525.0,
-                "y": 566.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 0,
-            "NodeName": "InverterDecoration",
-            "NodeParams": "",
-            "NodeType": 5,
-            "ParentNodeUID": -686395264,
-            "ChildNodesUIDList": [
-                401398656
-            ]
-        },
-        {
-            "UID": 401398656,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 525.0,
-                "y": 739.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 0,
-            "NodeName": "ActiveSelfCondition",
-            "NodeParams": "",
-            "NodeType": 4,
-            "ParentNodeUID": 787810816,
-            "ChildNodesUIDList": []
         },
         {
             "UID": 642604032,
@@ -166,8 +132,8 @@
             "UID": 1465611648,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 709.0,
-                "y": 565.0,
+                "x": 274.0,
+                "y": 559.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -182,12 +148,12 @@
             "UID": 78681088,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 189.0,
-                "y": 372.0,
+                "x": 604.0,
+                "y": 389.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 0,
+            "NodeIndex": 1,
             "NodeName": "ParalAllSuccess",
             "NodeParams": "",
             "NodeType": 3,
@@ -202,8 +168,8 @@
             "UID": 189250816,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 26.0,
-                "y": 570.0,
+                "x": 441.0,
+                "y": 587.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -218,8 +184,8 @@
             "UID": -246369536,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 191.0,
-                "y": 566.0,
+                "x": 606.0,
+                "y": 583.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -236,8 +202,8 @@
             "UID": 397132288,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 354.0,
-                "y": 566.0,
+                "x": 769.0,
+                "y": 583.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -252,8 +218,8 @@
             "UID": -1177377920,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 191.0,
-                "y": 744.0,
+                "x": 606.0,
+                "y": 761.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -314,6 +280,22 @@
             "NodeParams": "",
             "NodeType": 4,
             "ParentNodeUID": 1577345280,
+            "ChildNodesUIDList": []
+        },
+        {
+            "UID": 2045324800,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 69.0,
+                "y": 560.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "ActiveSelfCondition",
+            "NodeParams": "",
+            "NodeType": 4,
+            "ParentNodeUID": -686395264,
             "ChildNodesUIDList": []
         }
     ]

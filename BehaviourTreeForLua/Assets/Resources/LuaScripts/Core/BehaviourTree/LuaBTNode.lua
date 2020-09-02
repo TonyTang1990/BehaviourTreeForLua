@@ -2,15 +2,18 @@ print("LuaBTNode.lua")
 
 ---@class LuaBTNode @Lua测行为树节点抽象基类
 ---@field CSBTNode LuaBehaviourTree.BTNode @CS测节点
+---@field InstanceID number @实例对象ID
 ---@field Go UnityEngine.GameObject @当前节点所绑定的GameObject对象
 local LuaBTNode = BaseClass("LuaBTNode")
 LuaBTNode.CSBTNode = nil
 LuaBTNode.Go = nil
 
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function LuaBTNode:__init(csbtnode)
+---@param instanceid number @实例对象ID
+function LuaBTNode:__init(csbtnode, instanceid)
     print("LuaBTNode:__init()")
     self.CSBTNode = csbtnode
+    self.InstanceID = instanceid
     self.Go = self.CSBTNode.OwnerBT.gameObject
     self:ParseParam(self.CSBTNode.NodeParams)
 end
@@ -46,6 +49,7 @@ end
 function LuaBTNode:Dispose()
     print("LuaBTNode:Dispose()")
     self.CSBTNode = nil
+    self.InstanceID = nil
     self.Go = nil
 end
 

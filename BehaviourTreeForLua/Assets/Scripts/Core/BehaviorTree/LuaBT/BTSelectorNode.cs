@@ -21,7 +21,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected int mCurrentNodeIndex;
 
-        public BTSelectorNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
+        public BTSelectorNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
             mCurrentNodeIndex = 0;
         }

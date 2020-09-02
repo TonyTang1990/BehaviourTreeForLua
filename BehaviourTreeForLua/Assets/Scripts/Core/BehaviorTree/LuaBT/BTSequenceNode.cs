@@ -21,7 +21,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected int mCurrentNodeIndex;
 
-        public BTSequenceNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
+        public BTSequenceNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
             mCurrentNodeIndex = 0;
         }

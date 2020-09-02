@@ -24,12 +24,12 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 组合节点名数据
         /// </summary>
-        public static string[] BTCompositeNodeNameArray = { "Selector", "Seqeunce", "ParalAllSuccess", "ParalOneSuccess" };
+        public static string[] BTCompositeNodeNameArray = { "Selector", "Seqeunce", "ParalAllSuccess", "ParalOneSuccess", "RandomSelector" };
 
         /// <summary>
         /// 修饰节点名数据
         /// </summary>
-        public static string[] BTDecorationNodeNameArray = { "InverterDecoration" };
+        public static string[] BTDecorationNodeNameArray = { "InverterDecoration", "RepeatedDecoration" };
 
         /// <summary>
         /// Lua脚本相对目录

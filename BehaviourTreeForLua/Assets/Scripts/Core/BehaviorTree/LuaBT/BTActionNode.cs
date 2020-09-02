@@ -22,9 +22,9 @@ namespace LuaBehaviourTree
         /// </summary>
         protected LuaBTNode mLuaBTNode;
 
-        public BTActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
+        public BTActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
-            mLuaBTNode = BTUtilities.CreateLuaNode(this);
+            mLuaBTNode = BTUtilities.CreateLuaNode(this, instanceid);
         }
 
         /// <summary>

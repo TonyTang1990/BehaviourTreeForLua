@@ -253,6 +253,7 @@ public static class GenConfig
         typeof(TextMeshProUGUI),
         typeof(AudioRolloffMode),
         #region 自定义类
+        typeof(TBehaviourTreeManager),
         typeof(TBehaviourTree),
         typeof(EBTNodeRunningState),
         typeof(BTNode),

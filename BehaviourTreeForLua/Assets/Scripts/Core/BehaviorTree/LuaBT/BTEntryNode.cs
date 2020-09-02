@@ -21,11 +21,11 @@ namespace LuaBehaviourTree
         /// </summary>
         public BTNode ChildNode;
 
-        public BTEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
+        public BTEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
             if(node.ChildNodesUIDList.Count > 0)
             {
-                ChildNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]), btowner, this);
+                ChildNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]), btowner, this, instanceid);
             }
         }
 

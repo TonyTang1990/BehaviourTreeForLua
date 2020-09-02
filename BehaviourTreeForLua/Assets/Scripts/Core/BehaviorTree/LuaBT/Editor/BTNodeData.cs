@@ -34,6 +34,23 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 修饰节点名数据
         /// </summary>
-        public static string[] BTDecorationNodeNameArray = { "InverterDecoration" };
+        public static string[] BTDecorationNodeNameArray = BTData.BTDecorationNodeNameArray;
+
+        /// <summary>
+        /// 行为节点描述数据(和BTActionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTActionNodeParamsIntroArray =
+        {
+            "Log内容",
+            "坐标X,坐标Y,坐标Z",
+        };
+
+        /// <summary>
+        /// 条件节点描述数据(和BTConditionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTConditionNodeParamsIntroArray =
+        {
+            "目标对象UID(0表示玩家)",
+        };
     }
 }

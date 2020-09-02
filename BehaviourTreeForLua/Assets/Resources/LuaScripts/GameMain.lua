@@ -26,13 +26,14 @@ end
 
 --- 创建Lua测行为树节点
 ---@param btnode LuaBehaviourTree.BTNode @CS测的行为树对应的节点
+---@param instanceid number @实例对象ID
 ---@return LuaBTNode @Lua测行为树节点对象
-function CreateLuaBTnode(btnode)
+function CreateLuaBTnode(btnode, instanceid)
     print("创建Lua节点!")
     local luabtnodescriptname = btnode.NodeName
     local luabtnodescriptfullpath = string.format("%s.%s", _G.BTData.BTLuaScriptRelativePath, luabtnodescriptname)
     print("luabtnodescriptname = " .. luabtnodescriptname)
     print("luabtnodescriptfullpath = " .. luabtnodescriptfullpath)
-    local luabtnodeinstance = require(luabtnodescriptfullpath).New(btnode)
+    local luabtnodeinstance = require(luabtnodescriptfullpath).New(btnode, instanceid)
     return luabtnodeinstance
 end

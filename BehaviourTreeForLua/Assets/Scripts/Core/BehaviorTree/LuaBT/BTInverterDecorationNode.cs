@@ -14,7 +14,7 @@ namespace LuaBehaviourTree
     /// </summary>
     public class BTInverterDecorationNode : BTDecorationNode
     {
-        public BTInverterDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode) : base(node, btowner, parentnode)
+        public BTInverterDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
 
         }
