@@ -291,8 +291,9 @@ namespace LuaBehaviourTree
         /// 添加子节点
         /// </summary>
         /// <param name="childnodeuid"></param>
+        /// <param name="graph"></param>
         /// <param name="insertindex">默认不传往尾部插入</param>
-        public bool AddChildNode(int childnodeuid, int? insertindex = null)
+        public bool AddChildNode(int childnodeuid, BTGraph graph, int? insertindex = null)
         {
             if (insertindex == null)
             {
@@ -301,6 +302,7 @@ namespace LuaBehaviourTree
             if (ChildNodesUIDList.Contains(childnodeuid) == false)
             {
                 ChildNodesUIDList.Insert((int)insertindex, childnodeuid);
+                UpdateChildNodeIndex(graph);
                 return true;
             }
             else
@@ -314,10 +316,18 @@ namespace LuaBehaviourTree
         /// 删除子节点
         /// </summary>
         /// <param name="childnodeuid"></param>
-        /// <param name="insertindex">默认不传往尾部插入</param>
-        public bool DeleteChildNode(int childnodeuid)
+        /// <param name="graph"></param>
+        public bool DeleteChildNode(int childnodeuid, BTGraph graph)
         {
-            return ChildNodesUIDList.Remove(childnodeuid);
+            if (ChildNodesUIDList.Remove(childnodeuid))
+            {
+                UpdateChildNodeIndex(graph);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

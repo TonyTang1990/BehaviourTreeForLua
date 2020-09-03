@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2b8dd6de-53e2-457f-a4fc-4034ab1313c1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../Assembly-CSharp-Editor.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Assembly-CSharp-Editor.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Assembly-CSharp.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../BehaviourTreeNodes/DefaultBT.json" beforeDir="false" afterPath="$PROJECT_DIR$/../BehaviourTreeNodes/DefaultBT.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Core/BehaviourTree/MoveToPostion.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameMain.lua" beforeDir="false" afterPath="$PROJECT_DIR$/GameMain.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scenes/GameLauncherLuaScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scenes/GameLauncherLuaScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/BTGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/TBehaviourTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/Core/BehaviorTree/LuaBT/TBehaviourTree.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Scripts/GameLauncherLua.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Scripts/GameLauncherLua.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../XLua/Editor/GenConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../XLua/Editor/GenConfig.cs" afterDir="false" />
-    </list>
+    <list default="true" id="2b8dd6de-53e2-457f-a4fc-4034ab1313c1" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +28,7 @@
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BTData.lua">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="209">
-                  <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+                  <caret line="11" selection-start-line="11" selection-end-line="11" />
                 </state>
               </provider>
             </entry>
@@ -100,7 +87,7 @@
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTCompositeNodeName.lua">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="133">
-                  <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+                  <caret line="7" column="16" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
                 </state>
               </provider>
             </entry>
@@ -117,7 +104,7 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="305">
+                <state relative-caret-position="969">
                   <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
                 </state>
               </provider>
@@ -326,7 +313,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-106" width="1936" height="1056" extended-state="6" />
+    <frame x="-1928" y="-106" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15458423" />
@@ -459,7 +446,7 @@
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/BTData.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
@@ -473,7 +460,7 @@
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/EBTCompositeNodeName.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="133">
-          <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+          <caret line="7" column="16" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -493,7 +480,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Core/BehaviourTree/LuaBTNode.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
+        <state relative-caret-position="969">
           <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
         </state>
       </provider>

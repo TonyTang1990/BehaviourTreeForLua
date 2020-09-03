@@ -2334,6 +2334,10 @@ MonoBehaviour:
   DdDay: {fileID: 437348362}
   IfMoney: {fileID: 1345306345}
   TgHasTask: {fileID: 1922621043}
+  BtnPausePlayerAI: {fileID: 364413257}
+  BtnResumePlayerAI: {fileID: 571096625}
+  BtnPauseAllAI: {fileID: 1427720398}
+  BtnResumeAllAI: {fileID: 97244789}
   Player: {fileID: 636527518}
   PlayerTxt: {fileID: 1542166529}
   Company: {fileID: 1601496951}

@@ -245,8 +245,7 @@ namespace LuaBehaviourTree
                     var parentnode = FindNodeByUID(node.ParentNodeUID);
                     if (parentnode != null)
                     {
-                        parentnode.DeleteChildNode(node.UID);
-                        parentnode.UpdateChildNodeIndex(this);
+                        parentnode.DeleteChildNode(node.UID, this);
                     }
                     return true;
                 }
