@@ -38,16 +38,16 @@ namespace LuaBehaviourTree
         /// </summary>
         public List<BTNode> AllNodesList;
 
+        #region 编辑器部分
         /// <summary>
         /// 执行中的节点Map(Key为节点UID，Value为节点Node对象)
         /// </summary>
         public Dictionary<int, BTNode> ExecutingNodesMap
         {
             get;
-            protected set;
+            private set;
         }
 
-        #region 编辑器部分
         /// <summary>
         /// 
         /// </summary>
@@ -60,6 +60,7 @@ namespace LuaBehaviourTree
             AllNodesList = new List<BTNode>();
             AllNodesList.Add(RootNode);
             ExecutingNodesMap = new Dictionary<int, BTNode>();
+            ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
         }
         #endregion
 
@@ -70,7 +71,16 @@ namespace LuaBehaviourTree
         public TBehaviourTree OwnerBT
         {
             get;
-            protected set;
+            private set;
+        }
+
+        /// <summary>
+        /// 行为树已经执行过的条件节点映射Map(Key为已经执行过的条件节点,Value为该节点上一次的执行结果)
+        /// </summary>
+        public Dictionary<BTConditionNode, EBTNodeRunningState> ExecutedConditionNodesResultMap
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -82,6 +92,7 @@ namespace LuaBehaviourTree
         {
             Debug.Log("BTGraph()");
             ExecutingNodesMap = new Dictionary<int, BTNode>();
+            ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
         }
 
         /// <summary>
@@ -113,6 +124,7 @@ namespace LuaBehaviourTree
 #if UNITY_EDITOR
             ClearAllExecutingNodes();
 #endif
+            ClearAllExectedConditionNodes();
         }
 
         /// <summary>
@@ -152,6 +164,44 @@ namespace LuaBehaviourTree
             //Debug.Log("清除所有执行节点!");
             ExecutingNodesMap.Clear();
         }
+        
+        /// <summary>
+        /// 更新已执行的条件节点执行
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public bool UpdateExecutedConditionNodeResult(BTConditionNode node, EBTNodeRunningState result)
+        {
+            if (node != null)
+            {
+                if (!ExecutedConditionNodesResultMap.ContainsKey(node))
+                {
+                    Debug.Log($"添加UID:{node.UID}的已执行条件节点执行结果{result}!");
+                    ExecutedConditionNodesResultMap.Add(node, result);
+                    return true;
+                }
+                else
+                {
+                    Debug.Log($"更新UID:{node.UID}的已执行条件节点执行结果:{result}!");
+                    return true;
+                }
+            }
+            else
+            {
+                Debug.LogError("不允许更新空的已执行条件节点结果!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 清除所有已经执行的条件节点
+        /// </summary>
+        public void ClearAllExectedConditionNodes()
+        {
+            Debug.Log($"清除所有执行过的条件节点!");
+            ExecutedConditionNodesResultMap.Clear();
+        }
 
         /// <summary>
         /// 更新
@@ -168,6 +218,10 @@ namespace LuaBehaviourTree
                         ClearAllExecutingNodes();
                     }
 #endif
+                    if(!RootNode.IsRunning)
+                    {
+                        ClearAllExectedConditionNodes();
+                    }
                     RootNode.OnUpdate();
                 }
                 else
@@ -175,6 +229,7 @@ namespace LuaBehaviourTree
 #if UNITY_EDITOR
                     ClearAllExecutingNodes();
 #endif
+                    ClearAllExectedConditionNodes();
                     if (OwnerBT.RestartWhenComplete)
                     {
                         RootNode.OnUpdate();

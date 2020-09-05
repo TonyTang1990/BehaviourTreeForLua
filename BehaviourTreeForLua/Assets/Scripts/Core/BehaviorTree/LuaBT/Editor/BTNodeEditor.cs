@@ -444,6 +444,14 @@ namespace LuaBehaviourTree
             }
         }
 
+        private void OnInspectorUpdate()
+        {
+            if(Application.isPlaying)
+            {
+                Repaint();
+            }
+        }
+
         private void OnGUI()
         {
             mLableAlignMiddleStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };

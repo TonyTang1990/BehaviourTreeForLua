@@ -214,7 +214,7 @@ namespace LuaBehaviourTree
 
 #if UNITY_EDITOR
         /// <summary>
-        /// 添加为执行接地那
+        /// 添加为执行接节点
         /// </summary>
         /// <returns></returns>
         public bool AddAsExecutingNode()
@@ -283,6 +283,32 @@ namespace LuaBehaviourTree
         protected virtual void OnExit()
         {
             // 节点判定完成(成功或失败)时做一些事情
+        }
+
+        /// <summary>
+        /// 检查需要评估的条件节点状态变化
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckReevaluatedConditionNodes()
+        {
+            if(OwnerBT.BTRunningGraph != null)
+            {
+                var allkeys = OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap.Keys;
+                foreach (var key in allkeys)
+                {
+                    var newresult = key.OnUpdate();
+                    if(newresult != OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap[key])
+                    {
+                        Debug.Log($"节点UID:{key.UID}的条件节点状态由:{OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap[key]}变到{newresult},需要打断节点UID:{this.UID}运行，重置整棵树!");
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
         #endregion
 
