@@ -39,57 +39,57 @@ namespace LuaBehaviourTree
 
         }
 
-        protected override EBTNodeRunningState OnExecute()
-        {
-            var successcount = 0;
-            var failedcount = 0;
-            foreach (var childnode in ChildNodes)
-            {
-                EBTNodeRunningState childnodestate = childnode.NodeRunningState;
-                if (!childnode.IsTerminated)
-                {
-                    childnodestate = childnode.OnUpdate();
-                }
-                if (childnodestate == EBTNodeRunningState.Success)
-                {
-                    successcount++;
-                    if (ParalPolicy == EBTParalPolicy.OneSuccess)
-                    {
-                        return EBTNodeRunningState.Success;
-                    }
-                }
-                else if (childnodestate == EBTNodeRunningState.Failed)
-                {
-                    failedcount++;
-                    if (ParalPolicy == EBTParalPolicy.AllSuccess)
-                    {
-                        return EBTNodeRunningState.Failed;
-                    }
-                }
-            }
+        //protected override EBTNodeRunningState OnExecute()
+        //{
+        //    var successcount = 0;
+        //    var failedcount = 0;
+        //    foreach (var childnode in ChildNodes)
+        //    {
+        //        EBTNodeRunningState childnodestate = childnode.NodeRunningState;
+        //        if (!childnode.IsTerminated)
+        //        {
+        //            childnodestate = childnode.OnUpdate();
+        //        }
+        //        if (childnodestate == EBTNodeRunningState.Success)
+        //        {
+        //            successcount++;
+        //            if (ParalPolicy == EBTParalPolicy.OneSuccess)
+        //            {
+        //                return EBTNodeRunningState.Success;
+        //            }
+        //        }
+        //        else if (childnodestate == EBTNodeRunningState.Failed)
+        //        {
+        //            failedcount++;
+        //            if (ParalPolicy == EBTParalPolicy.AllSuccess)
+        //            {
+        //                return EBTNodeRunningState.Failed;
+        //            }
+        //        }
+        //    }
 
-            if (ParalPolicy == EBTParalPolicy.AllSuccess)
-            {
-                if (successcount == ChildNodes.Count)
-                {
-                    return EBTNodeRunningState.Success;
-                }
-                else
-                {
-                    return EBTNodeRunningState.Running;
-                }
-            }
-            else
-            {
-                if(failedcount == ChildNodes.Count)
-                {
-                    return EBTNodeRunningState.Failed;
-                }
-                else
-                {
-                    return EBTNodeRunningState.Running;
-                }
-            }
-        }
+        //    if (ParalPolicy == EBTParalPolicy.AllSuccess)
+        //    {
+        //        if (successcount == ChildNodes.Count)
+        //        {
+        //            return EBTNodeRunningState.Success;
+        //        }
+        //        else
+        //        {
+        //            return EBTNodeRunningState.Running;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if(failedcount == ChildNodes.Count)
+        //        {
+        //            return EBTNodeRunningState.Failed;
+        //        }
+        //        else
+        //        {
+        //            return EBTNodeRunningState.Running;
+        //        }
+        //    }
+        //}
     }
 }

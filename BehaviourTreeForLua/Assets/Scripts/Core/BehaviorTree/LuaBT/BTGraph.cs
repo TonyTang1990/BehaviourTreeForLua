@@ -61,6 +61,7 @@ namespace LuaBehaviourTree
             AllNodesList.Add(RootNode);
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
+            NeedResetWholeTree = false;
         }
         #endregion
 
@@ -72,6 +73,15 @@ namespace LuaBehaviourTree
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// 是否需要重置整棵树(条件变化需要打断时通过重置整棵树来达到打断目的)
+        /// </summary>
+        public bool NeedResetWholeTree
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -93,6 +103,7 @@ namespace LuaBehaviourTree
             Debug.Log("BTGraph()");
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
+            NeedResetWholeTree = false;
         }
 
         /// <summary>
