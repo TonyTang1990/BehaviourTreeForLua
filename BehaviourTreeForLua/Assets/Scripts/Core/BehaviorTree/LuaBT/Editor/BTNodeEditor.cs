@@ -146,6 +146,11 @@ namespace LuaBehaviourTree
         private TextAsset mCurrentSelectionBTGraphAsset;
 
         /// <summary>
+        /// 当前选择的行为树Asset原始名字
+        /// </summary>
+        private string mCurrentSelectionBTGraphAssetOriginalName;
+
+        /// <summary>
         /// 当前窗口滚动位置
         /// </summary>
         private Vector2 mWindowScrollPos;
@@ -261,7 +266,7 @@ namespace LuaBehaviourTree
         [MenuItem("TonyTang/AI/BTNodeEditor")]
         static void ShowEditor()
         {
-            BTNodeEditor btnodeeditor = EditorWindow.GetWindow<BTNodeEditor>();
+            BTNodeEditor btnodeeditor = EditorWindow.GetWindow<BTNodeEditor>("行为树编辑器");
             btnodeeditor.Show();
             btnodeeditor.Init();
         }
@@ -402,6 +407,7 @@ namespace LuaBehaviourTree
                         ReadAllNodesUID();
                         mCurrentSelectionBTGraph = btgrapshdata;
                         mCurrentSelectionBTGraphAsset = selectiontextasset;
+                        mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
                         var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
                         Debug.Log($"非运行时选中的Asset:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
                     }
@@ -420,6 +426,7 @@ namespace LuaBehaviourTree
                         {
                             mCurrentSelectionBTGraph = tbt.BTRunningGraph;
                             mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
                             var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
                             Debug.Log($"选中运行时有行为树数据对象:{selectiongameobject.name} 行为树AssetPath:{currentselectionbtnodeassetpath}");
                         }
@@ -427,6 +434,7 @@ namespace LuaBehaviourTree
                         {
                             mCurrentSelectionBTGraph = tbt.BTOriginalGraph;
                             mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
                             var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
                             Debug.Log($"非运行时选中的场景对象:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
                         }
@@ -547,28 +555,13 @@ namespace LuaBehaviourTree
                 EditorGUILayout.LabelField("行为树名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
                 mCurrentSelectionBTGraph.BTFileName = EditorGUILayout.TextField(mCurrentSelectionBTGraph.BTFileName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
                 EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
                 if (mCurrentSelectionBTGraphAsset != null)
                 {
                     if (Application.isPlaying == false)
                     {
                         if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
                         {
-                            // 检查行为树的有效性
-                            if (IsValideTree())
-                            {
-                                var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                                var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                                var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
-                                File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                                Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
-                                AssetDatabase.SaveAssets();
-                                AssetDatabase.Refresh();
-                            }
-                            else
-                            {
-                                Debug.LogError($"行为树有不符合条件的节点设定,保存失败!");
-                            }
+                            TrySaveBTAsset();
                         }
                     }
                 }
@@ -578,40 +571,31 @@ namespace LuaBehaviourTree
                     {
                         if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
                         {
-                            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
-                            {
-                                // 检查行为树的有效性
-                                if (IsValideTree())
-                                {
-                                    var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                                    var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                                    Debug.Log($"savefolderfullpath:{savefolderfullpath}");
-                                    if (Directory.Exists(savefolderfullpath) == false)
-                                    {
-                                        Directory.CreateDirectory(savefolderfullpath);
-                                    }
-                                    var assetfullpath = $"{savefolderfullpath}{mCurrentSelectionBTGraph.BTFileName}.json";
-                                    File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                                    Debug.Log($"导出成功:/nassetfullpath:{assetfullpath}");
-                                    AssetDatabase.SaveAssets();
-                                    AssetDatabase.Refresh();
-                                }
-                                else
-                                {
-                                    Debug.LogError($"行为树有不符合条件的节点设定,导出失败!");
-                                }
-                            }
-                            else
-                            {
-                                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
-                            }
+                            TrySaveBTAsset();
                         }
                     }
                 }
-                EditorGUILayout.EndHorizontal();
                 IsEnableMoveWithChildNodes = EditorGUILayout.Toggle("子节点一起移动开关:", IsEnableMoveWithChildNodes, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                 IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                 mCurrentCreateNodeStrategy = (ECreateNodeStrategy)EditorGUILayout.EnumPopup("节点添加策略:", mCurrentCreateNodeStrategy, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                if (GUILayout.Button("新建", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                {
+                    if(EditorUtility.DisplayDialog("行为树保存", "是否保存之前的行为树!", "确认", "取消"))
+                    {
+                        if(TrySaveBTAsset())
+                        {
+                            CreateNewBTAsset();
+                        }
+                        else
+                        {
+                            Debug.LogError($"保存失败!无法新建行为树,请先修复保存报错!");
+                        }
+                    }
+                    else
+                    {
+                        CreateNewBTAsset();
+                    }
+                }
                 EditorGUILayout.EndVertical();
             }
             else if (mToolBarSelectIndex == 1)
@@ -637,6 +621,63 @@ namespace LuaBehaviourTree
                     EditorGUILayout.EndVertical();
                 }
             }
+        }
+
+        /// <summary>
+        /// 保存行为树
+        /// </summary>
+        private bool TrySaveBTAsset()
+        {
+            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
+            {
+                // 检查行为树的有效性
+                if (IsValideTree())
+                {
+                    if(!mCurrentSelectionBTGraphAssetOriginalName.Equals(mCurrentSelectionBTGraph.BTFileName))
+                    {
+                        // 文件名有变化，自动删除老的文件
+                        var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
+                        Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件!");
+                        AssetDatabase.DeleteAsset(oldbtgraphassetpath);
+                    }
+                    var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                    var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
+                    var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
+                    mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraph.BTFileName;
+                    if (Directory.Exists(savefolderfullpath) == false)
+                    {
+                        Directory.CreateDirectory(savefolderfullpath);
+                    }
+                    File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
+                    Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError($"行为树有不符合条件的节点设定,保存失败!");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 新建行为树Asset
+        /// </summary>
+        private void CreateNewBTAsset()
+        {
+            Debug.Log($"创建新的行为树!");
+            // 创建一个默认的空的BTNode
+            var rootnode = new BTNode(GetNodeRect(new Vector2(ToolBarWidth, 50.0f)), 0, "Root", EBTNodeType.EntryNodeType, null, AllUsedNodeUIDMap);
+            mCurrentSelectionBTGraph = new BTGraph(DefaultBTGrapshFileName, rootnode);
+            mCurrentSelectionBTGraphAsset = null;
+            mCurrentSelectionBTGraphAssetOriginalName = "";
         }
 
         /// <summary>
