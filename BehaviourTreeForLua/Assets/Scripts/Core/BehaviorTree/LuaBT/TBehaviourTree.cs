@@ -26,7 +26,7 @@ namespace LuaBehaviourTree
         /// 当行为树完成时重新开始判定
         /// </summary>
         [Header("完成时重新开启判定(每帧判定)")]
-        public bool RestartWhenComplete = false;
+        public bool RestartWhenComplete = true;
 
         /// <summary>
         /// 实例对象UID(为了反向查逻辑对象)

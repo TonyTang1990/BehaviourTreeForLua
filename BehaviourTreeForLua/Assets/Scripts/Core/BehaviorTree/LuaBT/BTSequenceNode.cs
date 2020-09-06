@@ -59,5 +59,14 @@ namespace LuaBehaviourTree
                 }
             }
         }
+
+        /// <summary>
+        /// 退出节点
+        /// </summary>
+        protected override void OnExit()
+        {
+            base.OnExit();
+            mCurrentNodeIndex = 0;
+        }
     }
 }

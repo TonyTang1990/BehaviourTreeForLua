@@ -64,11 +64,6 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
     /// </summary>
     public Func<BTNode, int, LuaBTNode> LuaCreateLuaBTnode = null;
 
-    /// <summary>
-    /// 编辑器注册回调
-    /// </summary>
-    public static Action<LuaEnv> EditorHookCallBack;
-
     private void Awake()
     {
         Debug.Log($"XLuaManager:Awake()");
@@ -89,10 +84,6 @@ public class XLuaManager : SingletonMonoBehaviourTemplate<XLuaManager>
         mLuaFixedUpdate = mLuaEnv.Global.Get<Action<float>>("FixedUpdate");
         LuaCreateLuaBTnode = mLuaEnv.Global.Get<Func<BTNode, int, LuaBTNode>>("CreateLuaBTnode");
         mLuaGameStart();
-        if(EditorHookCallBack != null)
-        {
-            EditorHookCallBack(mLuaEnv);
-        }
     }
 
     public LuaEnv GetLuaEnv()

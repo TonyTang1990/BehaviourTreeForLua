@@ -54,15 +54,6 @@ namespace LuaBehaviourTree
 
         protected override EBTNodeRunningState OnExecute()
         {
-            // 仅当行为节点状态为运行时才需要重新判定已经判定过的条件节点
-            if(NodeRunningState == EBTNodeRunningState.Running)
-            {
-                if(CheckReevaluatedConditionNodes())
-                {
-                    // TODO: 打断当前节点运行，重置整棵树
-
-                }
-            }
             return (EBTNodeRunningState)mLuaBTNode.OnExecute();
         }
 

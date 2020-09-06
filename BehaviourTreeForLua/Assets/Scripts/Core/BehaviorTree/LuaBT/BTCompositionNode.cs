@@ -38,8 +38,6 @@ namespace LuaBehaviourTree
         protected override void OnExit()
         {
             base.OnExit();
-            // 节点判定完成(成功或失败)时做一些事情
-            Reset();
         }
 
         /// <summary>

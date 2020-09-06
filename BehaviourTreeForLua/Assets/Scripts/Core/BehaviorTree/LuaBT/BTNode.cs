@@ -32,15 +32,6 @@ namespace LuaBehaviourTree
         Success,                // 成功
         Failed,                 // 失败
     }
-
-    /// <summary>
-    /// 行为树节点打断状态
-    /// </summary>
-    public enum EBTInterrupState
-    {
-        NotInterrupt = 1,        // 未打断
-        Interrupted,             // 被打断
-    }
     
     /// <summary>
     /// 行为树节点抽象
@@ -153,15 +144,6 @@ namespace LuaBehaviourTree
                 return NodeRunningState == EBTNodeRunningState.Success || NodeRunningState == EBTNodeRunningState.Failed;
             }
         }
-
-        /// <summary>
-        /// 节点打断状态
-        /// </summary>
-        public EBTInterrupState NodeInterruptState
-        {
-            get;
-            protected set;
-        }
         #endregion
 
         public BTNode()
@@ -195,7 +177,6 @@ namespace LuaBehaviourTree
             ParentNodeUID = parentnode != null ? parentnode.UID : 0;
             ChildNodesUIDList = new List<int>();
             NodeRunningState = EBTNodeRunningState.Invalide;
-            NodeInterruptState = EBTInterrupState.NotInterrupt;
         }
 
         #region 运行时部分
@@ -210,7 +191,6 @@ namespace LuaBehaviourTree
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
             NodeRunningState = EBTNodeRunningState.Invalide;
-            NodeInterruptState = EBTInterrupState.NotInterrupt;
             OwnerBT = btowner;
             ParentNode = parentnode;
             InstanceID = instanceid;
@@ -228,12 +208,10 @@ namespace LuaBehaviourTree
             ParentNodeUID = 0;
             ChildNodesUIDList = null;
             NodeRunningState = EBTNodeRunningState.Invalide;
-            NodeInterruptState = EBTInterrupState.NotInterrupt;
             OwnerBT = null;
             ParentNode = null;
         }
 
-#if UNITY_EDITOR
         /// <summary>
         /// 添加为执行接节点
         /// </summary>
@@ -249,14 +227,32 @@ namespace LuaBehaviourTree
                 return false;
             }
         }
-#endif
 
         /// <summary>
         /// 响应条件变化终止
         /// </summary>
         public virtual void OnConditionalAbort()
         {
+            // 终止时直接强制退出重置节点
+            Debug.Log($"节点UID:{this.UID}响应条件变化终止!");
+            OnExit();
+        }
 
+        /// <summary>
+        /// 更新已执行的条件节点结果
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public bool UpdateExecutedReevaluatedNodeResult(EBTNodeRunningState result)
+        {
+            if (OwnerBT.BTRunningGraph != null)
+            {
+                return OwnerBT.BTRunningGraph.UpdateExecutedConditionNodeResult(this, result);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -265,24 +261,21 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public virtual EBTNodeRunningState OnUpdate()
         {
-            if(CanExecute())
+            if (NodeRunningState == EBTNodeRunningState.Invalide)
             {
-                if (NodeRunningState == EBTNodeRunningState.Invalide)
-                {
-                    OnEnter();
-                }
-                NodeRunningState = OnExecute();
-                var tempstate = NodeRunningState;
-                if (IsTerminated)
-                {
-                    OnExit();
-                }
-                return tempstate;
+                OnEnter();
             }
-            else
+            NodeRunningState = OnExecute();
+            if (CanReevaluate())
             {
-                return OverrideCantExecuteStatus();
+                UpdateExecutedReevaluatedNodeResult(NodeRunningState);
             }
+            var tempstate = NodeRunningState;
+            if (IsTerminated)
+            {
+                OnExit();
+            }
+            return tempstate;
         }
 
         /// <summary>
@@ -293,16 +286,14 @@ namespace LuaBehaviourTree
             Debug.Log(string.Format("重置节点:{0}", NodeName));
             NodeRunningState = EBTNodeRunningState.Invalide;
         }
-
+        
         /// <summary>
         /// 进入节点
         /// </summary>
         protected virtual void OnEnter()
         {
-            NodeRunningState = EBTNodeRunningState.Running;
-#if UNITY_EDITOR
+            //NodeRunningState = EBTNodeRunningState.Running;
             AddAsExecutingNode();
-#endif
         }
 
         /// <summary>
@@ -322,47 +313,12 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 节点是否可执行
+        /// 是否可被重新评估(需要参与重新评估判定的重写支持)
         /// </summary>
         /// <returns></returns>
-        protected virtual bool CanExecute()
+        protected virtual bool CanReevaluate()
         {
-            return true;
-        }
-
-        /// <summary>
-        /// 重写不可执行时的状态结果
-        /// </summary>
-        /// <returns></returns>
-        protected virtual EBTNodeRunningState OverrideCantExecuteStatus()
-        {
-            return EBTNodeRunningState.Failed;
-        }
-
-        /// <summary>
-        /// 检查需要评估的条件节点状态变化
-        /// </summary>
-        /// <returns></returns>
-        public bool CheckReevaluatedConditionNodes()
-        {
-            if(OwnerBT.BTRunningGraph != null)
-            {
-                var allkeys = OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap.Keys;
-                foreach (var key in allkeys)
-                {
-                    var newresult = key.OnUpdate();
-                    if(newresult != OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap[key])
-                    {
-                        Debug.Log($"节点UID:{key.UID}的条件节点状态由:{OwnerBT.BTRunningGraph.ExecutedConditionNodesResultMap[key]}变到{newresult},需要打断节点UID:{this.UID}运行，重置整棵树!");
-                        return true;
-                    }
-                }
-                return false;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         #endregion
 

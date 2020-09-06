@@ -24,12 +24,12 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 行为节点名数据
         /// </summary>
-        public static string[] BTActionNodeNameArray = { "LogAction", "MoveToPostion" };
+        public static string[] BTActionNodeNameArray = { "LogAction", "MoveToPostion", "WaitForSeconds", "Idle" };
 
         /// <summary>
         /// 条件节点名数据
         /// </summary>
-        public static string[] BTConditionNodeNameArray = { "ActiveSelfCondition" };
+        public static string[] BTConditionNodeNameArray = { "ActiveSelfCondition", "HasTaskCondition" };
 
         /// <summary>
         /// 修饰节点名数据
@@ -43,6 +43,8 @@ namespace LuaBehaviourTree
         {
             "Log内容",
             "坐标X,坐标Y,坐标Z",
+            "等待指定时长(s)",
+            "无需参数(保持空闲，直到条件有变化时)",
         };
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace LuaBehaviourTree
         public static string[] BTConditionNodeParamsIntroArray =
         {
             "目标对象UID(0表示玩家)",
+            "是否拥有任务",
         };
     }
 }

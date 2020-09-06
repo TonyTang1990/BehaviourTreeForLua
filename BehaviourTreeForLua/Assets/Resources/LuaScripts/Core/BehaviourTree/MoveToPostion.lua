@@ -46,7 +46,7 @@ end
 ---行为树节点释放
 function MoveToPostion:Dispose()
     _G.LuaBTActionNode.Dispose(self)
-    print(string.format("MoveToPostion:Dispose() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.LogContent))
+    print(string.format("MoveToPostion:Dispose() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
     self.TargetPosition = nil
 end
 

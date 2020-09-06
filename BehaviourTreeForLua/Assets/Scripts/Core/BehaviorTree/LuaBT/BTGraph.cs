@@ -40,15 +40,6 @@ namespace LuaBehaviourTree
 
         #region 编辑器部分
         /// <summary>
-        /// 执行中的节点Map(Key为节点UID，Value为节点Node对象)
-        /// </summary>
-        public Dictionary<int, BTNode> ExecutingNodesMap
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="btfilename">行为树文件名</param>
@@ -60,7 +51,7 @@ namespace LuaBehaviourTree
             AllNodesList = new List<BTNode>();
             AllNodesList.Add(RootNode);
             ExecutingNodesMap = new Dictionary<int, BTNode>();
-            ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
+            ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             NeedResetWholeTree = false;
         }
         #endregion
@@ -85,9 +76,18 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 行为树已经执行过的条件节点映射Map(Key为已经执行过的条件节点,Value为该节点上一次的执行结果)
+        /// 执行中的节点Map(Key为节点UID，Value为节点Node对象)
         /// </summary>
-        public Dictionary<BTConditionNode, EBTNodeRunningState> ExecutedConditionNodesResultMap
+        public Dictionary<int, BTNode> ExecutingNodesMap
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 行为树已经执行过的需要重新评估的节点映射Map(Key为已经执行过的需要重新评估的节点,Value为该节点上一次的执行结果)
+        /// </summary>
+        public Dictionary<BTNode, EBTNodeRunningState> ExecutedReevaluatedNodesResultMap
         {
             get;
             private set;
@@ -102,7 +102,7 @@ namespace LuaBehaviourTree
         {
             Debug.Log("BTGraph()");
             ExecutingNodesMap = new Dictionary<int, BTNode>();
-            ExecutedConditionNodesResultMap = new Dictionary<BTConditionNode, EBTNodeRunningState>();
+            ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             NeedResetWholeTree = false;
         }
 
@@ -125,6 +125,7 @@ namespace LuaBehaviourTree
         /// </summary>
         public void Dispose()
         {
+            ClearRunningDatas();
             OwnerBT = null;
             for(int i = 0, length = AllNodesList != null ? AllNodesList.Count : 0; i < length; i++)
             {
@@ -132,10 +133,6 @@ namespace LuaBehaviourTree
             }
             AllNodesList = null;
             RootNode = null;
-#if UNITY_EDITOR
-            ClearAllExecutingNodes();
-#endif
-            ClearAllExectedConditionNodes();
         }
 
         /// <summary>
@@ -173,23 +170,31 @@ namespace LuaBehaviourTree
         public void ClearAllExecutingNodes()
         {
             //Debug.Log("清除所有执行节点!");
-            ExecutingNodesMap.Clear();
+            if(ExecutingNodesMap.Count > 0)
+            {
+                // 清理已执行节点前重置他们的状态，确保下一次运行状态回到初始状态
+                foreach (var executingnode in ExecutingNodesMap)
+                {
+                    executingnode.Value.Reset();
+                }
+                ExecutingNodesMap.Clear();
+            }
         }
-        
+
         /// <summary>
         /// 更新已执行的条件节点执行
         /// </summary>
         /// <param name="node"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public bool UpdateExecutedConditionNodeResult(BTConditionNode node, EBTNodeRunningState result)
+        public bool UpdateExecutedConditionNodeResult(BTNode node, EBTNodeRunningState result)
         {
             if (node != null)
             {
-                if (!ExecutedConditionNodesResultMap.ContainsKey(node))
+                if (!ExecutedReevaluatedNodesResultMap.ContainsKey(node))
                 {
                     Debug.Log($"添加UID:{node.UID}的已执行条件节点执行结果{result}!");
-                    ExecutedConditionNodesResultMap.Add(node, result);
+                    ExecutedReevaluatedNodesResultMap.Add(node, result);
                     return true;
                 }
                 else
@@ -208,10 +213,32 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 清除所有已经执行的条件节点
         /// </summary>
-        public void ClearAllExectedConditionNodes()
+        protected void ClearAllExectedConditionNodes()
         {
             Debug.Log($"清除所有执行过的条件节点!");
-            ExecutedConditionNodesResultMap.Clear();
+            if(ExecutedReevaluatedNodesResultMap.Count > 0)
+            {
+                ExecutedReevaluatedNodesResultMap.Clear();
+            }
+        }
+        
+        /// <summary>
+        /// 检查需要评估的节点状态变化
+        /// </summary>
+        /// <returns>评估的条件节点是否有变化</returns>
+        protected bool ReevaluatedExecutedNodes()
+        {
+            var allkeys = ExecutedReevaluatedNodesResultMap.Keys;
+            foreach (var conditionnode in allkeys)
+            {
+                var newresult = conditionnode.OnUpdate();
+                if (newresult != ExecutedReevaluatedNodesResultMap[conditionnode])
+                {
+                    Debug.Log($"节点UID:{conditionnode.UID}的条件节点状态由:{ExecutedReevaluatedNodesResultMap[conditionnode]}变到{newresult},需要打断行为树重置整棵树运行!");
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -223,24 +250,25 @@ namespace LuaBehaviourTree
             {
                 if (!RootNode.IsTerminated)
                 {
-#if UNITY_EDITOR
                     if(!RootNode.IsRunning)
                     {
-                        ClearAllExecutingNodes();
+                        ClearRunningDatas();
                     }
-#endif
-                    if(!RootNode.IsRunning)
+                    if (ReevaluatedExecutedNodes())
                     {
-                        ClearAllExectedConditionNodes();
+                        // 条件节点运行结果有变化需要重置运行节点重新判定
+                        DoAbortBehaviourTree();
                     }
                     RootNode.OnUpdate();
                 }
                 else
                 {
-#if UNITY_EDITOR
-                    ClearAllExecutingNodes();
-#endif
-                    ClearAllExectedConditionNodes();
+                    ClearRunningDatas();
+                    if (ReevaluatedExecutedNodes())
+                    {
+                        // 条件节点运行结果有变化需要重置运行节点重新判定
+                        DoAbortBehaviourTree();
+                    }
                     if (OwnerBT.RestartWhenComplete)
                     {
                         RootNode.OnUpdate();
@@ -248,7 +276,29 @@ namespace LuaBehaviourTree
                 }
             }
         }
-#endregion
+
+        /// <summary>
+        /// 清理运行数据
+        /// </summary>
+        protected void ClearRunningDatas()
+        {
+            ClearAllExecutingNodes();
+            ClearAllExectedConditionNodes();
+        }
+
+        /// <summary>
+        /// 执行终止行为树
+        /// </summary>
+        protected void DoAbortBehaviourTree()
+        {
+            Debug.Log("DoAbortBehaviourTree()");
+            foreach(var executingnode in ExecutingNodesMap)
+            {
+                executingnode.Value.OnConditionalAbort();
+            }
+            ClearRunningDatas();
+        }
+        #endregion
 
         #region 通用部分
         /// <summary>

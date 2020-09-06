@@ -49,7 +49,6 @@ namespace LuaBehaviourTree
         protected override void OnExit()
         {
             base.OnExit();
-            Reset();
         }
     }
 }

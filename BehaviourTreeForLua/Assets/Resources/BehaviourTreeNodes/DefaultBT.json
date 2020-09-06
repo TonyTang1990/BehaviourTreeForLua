@@ -73,7 +73,7 @@
             "NodeType": 3,
             "ParentNodeUID": 1969312128,
             "ChildNodesUIDList": [
-                2045324800,
+                -1678069372,
                 1465611648
             ]
         },
@@ -283,19 +283,37 @@
             "ChildNodesUIDList": []
         },
         {
-            "UID": 2045324800,
+            "UID": -1678069372,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 69.0,
-                "y": 560.0,
+                "x": 65.0,
+                "y": 554.0,
                 "width": 150.0,
                 "height": 150.0
             },
             "NodeIndex": 0,
-            "NodeName": "ActiveSelfCondition",
+            "NodeName": "InverterDecoration",
+            "NodeParams": "",
+            "NodeType": 5,
+            "ParentNodeUID": -686395264,
+            "ChildNodesUIDList": [
+                -1403054194
+            ]
+        },
+        {
+            "UID": -1403054194,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 66.0,
+                "y": 733.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 0,
+            "NodeName": "HasTaskCondition",
             "NodeParams": "",
             "NodeType": 4,
-            "ParentNodeUID": -686395264,
+            "ParentNodeUID": -1678069372,
             "ChildNodesUIDList": []
         }
     ]

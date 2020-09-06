@@ -27,23 +27,6 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 更新已执行的条件节点结果
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public bool UpdateExecutedConditionNodeResult(EBTNodeRunningState result)
-        {
-            if (OwnerBT.BTRunningGraph != null)
-            {
-                return OwnerBT.BTRunningGraph.UpdateExecutedConditionNodeResult(this, result);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 释放
         /// </summary>
         public override void Dispose()
@@ -70,17 +53,7 @@ namespace LuaBehaviourTree
 
         protected override EBTNodeRunningState OnExecute()
         {
-            var result = (EBTNodeRunningState)mLuaBTNode.OnExecute();
-            if (result == EBTNodeRunningState.Success || result == EBTNodeRunningState.Failed)
-            {
-                UpdateExecutedConditionNodeResult(result);
-                return result;
-            }
-            else
-            {
-                Debug.LogError($"条件节点执行不允许出现:{result}结果!");
-                return EBTNodeRunningState.Invalide;
-            }
+            return (EBTNodeRunningState)mLuaBTNode.OnExecute();
         }
 
         /// <summary>
@@ -90,6 +63,15 @@ namespace LuaBehaviourTree
         {
             base.OnExit();
             mLuaBTNode.OnExit();
+        }
+
+        /// <summary>
+        /// 是否可被重新评估
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CanReevaluate()
+        {
+            return true;
         }
     }
 }
