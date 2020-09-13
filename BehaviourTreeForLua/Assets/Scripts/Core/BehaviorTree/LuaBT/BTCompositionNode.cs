@@ -49,11 +49,12 @@ namespace LuaBehaviourTree
             if (NodeRunningState != EBTNodeRunningState.Invalide)
             {
                 base.Reset();
-                // 符合节点完成后需要重置之前运行的所有节点状态，确保下一次再次进入正常运行
-                foreach (var childnode in ChildNodes)
-                {
-                    childnode.Reset();
-                }
+                //组合节点重置不负责子节点的重置，避免子节点状态异常
+                //// 符合节点完成后需要重置之前运行的所有节点状态，确保下一次再次进入正常运行
+                //foreach (var childnode in ChildNodes)
+                //{
+                //    childnode.Reset();
+                //}
             }
         }
     }

@@ -113,6 +113,10 @@ namespace LuaBehaviourTree
 
         private void OnDestroy()
         {
+            if (IsStart)
+            {
+                TBehaviourTreeManager.getInstance().UnregisterTBhaviourTree(this);
+            }
             ReleaseBTGraphAsset();
             IsBTEnable = false;
         }
@@ -123,9 +127,15 @@ namespace LuaBehaviourTree
         /// <param name="assetname"></param>
         public void LoadBTGraphAsset(string assetname)
         {
+            // 隐藏加载AI时可能没有得到正确的InstanceID
+            if (InstanceID == 0)
+            {
+                InstanceID = gameObject.GetInstanceID();
+            }
             ReleaseBTGraphAsset();
             BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
             BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
+            BTOriginalGraph.Init();
             // TODO: 根据原始数据构建运行时BTGraph数据
             BTRunningGraph = new BTGraph();
             BTRunningGraph.SetBTOwner(this);
@@ -137,10 +147,6 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public bool ReleaseBTGraphAsset()
         {
-            if(IsStart)
-            {
-                TBehaviourTreeManager.getInstance().UnregisterTBhaviourTree(this);
-            }
             if (BTGraphAsset != null)
             {
                 BTGraphAsset = null;
@@ -170,6 +176,14 @@ namespace LuaBehaviourTree
         public void Resume()
         {
             IsPaused = false;
+        }
+
+        /// <summary>
+        /// 中断行为树
+        /// </summary>
+        public void Abort()
+        {
+            BTRunningGraph?.DoAbortBehaviourTree();
         }
     }
 }

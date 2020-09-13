@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\Editor\BTNodeData.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\Editor\BTNodeEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\AssetProcesserHook\ScriptKeywordProcesser.cs" />
+    <Compile Include="Assets\Scripts\Editor\EditorUtilities.cs" />
     <Compile Include="Assets\Scripts\Editor\Lua\FieldOrPropertyInfo.cs" />
     <Compile Include="Assets\Scripts\Editor\Lua\GenerateLuaApi.cs" />
     <Compile Include="Assets\Scripts\Editor\Lua\LuaToolsWindow.cs" />

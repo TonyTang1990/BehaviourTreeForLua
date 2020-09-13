@@ -37,7 +37,8 @@ namespace LuaBehaviourTree
             if (NodeRunningState != EBTNodeRunningState.Invalide)
             {
                 base.Reset();
-                ChildNode.Reset();
+                // 不负责子节点的重置，避免子节点状态异常
+                //ChildNode.Reset();
             }
         }
 

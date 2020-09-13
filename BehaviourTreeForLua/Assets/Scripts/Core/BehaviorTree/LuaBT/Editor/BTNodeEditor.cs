@@ -86,7 +86,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 操作选择面板宽度
         /// </summary>
-        private const float ToolBarWidth = 300.0f;
+        private const float ToolBarWidth = 250.0f;
 
         /// <summary>
         /// 操作选择面板高度
@@ -101,12 +101,12 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 操作选择面板宽度
         /// </summary>
-        private const float InspectorWindowWidth = 300.0f;
+        private const float InspectorWindowWidth = 250.0f;
 
         /// <summary>
         /// 操作选择面板高度
         /// </summary>
-        private const float InspectorWindowHeight = 2000.0f;
+        private float InspectorWindowHeight = 2000.0f;
         #endregion
 
         #region 节点操作区域
@@ -144,11 +144,6 @@ namespace LuaBehaviourTree
         /// 当前选择的行为树图TextAsset
         /// </summary>
         private TextAsset mCurrentSelectionBTGraphAsset;
-
-        /// <summary>
-        /// 当前选择的行为树Asset原始名字
-        /// </summary>
-        private string mCurrentSelectionBTGraphAssetOriginalName;
 
         /// <summary>
         /// 当前窗口滚动位置
@@ -258,9 +253,19 @@ namespace LuaBehaviourTree
         private BTGraph mCurrentSelectionBTGraph;
 
         /// <summary>
+        /// 当前选择的行为树Asset原始名字
+        /// </summary>
+        private string mCurrentSelectionBTGraphAssetOriginalName;
+
+        /// <summary>
         /// 所有已经使用的节点UID映射Map(Key为已使用的UID，Value为已使用的UID)
         /// </summary>
         private Dictionary<int, int> AllUsedNodeUIDMap;
+
+        /// <summary>
+        /// 需要删除的UID列表
+        /// </summary>
+        private List<int> mNeedDeletedUIDList;
         #endregion
 
         [MenuItem("TonyTang/AI/BTNodeEditor")]
@@ -296,8 +301,6 @@ namespace LuaBehaviourTree
         private void OnEnable()
         {
             Debug.Log($"BTNodeEditor:OnEnable()");
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChange;
-            EditorApplication.playModeStateChanged += OnPlayModeStateChange;
             mNodeTypeColorMap = new Dictionary<EBTNodeType, Color>();
             mNodeTypeColorMap.Add(EBTNodeType.EntryNodeType, Color.white);
             mNodeTypeColorMap.Add(EBTNodeType.ActionNodeType, Color.red);
@@ -317,6 +320,7 @@ namespace LuaBehaviourTree
             mNormalCurveColor = Color.blue;
             mRunningCurveColor = Color.green;
             AllUsedNodeUIDMap = new Dictionary<int, int>();
+            mNeedDeletedUIDList = new List<int>();
             // UID二次防御检测，以防万一
             ReadAllNodesUID();
             InitMenu();
@@ -356,32 +360,6 @@ namespace LuaBehaviourTree
         private void OnDestroy()
         {
             Debug.Log($"BTNodeEditor:OnDestroy()");
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChange;
-        }
-
-        /// <summary>
-        /// 响应播放状态改变
-        /// </summary>
-        /// <param name="state"></param>
-        private static void OnPlayModeStateChange(PlayModeStateChange state)
-        {
-            Debug.Log($"PlayModeStateChange:{state}");
-            if (state == PlayModeStateChange.ExitingPlayMode)
-            {
-
-            }
-            else if (state == PlayModeStateChange.EnteredPlayMode)
-            {
-
-            }
-        }
-        
-        /// <summary>
-        /// 打印Key和Value
-        /// </summary>
-        private static void PrintKeyValue(string key, string value)
-        {
-            Debug.Log($"Key:{key} Value:{value}");
         }
         
         /// <summary>
@@ -395,26 +373,7 @@ namespace LuaBehaviourTree
                 if(selectionasset is TextAsset)
                 {
                     var selectiontextasset = selectionasset as TextAsset;
-                    var assetpath = AssetDatabase.GetAssetPath(selectiontextasset);
-                    if (assetpath.EndsWith(".json"))
-                    {
-                        var btgrapshdata = JsonUtility.FromJson<BTGraph>(selectiontextasset.text);
-                        if (btgrapshdata == null)
-                        {
-                            Debug.Log($"选中的是非BTGraph的Json数据，不处理!");
-                            return;
-                        }
-                        ReadAllNodesUID();
-                        mCurrentSelectionBTGraph = btgrapshdata;
-                        mCurrentSelectionBTGraphAsset = selectiontextasset;
-                        mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                        var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
-                        Debug.Log($"非运行时选中的Asset:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
-                    }
-                    else
-                    {
-                        Debug.Log($"选中的是非Json数据，不处理!");
-                    }
+                    LoadBTAsset(selectiontextasset);
                 }
                 else if(selectionasset is GameObject)
                 {
@@ -452,19 +411,48 @@ namespace LuaBehaviourTree
             }
         }
 
+        /// <summary>
+        /// 加载行为树Asset
+        /// </summary>
+        /// <param name="asset"></param>
+        private void LoadBTAsset(TextAsset asset)
+        {
+            var assetpath = AssetDatabase.GetAssetPath(asset);
+            if (assetpath.EndsWith(".json"))
+            {
+                var btgrapshdata = JsonUtility.FromJson<BTGraph>(asset.text);
+                if (btgrapshdata == null)
+                {
+                    Debug.Log($"选中的是非BTGraph的Json数据，不处理!");
+                    return;
+                }
+                ReadAllNodesUID();
+                mCurrentSelectionBTGraph = btgrapshdata;
+                mCurrentSelectionBTGraph.Init();
+                mCurrentSelectionBTGraphAsset = asset;
+                mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
+                var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                Debug.Log($"非运行时选中的Asset:{asset.name} AssetPath:{currentselectionbtnodeassetpath}!");
+            }
+            else
+            {
+                Debug.Log($"选中的是非Json数据，不处理!");
+            }
+        }
+
         private void OnInspectorUpdate()
         {
-            if(Application.isPlaying)
-            {
-                Repaint();
-            }
+            Repaint();
         }
 
         private void OnGUI()
         {
+            InspectorWindowHeight = position.height;
+            mInspectorRect.height = InspectorWindowHeight - mToolBarRect.height;
             mLableAlignMiddleStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             mLableAlignLeftStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperLeft };
-            if (mCurrentSelectionBTGraph != null)
+            // mCurrentSelectionBTGraph.RootNodeUID在运行时选中查看AI对象后关闭运行会导致为0
+            if (mCurrentSelectionBTGraph != null && mCurrentSelectionBTGraph.RootNodeUID != 0)
             {
                 HandleInteraction();
                 DrawOperationPanel();
@@ -474,14 +462,6 @@ namespace LuaBehaviourTree
             {
                 EditorGUILayout.LabelField("未选中有效行为树节点或文件!", mLableAlignMiddleStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             }
-        }
-
-        /// <summary>
-        /// 绘制等待提示
-        /// </summary>
-        private void DrawWaitTips()
-        {
-            EditorGUILayout.LabelField("请耐心等待!", mLableAlignMiddleStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
         }
 
         /// <summary>
@@ -551,6 +531,7 @@ namespace LuaBehaviourTree
             if (mToolBarSelectIndex == 0)
             {
                 EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorUtilities.DisplayDIYGUILable("操作面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("行为树名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
                 mCurrentSelectionBTGraph.BTFileName = EditorGUILayout.TextField(mCurrentSelectionBTGraph.BTFileName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
@@ -571,7 +552,14 @@ namespace LuaBehaviourTree
                     {
                         if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
                         {
-                            TrySaveBTAsset();
+                            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
+                            {
+                                TrySaveBTAsset();
+                            }
+                            else
+                            {
+                                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                            }
                         }
                     }
                 }
@@ -597,6 +585,24 @@ namespace LuaBehaviourTree
                     }
                 }
                 EditorGUILayout.EndVertical();
+                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.Height(mInspectorRect.height / 2));
+                EditorUtilities.DisplayDIYGUILable("调试面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
+                IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                if (IsDebugMode && Application.isPlaying)
+                {
+                    if (mCurrentSelectionBTGraph != null)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("运行节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        GUILayout.Label(mCurrentSelectionBTGraph.ExecutingNodesMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("需要重新评估节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        GUILayout.Label(mCurrentSelectionBTGraph.ExecutedReevaluatedNodesResultMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        EditorGUILayout.EndHorizontal();
+                    }
+                }
+                EditorGUILayout.EndVertical();
             }
             else if (mToolBarSelectIndex == 1)
             {
@@ -612,6 +618,9 @@ namespace LuaBehaviourTree
                     EditorGUILayout.LabelField("节点参数说明:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                     var nodeparamintroduction = GetNodeParamsIntroduction(mCurrentClickNode);
                     GUILayout.Label(nodeparamintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
+                     EditorGUILayout.LabelField("节点介绍:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                    var nodeintroduction = GetNodeIntroduction(mCurrentClickNode);
+                    GUILayout.Label(nodeintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
                     EditorGUILayout.EndVertical();
                 }
                 else
@@ -633,7 +642,7 @@ namespace LuaBehaviourTree
                 // 检查行为树的有效性
                 if (IsValideTree())
                 {
-                    if(!mCurrentSelectionBTGraphAssetOriginalName.Equals(mCurrentSelectionBTGraph.BTFileName))
+                    if (string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetOriginalName) == false && !mCurrentSelectionBTGraph.BTFileName.Equals(mCurrentSelectionBTGraphAssetOriginalName))
                     {
                         // 文件名有变化，自动删除老的文件
                         var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
@@ -641,6 +650,7 @@ namespace LuaBehaviourTree
                         AssetDatabase.DeleteAsset(oldbtgraphassetpath);
                     }
                     var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                    var newbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraph.BTFileName}.json";
                     var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
                     var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
                     mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraph.BTFileName;
@@ -652,6 +662,8 @@ namespace LuaBehaviourTree
                     Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
+                    mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(newbtgraphassetpath);
+                    LoadBTAsset(mCurrentSelectionBTGraphAsset);
                     return true;
                 }
                 else
@@ -677,7 +689,7 @@ namespace LuaBehaviourTree
             var rootnode = new BTNode(GetNodeRect(new Vector2(ToolBarWidth, 50.0f)), 0, "Root", EBTNodeType.EntryNodeType, null, AllUsedNodeUIDMap);
             mCurrentSelectionBTGraph = new BTGraph(DefaultBTGrapshFileName, rootnode);
             mCurrentSelectionBTGraphAsset = null;
-            mCurrentSelectionBTGraphAssetOriginalName = "";
+            mCurrentSelectionBTGraphAssetOriginalName = DefaultBTGrapshFileName;
         }
 
         /// <summary>
@@ -724,6 +736,129 @@ namespace LuaBehaviourTree
                     else
                     {
                         return "请在BTNodeData.cs BTConditionNodeParamsIntroArray里添加对应介绍!";
+                    }
+                }
+                else
+                {
+                    return $"找不到节点名:{btnode.NodeName}定义";
+                }
+            }
+            else if (btnode.NodeType == (int)EBTNodeType.DecorationNodeType)
+            {
+                var index = Array.FindIndex<string>(BTNodeData.BTDecorationNodeNameArray, (name) =>
+                {
+                    return name.Equals(btnode.NodeName);
+                });
+                if (index != -1)
+                {
+                    if (index < BTNodeData.BTDecorationNodeParamsIntroArray.Length)
+                    {
+                        return BTNodeData.BTDecorationNodeParamsIntroArray[index];
+                    }
+                    else
+                    {
+                        return "请在BTNodeData.cs BTDecorationNodeParamsIntroArray里添加对应介绍!";
+                    }
+                }
+                else
+                {
+                    return $"找不到节点名:{btnode.NodeName}定义";
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// 获取指定节点介绍
+        /// </summary>
+        /// <param name="btnode"></param>
+        /// <returns></returns>
+        private string GetNodeIntroduction(BTNode btnode)
+        {
+            if (btnode.NodeType == (int)EBTNodeType.CompositeNodeType)
+            {
+                var index = Array.FindIndex<string>(BTNodeData.BTCompositeNodeNameArray, (name) =>
+                {
+                    return name.Equals(btnode.NodeName);
+                });
+                if (index != -1)
+                {
+                    if (index < BTNodeData.BTCompositeNodeIntroArray.Length)
+                    {
+                        return BTNodeData.BTCompositeNodeIntroArray[index];
+                    }
+                    else
+                    {
+                        return "请在BTNodeData.cs BTCompositeNodeIntroArray里添加对应介绍!";
+                    }
+                }
+                else
+                {
+                    return $"找不到节点名:{btnode.NodeName}定义";
+                }
+            }
+            else if (btnode.NodeType == (int)EBTNodeType.ActionNodeType)
+            {
+                var index = Array.FindIndex<string>(BTNodeData.BTActionNodeNameArray, (name) =>
+                {
+                    return name.Equals(btnode.NodeName);
+                });
+                if (index != -1)
+                {
+                    if (index < BTNodeData.BTActionNodeIntroArray.Length)
+                    {
+                        return BTNodeData.BTActionNodeIntroArray[index];
+                    }
+                    else
+                    {
+                        return "请在BTNodeData.cs BTActionNodeIntroArray里添加对应介绍!";
+                    }
+                }
+                else
+                {
+                    return $"找不到节点名:{btnode.NodeName}定义";
+                }
+            }
+            else if (btnode.NodeType == (int)EBTNodeType.ConditionNodeType)
+            {
+                var index = Array.FindIndex<string>(BTNodeData.BTConditionNodeNameArray, (name) =>
+                {
+                    return name.Equals(btnode.NodeName);
+                });
+                if (index != -1)
+                {
+                    if (index < BTNodeData.BTConditionNodeIntroArray.Length)
+                    {
+                        return BTNodeData.BTConditionNodeIntroArray[index];
+                    }
+                    else
+                    {
+                        return "请在BTNodeData.cs BTConditionNodeIntroArray里添加对应介绍!";
+                    }
+                }
+                else
+                {
+                    return $"找不到节点名:{btnode.NodeName}定义";
+                }
+            }
+            else if (btnode.NodeType == (int)EBTNodeType.DecorationNodeType)
+            {
+                var index = Array.FindIndex<string>(BTNodeData.BTDecorationNodeNameArray, (name) =>
+                {
+                    return name.Equals(btnode.NodeName);
+                });
+                if (index != -1)
+                {
+                    if (index < BTNodeData.BTDecorationNodeIntroArray.Length)
+                    {
+                        return BTNodeData.BTDecorationNodeIntroArray[index];
+                    }
+                    else
+                    {
+                        return "请在BTNodeData.cs BTDecorationNodeIntroArray里添加对应介绍!";
                     }
                 }
                 else
@@ -881,7 +1016,7 @@ namespace LuaBehaviourTree
             if (IsDebugMode)
             {
                 EditorGUILayout.BeginVertical("box");
-                EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}-状态:{btnode.NodeRunningState.ToString()}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+                EditorGUILayout.LabelField($"{GetNodeTypeName((EBTNodeType)btnode.NodeType)}-状态:{btnode.LastNodeRunningState.ToString()}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.BeginVertical("box");
                 EditorGUILayout.LabelField($"UID:{btnode.UID}", mLableAlignMiddleStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
@@ -1017,37 +1152,40 @@ namespace LuaBehaviourTree
         /// <param name="operationnode"></param>
         private void AddAllAvalibleReplaceBTNodeMenu(GenericMenu menu, BTNode operationnode)
         {
-            // 替换节点只允许替换同类型节点
-            string validereplacetypename = "";
-            string[] validereplacenodenamearray = null;
-            if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
+    if (operationnode != null)
+    {
+        // 替换节点只允许替换同类型节点
+        string validereplacetypename = "";
+        string[] validereplacenodenamearray = null;
+        if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
+        {
+            validereplacetypename = "行为节点";
+            validereplacenodenamearray = BTNodeData.BTActionNodeNameArray;
+        }
+        else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
+        {
+            validereplacetypename = "组合节点";
+            validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
+        }
+        else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
+        {
+            validereplacetypename = "条件节点";
+            validereplacenodenamearray = BTNodeData.BTConditionNodeNameArray;
+        }
+        else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
+        {
+            validereplacetypename = "装饰节点";
+            validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
+        }
+        if (string.IsNullOrEmpty(validereplacetypename) == false)
+        {
+            foreach (var nodename in validereplacenodenamearray)
             {
-                validereplacetypename = "行为节点";
-                validereplacenodenamearray = BTNodeData.BTActionNodeNameArray;
+                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
+                menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);
             }
-            else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
-            {
-                validereplacetypename = "组合节点";
-                validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
-            }
-            else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
-            {
-                validereplacetypename = "条件节点";
-                validereplacenodenamearray = BTNodeData.BTConditionNodeNameArray;
-            }
-            else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
-            {
-                validereplacetypename = "装饰节点";
-                validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
-            }
-            if (string.IsNullOrEmpty(validereplacetypename) == false)
-            {
-                foreach (var nodename in validereplacenodenamearray)
-                {
-                    var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
-                    menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);
-                }
-            }
+        }
+    }
         }
 
         /// <summary>
@@ -1268,9 +1406,17 @@ namespace LuaBehaviourTree
         private void OnDeleteBTNode(object deletednode)
         {
             var node = deletednode as BTNode;
-            mCurrentSelectionBTGraph.DeleteNode(node);
+            mNeedDeletedUIDList.Clear();
+            mNeedDeletedUIDList.Add(node.UID);
+            mCurrentSelectionBTGraph.DeleteNode(node, mNeedDeletedUIDList);
+            foreach (var deleteuid in mNeedDeletedUIDList)
+            {
+                AllUsedNodeUIDMap.Remove(deleteuid);
+                //Debug.Log($"删除UID:{deleteuid}的使用!");
+            }
+            mNeedDeletedUIDList.Clear();
             Debug.Log($"OnDeleteBTNode({node.NodeName})");
-        }
+}
         #endregion
     }
 }

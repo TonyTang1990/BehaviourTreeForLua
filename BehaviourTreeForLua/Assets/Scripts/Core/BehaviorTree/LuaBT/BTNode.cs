@@ -124,6 +124,17 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 节点前一次运行状态
+        /// Note：
+        /// 解决节点OnExit退出后导致状态重置无法正确查看前一次状态问题(用于Editor查看状态用)
+        /// </summary>
+        public EBTNodeRunningState LastNodeRunningState
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// 是否处于运行中
         /// </summary>
         public bool IsRunning
@@ -177,6 +188,7 @@ namespace LuaBehaviourTree
             ParentNodeUID = parentnode != null ? parentnode.UID : 0;
             ChildNodesUIDList = new List<int>();
             NodeRunningState = EBTNodeRunningState.Invalide;
+            LastNodeRunningState = EBTNodeRunningState.Invalide;
         }
 
         #region 运行时部分
@@ -191,6 +203,7 @@ namespace LuaBehaviourTree
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
             NodeRunningState = EBTNodeRunningState.Invalide;
+            LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = btowner;
             ParentNode = parentnode;
             InstanceID = instanceid;
@@ -208,6 +221,7 @@ namespace LuaBehaviourTree
             ParentNodeUID = 0;
             ChildNodesUIDList = null;
             NodeRunningState = EBTNodeRunningState.Invalide;
+            LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = null;
             ParentNode = null;
         }
@@ -266,6 +280,7 @@ namespace LuaBehaviourTree
                 OnEnter();
             }
             NodeRunningState = OnExecute();
+            LastNodeRunningState = NodeRunningState;
             if (CanReevaluate())
             {
                 UpdateExecutedReevaluatedNodeResult(NodeRunningState);
@@ -279,11 +294,21 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 响应暂停
+        /// </summary>
+        /// <param name="ispause"></param>
+        public virtual void OnPause(bool ispause)
+        {
+
+        }
+
+        /// <summary>
         /// 重置节点状态
         /// </summary>
         public virtual void Reset()
         {
             Debug.Log(string.Format("重置节点:{0}", NodeName));
+            LastNodeRunningState = NodeRunningState;
             NodeRunningState = EBTNodeRunningState.Invalide;
         }
         
@@ -310,6 +335,7 @@ namespace LuaBehaviourTree
         protected virtual void OnExit()
         {
             // 节点判定完成(成功或失败)时做一些事情
+            Reset();
         }
 
         /// <summary>

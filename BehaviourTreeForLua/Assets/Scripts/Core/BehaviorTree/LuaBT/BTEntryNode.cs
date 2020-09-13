@@ -27,29 +27,15 @@ namespace LuaBehaviourTree
             {
                 ChildNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.FindNodeByUID(node.ChildNodesUIDList[0]), btowner, this, instanceid);
             }
-        }
-
-        /// <summary>
-        /// 节点更新
-        /// </summary>
-        /// <returns></returns>
-        public override EBTNodeRunningState OnUpdate()
-        {
-            // 入口节点强制进入Enter，为了将根节点添加到执行节点里
-            OnEnter();
-            EBTNodeRunningState result = EBTNodeRunningState.Invalide;
-            if (ChildNode != null)
-            {
-                result =  ChildNode.OnUpdate();
-            }
             else
             {
-                result = EBTNodeRunningState.Success;
+                Debug.LogError($"根节点至少且必须要有一个子节点!");
             }
-            NodeRunningState = result;
-            return result;
         }
-
-
+        
+        protected override EBTNodeRunningState OnExecute()
+        {
+            return ChildNode.OnUpdate();
+        }
     }
 }

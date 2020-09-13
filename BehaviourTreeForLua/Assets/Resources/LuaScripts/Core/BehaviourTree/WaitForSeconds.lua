@@ -38,10 +38,8 @@ end
 function WaitForSeconds:OnExecute()
     _G.LuaBTActionNode.OnExecute(self)
     print(string.format("WaitForSeconds:OnExecute() 节点UID:%s WaitForSeconds参数:%s", self.CSBTNode.UID, self.WaitTime))
-    if distance > 0.5 then
-        local targetdir = (self.TargetPosition - self.Go.transform.position).normalized
-        --print(string.format("targetdir:%s", targetdir:ToString()))
-        self.Go.transform:Translate(targetdir * CS.UnityEngine.Time.deltaTime)
+    if self.TimePassed < self.WaitTime then
+        self.TimePassed = self.TimePassed + CS.UnityEngine.Time.deltaTime
         return _G.EBTNodeRunningState.Running
     else
         return _G.EBTNodeRunningState.Success
@@ -58,7 +56,7 @@ end
 function WaitForSeconds:Dispose()
     _G.LuaBTActionNode.Dispose(self)
     print(string.format("WaitForSeconds:Dispose() 节点UID:%s WaitForSeconds参数:%s", self.CSBTNode.UID, self.WaitTime))
-    self.TargetPosition = nil
+    self.WaitTime = nil
     self.TimePassed = nil
 end
 
