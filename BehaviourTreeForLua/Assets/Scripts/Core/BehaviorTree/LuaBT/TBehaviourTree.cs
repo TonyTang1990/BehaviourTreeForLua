@@ -78,6 +78,11 @@ namespace LuaBehaviourTree
             protected set;
         }
 
+        /// <summary>
+        /// 等待加载的行为树Asset(用于解决默认隐藏状态下加载无法正确触发OnDestroy导致无法正确释放资源问题)
+        /// </summary>
+        private string mWaitLoadedAssetName;
+
         private void Awake()
         {
             InstanceID = gameObject.GetInstanceID();
@@ -93,6 +98,11 @@ namespace LuaBehaviourTree
         private void OnEnable()
         {
             IsBTEnable = true;
+            if (string.IsNullOrEmpty(mWaitLoadedAssetName) == false)
+            {
+                LoadBTGraphAsset(mWaitLoadedAssetName);
+                mWaitLoadedAssetName = null;
+            }
         }
 
         private void OnDisable()
@@ -127,18 +137,28 @@ namespace LuaBehaviourTree
         /// <param name="assetname"></param>
         public void LoadBTGraphAsset(string assetname)
         {
-            // 隐藏加载AI时可能没有得到正确的InstanceID
-            if (InstanceID == 0)
+            if (gameObject.activeInHierarchy)
             {
-                InstanceID = gameObject.GetInstanceID();
+                // 隐藏加载AI时可能没有得到正确的InstanceID
+                if (InstanceID == 0)
+                {
+                    InstanceID = gameObject.GetInstanceID();
+                }
+                ReleaseBTGraphAsset();
+                BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
+                BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
+                BTOriginalGraph.Init();
+                // TODO: 根据原始数据构建运行时BTGraph数据
+                BTRunningGraph = new BTGraph();
+                BTRunningGraph.SetBTOwner(this);
             }
-            ReleaseBTGraphAsset();
-            BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
-            BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
-            BTOriginalGraph.Init();
-            // TODO: 根据原始数据构建运行时BTGraph数据
-            BTRunningGraph = new BTGraph();
-            BTRunningGraph.SetBTOwner(this);
+            else
+            {
+                // 隐藏状态下需要等待显示后再加载，
+                //避免默认隐藏状态下直接销毁OnDestroy不会进，无法正确释放已加载的行为树
+                Debug.Log($"实体对象:{gameObject.name}处于不显示状态，等待显示后再加载行为树:{assetname}");
+                mWaitLoadedAssetName = assetname;
+            }
         }
 
         /// <summary>
