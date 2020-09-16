@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\CSBT\RepeatDecorationNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\CSBT\SelectorNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\CSBT\SequenceNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\Blackboard.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTActionNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTBaseParalNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCompositionNode.cs" />

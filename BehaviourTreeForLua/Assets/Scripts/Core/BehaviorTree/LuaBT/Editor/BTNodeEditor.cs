@@ -71,7 +71,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 操作面板
         /// </summary>
-        private string[] mToolBarStrings = { "总面板", "参数面板" };
+        private string[] mToolBarStrings = { "总面板", "参数面板", "动态变量" };
 
         /// <summary>
         /// 操作面板选择索引
@@ -101,7 +101,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 操作选择面板宽度
         /// </summary>
-        private const float InspectorWindowWidth = 250.0f;
+        private const float InspectorWindowWidth = ToolBarWidth;
 
         /// <summary>
         /// 操作选择面板高度
@@ -244,6 +244,16 @@ namespace LuaBehaviourTree
         /// 当前节点创建插入测流
         /// </summary>
         private ECreateNodeStrategy mCurrentCreateNodeStrategy = ECreateNodeStrategy.ToEnd;
+
+        /// <summary>
+        /// 当前设置的变量名
+        /// </summary>
+        private string mCurrentVariableName = string.Empty;
+
+        /// <summary>
+        /// 当前选中的变量类型
+        /// </summary>
+        private EVariableType mCurrentSelectedVariableType = EVariableType.Bool;
         #endregion
 
         #region 数据存储
@@ -268,7 +278,7 @@ namespace LuaBehaviourTree
         private List<int> mNeedDeletedUIDList;
         #endregion
 
-        [MenuItem("TonyTang/AI/BTNodeEditor")]
+        [MenuItem("TonyTang/AI/行为树编辑器")]
         static void ShowEditor()
         {
             BTNodeEditor btnodeeditor = EditorWindow.GetWindow<BTNodeEditor>("行为树编辑器");
@@ -527,108 +537,167 @@ namespace LuaBehaviourTree
         /// </summary>
         private void DrawSelectTollBarInspector()
         {
-            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
             if (mToolBarSelectIndex == 0)
             {
-                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                EditorUtilities.DisplayDIYGUILable("操作面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("行为树名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                mCurrentSelectionBTGraph.BTFileName = EditorGUILayout.TextField(mCurrentSelectionBTGraph.BTFileName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                EditorGUILayout.EndHorizontal();
-                if (mCurrentSelectionBTGraphAsset != null)
-                {
-                    if (Application.isPlaying == false)
-                    {
-                        if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
-                        {
-                            TrySaveBTAsset();
-                        }
-                    }
-                }
-                else
-                {
-                    if (Application.isPlaying == false)
-                    {
-                        if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
-                        {
-                            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
-                            {
-                                TrySaveBTAsset();
-                            }
-                            else
-                            {
-                                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
-                            }
-                        }
-                    }
-                }
-                IsEnableMoveWithChildNodes = EditorGUILayout.Toggle("子节点一起移动开关:", IsEnableMoveWithChildNodes, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                mCurrentCreateNodeStrategy = (ECreateNodeStrategy)EditorGUILayout.EnumPopup("节点添加策略:", mCurrentCreateNodeStrategy, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                if (GUILayout.Button("新建", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
-                {
-                    if(EditorUtility.DisplayDialog("行为树保存", "是否保存之前的行为树!", "确认", "取消"))
-                    {
-                        if(TrySaveBTAsset())
-                        {
-                            CreateNewBTAsset();
-                        }
-                        else
-                        {
-                            Debug.LogError($"保存失败!无法新建行为树,请先修复保存报错!");
-                        }
-                    }
-                    else
-                    {
-                        CreateNewBTAsset();
-                    }
-                }
-                EditorGUILayout.EndVertical();
-                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.Height(mInspectorRect.height / 2));
-                EditorUtilities.DisplayDIYGUILable("调试面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
-                IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                if (IsDebugMode && Application.isPlaying)
-                {
-                    if (mCurrentSelectionBTGraph != null)
-                    {
-                        EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("运行节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                        GUILayout.Label(mCurrentSelectionBTGraph.ExecutingNodesMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                        EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("需要重新评估节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                        GUILayout.Label(mCurrentSelectionBTGraph.ExecutedReevaluatedNodesResultMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                        EditorGUILayout.EndHorizontal();
-                    }
-                }
-                EditorGUILayout.EndVertical();
+                DrawUserOperationPanel();
             }
             else if (mToolBarSelectIndex == 1)
             {
-                if (mCurrentClickNode != null)
+                DrawParamsPanel();
+            }
+            else if(mToolBarSelectIndex == 2)
+            {
+                DrawVariablesPanel();
+            }
+        }
+
+        /// <summary>
+        /// 绘制用户操作面板
+        /// </summary>
+        private void DrawUserOperationPanel()
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            EditorUtilities.DisplayDIYGUILable("操作面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("行为树名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            mCurrentSelectionBTGraph.BTFileName = EditorGUILayout.TextField(mCurrentSelectionBTGraph.BTFileName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            EditorGUILayout.EndHorizontal();
+            if (mCurrentSelectionBTGraphAsset != null)
+            {
+                if (Application.isPlaying == false)
                 {
-                    EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField("节点名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                    GUILayout.Label(mCurrentClickNode != null ? mCurrentClickNode.NodeName : string.Empty, "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                    EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.LabelField("节点参数:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                    mCurrentClickNode.NodeParams = GUILayout.TextField(mCurrentClickNode.NodeParams, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                    EditorGUILayout.LabelField("节点参数说明:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                    var nodeparamintroduction = GetNodeParamsIntroduction(mCurrentClickNode);
-                    GUILayout.Label(nodeparamintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
-                     EditorGUILayout.LabelField("节点介绍:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                    var nodeintroduction = GetNodeIntroduction(mCurrentClickNode);
-                    GUILayout.Label(nodeintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
-                    EditorGUILayout.EndVertical();
+                    if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                    {
+                        TrySaveBTAsset();
+                    }
+                }
+            }
+            else
+            {
+                if (Application.isPlaying == false)
+                {
+                    if (GUILayout.Button("导出", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                    {
+                        if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
+                        {
+                            TrySaveBTAsset();
+                        }
+                        else
+                        {
+                            Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                        }
+                    }
+                }
+            }
+            IsEnableMoveWithChildNodes = EditorGUILayout.Toggle("子节点一起移动开关:", IsEnableMoveWithChildNodes, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+            IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+            mCurrentCreateNodeStrategy = (ECreateNodeStrategy)EditorGUILayout.EnumPopup("节点添加策略:", mCurrentCreateNodeStrategy, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+            if (GUILayout.Button("新建", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+            {
+                if (EditorUtility.DisplayDialog("行为树保存", "是否保存之前的行为树!", "确认", "取消"))
+                {
+                    if (TrySaveBTAsset())
+                    {
+                        CreateNewBTAsset();
+                    }
+                    else
+                    {
+                        Debug.LogError($"保存失败!无法新建行为树,请先修复保存报错!");
+                    }
                 }
                 else
                 {
-                    EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                    EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-                    EditorGUILayout.EndVertical();
+                    CreateNewBTAsset();
                 }
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.Height(mInspectorRect.height / 2));
+            EditorUtilities.DisplayDIYGUILable("调试面板", Color.yellow, 0, ToolBarWidth - 10, 20.0f);
+            IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+            if (IsDebugMode && Application.isPlaying)
+            {
+                if (mCurrentSelectionBTGraph != null)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("运行节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                    GUILayout.Label(mCurrentSelectionBTGraph.ExecutingNodesMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("需要重新评估节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                    GUILayout.Label(mCurrentSelectionBTGraph.ExecutedReevaluatedNodesResultMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// 绘制参数面板
+        /// </summary>
+        private void DrawParamsPanel()
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            if (mCurrentClickNode != null)
+            {
+                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("节点名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                GUILayout.Label(mCurrentClickNode != null ? mCurrentClickNode.NodeName : string.Empty, "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.LabelField("节点参数:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                mCurrentClickNode.NodeParams = GUILayout.TextField(mCurrentClickNode.NodeParams, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                EditorGUILayout.LabelField("节点参数说明:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                var nodeparamintroduction = GetNodeParamsIntroduction(mCurrentClickNode);
+                GUILayout.Label(nodeparamintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
+                EditorGUILayout.LabelField("节点介绍:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                var nodeintroduction = GetNodeIntroduction(mCurrentClickNode);
+                GUILayout.Label(nodeintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
+                EditorGUILayout.EndVertical();
+            }
+            else
+            {
+                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                EditorGUILayout.EndVertical();
+            }
+        }
+
+        /// <summary>
+        /// 绘制变量面板
+        /// </summary>
+        private void DrawVariablesPanel()
+        {
+            if (mCurrentSelectionBTGraphAsset != null)
+            {
+                var toolbarwidth = ToolBarWidth / mToolBarStrings.Length - 10;
+                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("参数名:", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f));
+                mCurrentVariableName = GUILayout.TextField(mCurrentVariableName, GUILayout.Width(ToolBarWidth - toolbarwidth - 20), GUILayout.Height(20.0f));
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("类型:", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f));
+                mCurrentSelectedVariableType = (EVariableType)EditorGUILayout.EnumPopup("", mCurrentSelectedVariableType, GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f));
+                if (Application.isPlaying == false)
+                {
+                    if (GUILayout.Button("添加", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f)))
+                    {
+
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+                if(mCurrentSelectionBTGraph.AllVariableDefinitionMap != null)
+                {
+                    var keys = new List<string>(mCurrentSelectionBTGraph.AllVariableDefinitionMap.Keys);
+                }
+                EditorGUILayout.EndVertical();
+            }
+            else
+            {
+                EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                EditorGUILayout.EndVertical();
             }
         }
 

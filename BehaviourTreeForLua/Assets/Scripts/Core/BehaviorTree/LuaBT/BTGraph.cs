@@ -17,6 +17,17 @@ using UnityEngine;
 namespace LuaBehaviourTree
 {
     /// <summary>
+    /// 变量类型枚举
+    /// </summary>
+    public enum EVariableType
+    {
+        Bool = 1,           // bool类型
+        String,             // string类型
+        Float,              // float类型
+        Int,                // int类型
+    }
+
+    /// <summary>
     /// BTGraph.cs
     /// 行为树图抽象
     /// </summary>
@@ -37,6 +48,11 @@ namespace LuaBehaviourTree
         /// 所有的节点数据
         /// </summary>
         public List<BTNode> AllNodesList;
+        
+        /// <summary>
+        /// 所有变量定义Map
+        /// </summary>
+        public Dictionary<string, EVariableType> AllVariableDefinitionMap;
 
         /// <summary>
         /// 根节点
@@ -90,6 +106,15 @@ namespace LuaBehaviourTree
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// 数据共享黑板
+        /// </summary>
+        public Blackboard BTBlackBoard
+        {
+            get;
+            set;
         }
 
         /// <summary>
