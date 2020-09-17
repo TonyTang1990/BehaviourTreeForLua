@@ -673,7 +673,7 @@ namespace LuaBehaviourTree
                 var toolbarwidth = ToolBarWidth / mToolBarStrings.Length - 10;
                 EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("参数名:", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f));
+                EditorGUILayout.LabelField("变量名:", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f));
                 mCurrentVariableName = GUILayout.TextField(mCurrentVariableName, GUILayout.Width(ToolBarWidth - toolbarwidth - 20), GUILayout.Height(20.0f));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
@@ -683,13 +683,43 @@ namespace LuaBehaviourTree
                 {
                     if (GUILayout.Button("添加", GUILayout.Width(toolbarwidth), GUILayout.Height(20.0f)))
                     {
-
+                        if (string.IsNullOrEmpty(mCurrentVariableName) == false)
+                        {
+                            if (mCurrentSelectionBTGraph.IsVariableNameAvalible(mCurrentVariableName))
+                            {
+                                var customvariabledata = mCurrentSelectionBTGraph.GetVariableDefaultValue(mCurrentVariableName, mCurrentSelectedVariableType);
+                                mCurrentSelectionBTGraph.AddCustomVariableData(customvariabledata);
+                            }
+                            else
+                            {
+                                Debug.LogError($"变量名已存在不可重复定义!");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError($"不允许设置空的变量名!");
+                        }
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                if(mCurrentSelectionBTGraph.AllVariableDefinitionMap != null)
+                if(mCurrentSelectionBTGraph.AllBoolVariableDataList != null)
                 {
-                    var keys = new List<string>(mCurrentSelectionBTGraph.AllVariableDefinitionMap.Keys);
+                    for(int i = 0, length = mCurrentSelectionBTGraph.AllBoolVariableDataList.Count; i < length; i++)
+                    {
+                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllBoolVariableDataList[i]);
+                    }
+                    for (int i = 0, length = mCurrentSelectionBTGraph.AllIntVariableDataList.Count; i < length; i++)
+                    {
+                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllIntVariableDataList[i]);
+                    }
+                    for (int i = 0, length = mCurrentSelectionBTGraph.AllFloatVariableDataList.Count; i < length; i++)
+                    {
+                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllFloatVariableDataList[i]);
+                    }
+                    for (int i = 0, length = mCurrentSelectionBTGraph.AllStringVariableDataList.Count; i < length; i++)
+                    {
+                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllStringVariableDataList[i]);
+                    }
                 }
                 EditorGUILayout.EndVertical();
             }
@@ -699,6 +729,55 @@ namespace LuaBehaviourTree
                 EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                 EditorGUILayout.EndVertical();
             }
+        }
+
+        /// <summary>
+        /// 绘制一个自定义变量
+        /// </summary>
+        /// <param name="customvariabledata"></param>
+        private void DrawOneCustomVariable(CustomVariableData customvariabledata)
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10;
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField(customvariabledata.VariableName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            if(GUILayout.Button("×", GUILayout.Width(40f), GUILayout.Height(20.0f)))
+            {
+
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("类型:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField(customvariabledata.VariableType.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("变量值:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            if (customvariabledata.VariableType == EVariableType.Bool)
+            {
+                var customboolvariabledata = customvariabledata as CustomBoolVariableData;
+                customboolvariabledata.VariableValue = EditorGUILayout.Toggle(customboolvariabledata.VariableValue, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (customvariabledata.VariableType == EVariableType.Int)
+            {
+                var customintvariabledata = customvariabledata as CustomIntVariableData;
+                customintvariabledata.VariableValue = EditorGUILayout.IntField(customintvariabledata.VariableValue, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (customvariabledata.VariableType == EVariableType.String)
+            {
+                var customstringvariabledata = customvariabledata as CustomStringVariableData;
+                customstringvariabledata.VariableValue = EditorGUILayout.TextField(customstringvariabledata.VariableValue, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (customvariabledata.VariableType == EVariableType.Float)
+            {
+                var customfloatvariabledata = customvariabledata as CustomFloatVariableData;
+                customfloatvariabledata.VariableValue = EditorGUILayout.FloatField(customfloatvariabledata.VariableValue, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else
+            {
+                EditorGUILayout.LabelField($"不支持的变量类型:{customvariabledata.VariableType}", "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.LabelField("", GUILayout.Width(ToolBarWidth), GUILayout.Height(1f));
         }
 
         /// <summary>
@@ -718,6 +797,7 @@ namespace LuaBehaviourTree
                         Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件!");
                         AssetDatabase.DeleteAsset(oldbtgraphassetpath);
                     }
+                    //var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
                     var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
                     var newbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraph.BTFileName}.json";
                     var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";

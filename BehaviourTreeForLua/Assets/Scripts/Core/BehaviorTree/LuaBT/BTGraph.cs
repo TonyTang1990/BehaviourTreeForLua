@@ -28,6 +28,98 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
+    /// 自定义变量数据基类
+    /// </summary>
+    [Serializable]
+    public class CustomVariableData
+    {
+        /// <summary>
+        /// 变量名字
+        /// </summary>
+        public string VariableName;
+
+        /// <summary>
+        /// 变量类型
+        /// </summary>
+        public EVariableType VariableType;
+
+        public CustomVariableData(string variablename, EVariableType variabletype)
+        {
+            VariableName = variablename;
+            VariableType = variabletype;
+        }
+    }
+
+    /// <summary>
+    /// 自定义Bool变量数据
+    /// </summary>
+    [Serializable]
+    public class CustomBoolVariableData : CustomVariableData
+    {
+        /// <summary>
+        /// 变量值
+        /// </summary>
+        public bool VariableValue;
+
+        public CustomBoolVariableData(string variablename, EVariableType variabletype, bool variablevalue) : base(variablename, variabletype)
+        {
+            VariableValue = variablevalue;
+        }
+    }
+
+
+    /// <summary>
+    /// 自定义Int变量数据
+    /// </summary>
+    [Serializable]
+    public class CustomIntVariableData : CustomVariableData
+    {
+        /// <summary>
+        /// 变量值
+        /// </summary>
+        public int VariableValue;
+
+        public CustomIntVariableData(string variablename, EVariableType variabletype, int variablevalue) : base(variablename, variabletype)
+        {
+            VariableValue = variablevalue;
+        }
+    }
+
+    /// <summary>
+    /// 自定义float变量数据
+    /// </summary>
+    [Serializable]
+    public class CustomFloatVariableData : CustomVariableData
+    {
+        /// <summary>
+        /// 变量值
+        /// </summary>
+        public float VariableValue;
+
+        public CustomFloatVariableData(string variablename, EVariableType variabletype, float variablevalue) : base(variablename, variabletype)
+        {
+            VariableValue = variablevalue;
+        }
+    }
+
+    /// <summary>
+    /// 自定义string变量数据
+    /// </summary>
+    [Serializable]
+    public class CustomStringVariableData : CustomVariableData
+    {
+        /// <summary>
+        /// 变量值
+        /// </summary>
+        public string VariableValue;
+
+        public CustomStringVariableData(string variablename, EVariableType variabletype, string variablevalue) : base(variablename, variabletype)
+        {
+            VariableValue = variablevalue;
+        }
+    }
+
+    /// <summary>
     /// BTGraph.cs
     /// 行为树图抽象
     /// </summary>
@@ -48,11 +140,30 @@ namespace LuaBehaviourTree
         /// 所有的节点数据
         /// </summary>
         public List<BTNode> AllNodesList;
-        
+
+        /// Note:
+        /// 因为Unity自带的JsonUtility不支持object和Dictionary所以才分别存储的各自类型的变量数据
+        /// Newtonsoft测试支持object和Dictionary但序列化Unity自带的一些数据结构遇到一些问题未解决所以就还是沿用JsonUtility
+
         /// <summary>
-        /// 所有变量定义Map
+        /// 所有Bool变量定义数据列表
         /// </summary>
-        public Dictionary<string, EVariableType> AllVariableDefinitionMap;
+        public List<CustomBoolVariableData> AllBoolVariableDataList;
+
+        /// <summary>
+        /// 所有Int变量定义数据列表
+        /// </summary>
+        public List<CustomIntVariableData> AllIntVariableDataList;
+
+        /// <summary>
+        /// 所有Float变量定义数据列表
+        /// </summary>
+        public List<CustomFloatVariableData> AllFloatVariableDataList;
+
+        /// <summary>
+        /// 所有String变量定义数据列表
+        /// </summary>
+        public List<CustomStringVariableData> AllStringVariableDataList;
 
         /// <summary>
         /// 根节点
@@ -93,8 +204,113 @@ namespace LuaBehaviourTree
             RootNode = rootnode;
             AllNodesList = new List<BTNode>();
             AllNodesList.Add(rootnode);
+            AllBoolVariableDataList = new List<CustomBoolVariableData>();
+            AllIntVariableDataList = new List<CustomIntVariableData>();
+            AllFloatVariableDataList = new List<CustomFloatVariableData>();
+            AllStringVariableDataList = new List<CustomStringVariableData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
+            BTBlackBoard = new Blackboard();
+        }
+        
+        /// <summary>
+        /// 指定成员变量名是否可以
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool IsVariableNameAvalible(string name)
+        {
+            var findboolvariabledata = AllBoolVariableDataList.Find((variabledata) =>
+            {
+                return variabledata.VariableName == name;
+            });
+            if(findboolvariabledata != null)
+            {
+                return false;
+            }
+            var finintvariabledata = AllIntVariableDataList.Find((variabledata) =>
+            {
+                return variabledata.VariableName == name;
+            });
+            if (finintvariabledata != null)
+            {
+                return false;
+            }
+            var findfloatvariabledata = AllFloatVariableDataList.Find((variabledata) =>
+            {
+                return variabledata.VariableName == name;
+            });
+            if (findfloatvariabledata != null)
+            {
+                return false;
+            }
+            var findstringvariabledata = AllStringVariableDataList.Find((variabledata) =>
+            {
+                return variabledata.VariableName == name;
+            });
+            if (findstringvariabledata != null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 获取指定变量类型的默认值
+        /// </summary>
+        /// <param name="variabletype"></param>
+        /// <returns></returns>
+        public CustomVariableData GetVariableDefaultValue(string variablename, EVariableType variabletype)
+        {
+            if (variabletype == EVariableType.Bool)
+            {
+                return new CustomBoolVariableData(variablename, variabletype, default(bool));
+            }
+            else if (variabletype == EVariableType.Int)
+            {
+                return new CustomIntVariableData(variablename, variabletype, default(int));
+            }
+            else if (variabletype == EVariableType.String)
+            {
+                return new CustomStringVariableData(variablename, variabletype, default(string));
+            }
+            else if (variabletype == EVariableType.Float)
+            {
+                return new CustomFloatVariableData(variablename, variabletype, default(float));
+            }
+            else
+            {
+                Debug.LogError($"不支持的变量类型:{variabletype},获取默认值失败!");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 添加自定义数据
+        /// </summary>
+        /// <param name="customvariabledata"></param>
+        public void AddCustomVariableData(CustomVariableData customvariabledata)
+        {
+            if (customvariabledata.VariableType == EVariableType.Bool)
+            {
+                AllBoolVariableDataList.Add(customvariabledata as CustomBoolVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.Int)
+            {
+                AllIntVariableDataList.Add(customvariabledata as CustomIntVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.Float)
+            {
+                AllFloatVariableDataList.Add(customvariabledata as CustomFloatVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.String)
+            {
+                AllStringVariableDataList.Add(customvariabledata as CustomStringVariableData);
+            }
+            else
+            {
+                Debug.LogError($"不支持添加的自定义变量类型:{customvariabledata.VariableType},添加失败!");
+            }
         }
         #endregion
 
@@ -126,8 +342,13 @@ namespace LuaBehaviourTree
         {
             Debug.Log("BTGraph()");
             AllNodesList = new List<BTNode>();
+            AllBoolVariableDataList = new List<CustomBoolVariableData>();
+            AllIntVariableDataList = new List<CustomIntVariableData>();
+            AllFloatVariableDataList = new List<CustomFloatVariableData>();
+            AllStringVariableDataList = new List<CustomStringVariableData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
+            BTBlackBoard = new Blackboard();
         }
 
         /// <summary>
@@ -148,7 +369,12 @@ namespace LuaBehaviourTree
             // 通过编辑器构建的行为树图数据构建一颗运行时的行为树图数据
             BTFileName = btowner.BTOriginalGraph.BTFileName;
             AllNodesList = new List<BTNode>();
+            AllBoolVariableDataList = btowner.BTOriginalGraph.AllBoolVariableDataList;
+            AllIntVariableDataList = btowner.BTOriginalGraph.AllIntVariableDataList;
+            AllFloatVariableDataList = btowner.BTOriginalGraph.AllFloatVariableDataList;
+            AllStringVariableDataList = btowner.BTOriginalGraph.AllStringVariableDataList;
             OwnerBT = btowner;
+            BTBlackBoard = new Blackboard();
             RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null, btowner.InstanceID);
             RootNodeUID = btowner.BTOriginalGraph.RootNodeUID;
         }

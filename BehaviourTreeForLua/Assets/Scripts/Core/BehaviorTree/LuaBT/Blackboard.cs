@@ -143,6 +143,10 @@ namespace LuaBehaviourTree
             get;
             set;
         }
+        public BlackboardData()
+        {
+            Data = default(T);
+        }
 
         public BlackboardData(T data)
         {

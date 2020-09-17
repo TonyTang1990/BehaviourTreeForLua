@@ -176,5 +176,33 @@
             "ParentNodeUID": 1910568900,
             "ChildNodesUIDList": []
         }
+    ],
+    "AllBoolVariableDataList": [
+        {
+            "VariableName": "testbool",
+            "VariableType": 1,
+            "VariableValue": true
+        }
+    ],
+    "AllIntVariableDataList": [
+        {
+            "VariableName": "testint",
+            "VariableType": 4,
+            "VariableValue": 123
+        }
+    ],
+    "AllFloatVariableDataList": [
+        {
+            "VariableName": "testfloat",
+            "VariableType": 3,
+            "VariableValue": 1.100000023841858
+        }
+    ],
+    "AllStringVariableDataList": [
+        {
+            "VariableName": "testfstring",
+            "VariableType": 2,
+            "VariableValue": "tanghuan"
+        }
     ]
 }
