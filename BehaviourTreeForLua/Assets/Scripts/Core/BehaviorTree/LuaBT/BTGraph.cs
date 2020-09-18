@@ -197,13 +197,10 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="btfilename">行为树文件名</param>
         /// <param name="rootnode"></param>
-        public BTGraph(string btfilename, BTNode rootnode)
+        public BTGraph(string btfilename)
         {
             BTFileName = btfilename;
-            RootNodeUID = rootnode.UID;
-            RootNode = rootnode;
             AllNodesList = new List<BTNode>();
-            AllNodesList.Add(rootnode);
             AllBoolVariableDataList = new List<CustomBoolVariableData>();
             AllIntVariableDataList = new List<CustomIntVariableData>();
             AllFloatVariableDataList = new List<CustomFloatVariableData>();
@@ -212,7 +209,39 @@ namespace LuaBehaviourTree
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             BTBlackBoard = new Blackboard();
         }
-        
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="btfilename">行为树文件名</param>
+        ///// <param name="rootnode"></param>
+        //public BTGraph(string btfilename, BTNode rootnode)
+        //{
+        //    BTFileName = btfilename;
+        //    RootNodeUID = rootnode.UID;
+        //    RootNode = rootnode;
+        //    AllNodesList = new List<BTNode>();
+        //    AllNodesList.Add(rootnode);
+        //    AllBoolVariableDataList = new List<CustomBoolVariableData>();
+        //    AllIntVariableDataList = new List<CustomIntVariableData>();
+        //    AllFloatVariableDataList = new List<CustomFloatVariableData>();
+        //    AllStringVariableDataList = new List<CustomStringVariableData>();
+        //    ExecutingNodesMap = new Dictionary<int, BTNode>();
+        //    ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
+        //    BTBlackBoard = new Blackboard();
+        //}
+
+        /// <summary>
+        /// 设置根节点
+        /// </summary>
+        /// <param name="rootnode"></param>
+        public void SetRootNode(BTNode rootnode)
+        {
+            RootNode = rootnode;
+            RootNodeUID = rootnode.UID;
+            AllNodesList.Add(rootnode);
+        }
+
         /// <summary>
         /// 指定成员变量名是否可以
         /// </summary>
@@ -312,6 +341,36 @@ namespace LuaBehaviourTree
                 Debug.LogError($"不支持添加的自定义变量类型:{customvariabledata.VariableType},添加失败!");
             }
         }
+
+        /// <summary>
+        /// 移除指定自定义变量数据
+        /// </summary>
+        /// <param name="customvariabledata"></param>
+        /// <returns></returns>
+        public bool RemoveCustomVariableData(CustomVariableData customvariabledata)
+        {
+            if (customvariabledata.VariableType == EVariableType.Bool)
+            {
+                return AllBoolVariableDataList.Remove(customvariabledata as CustomBoolVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.Int)
+            {
+                return AllIntVariableDataList.Remove(customvariabledata as CustomIntVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.Float)
+            {
+                return AllFloatVariableDataList.Remove(customvariabledata as CustomFloatVariableData);
+            }
+            else if (customvariabledata.VariableType == EVariableType.String)
+            {
+                return AllStringVariableDataList.Remove(customvariabledata as CustomStringVariableData);
+            }
+            else
+            {
+                Debug.LogError($"不支持添加的自定义变量类型:{customvariabledata.VariableType},移除失败!");
+                return false;
+            }
+        }
         #endregion
 
         #region 运行时部分
@@ -377,6 +436,31 @@ namespace LuaBehaviourTree
             BTBlackBoard = new Blackboard();
             RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null, btowner.InstanceID);
             RootNodeUID = btowner.BTOriginalGraph.RootNodeUID;
+            InitBlackBoard();
+        }
+
+        /// <summary>
+        /// 初始化黑板数据
+        /// </summary>
+        private void InitBlackBoard()
+        {
+            foreach(var boolvariabledata in AllBoolVariableDataList)
+            {
+                BTBlackBoard.AddData(boolvariabledata.VariableName, new BlackboardData<bool>(boolvariabledata.VariableValue));
+            }
+            foreach (var intvariabledata in AllIntVariableDataList)
+            {
+                BTBlackBoard.AddData(intvariabledata.VariableName, new BlackboardData<int>(intvariabledata.VariableValue));
+            }
+            foreach (var floatvariabledata in AllFloatVariableDataList)
+            {
+                BTBlackBoard.AddData(floatvariabledata.VariableName, new BlackboardData<float>(floatvariabledata.VariableValue));
+            }
+            foreach (var stringvariabledata in AllStringVariableDataList)
+            {
+                BTBlackBoard.AddData(stringvariabledata.VariableName, new BlackboardData<string>(stringvariabledata.VariableValue));
+            }
+            BTBlackBoard.PrintAllBlackBoardDatas();
         }
 
         /// <summary>

@@ -121,7 +121,6 @@
     <Compile Include="Assets\Scripts\Extension\StringExtension.cs" />
     <Compile Include="Assets\Scripts\GameLauncherCS.cs" />
     <Compile Include="Assets\Scripts\GameLauncherLua.cs" />
-    <Compile Include="Assets\UnityPackages\JsonNetSample\JsonNetSample.cs" />
     <Compile Include="Assets\XLua\Examples\01_Helloworld\Helloworld.cs" />
     <Compile Include="Assets\XLua\Examples\02_U3DScripting\LuaBehaviour.cs" />
     <Compile Include="Assets\XLua\Examples\04_LuaObjectOrented\InvokeLua.cs" />
@@ -405,9 +404,6 @@
     </Reference>
     <Reference Include="Unity.Analytics.Tracker">
       <HintPath>D:/TonyTang/Work/Projects/Unity/MyGitHubProjects/BehaivourTreeForLua/BehaviourTreeForLua/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>D:/TonyTang/Work/Projects/Unity/MyGitHubProjects/BehaivourTreeForLua/BehaviourTreeForLua/Assets/UnityPackages/JsonNet/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>D:/TonyTang/Work/Software/Unity/Unity2018.4.14f1/Unity/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>

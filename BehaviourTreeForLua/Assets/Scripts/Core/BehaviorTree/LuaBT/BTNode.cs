@@ -27,12 +27,23 @@ namespace LuaBehaviourTree
     /// </summary>
     public enum EBTNodeRunningState
     {
-        Invalide = 1,           // 无效状态
-        Running,                // 运行中
-        Success,                // 成功
-        Failed,                 // 失败
+        Invalide = 1,                   // 无效状态
+        Running,                        // 运行中
+        Success,                        // 成功
+        Failed,                         // 失败
     }
-    
+
+    /// <summary>
+    /// 节点打断类型(参考BehaviourDesigner里的概念)
+    /// Note:
+    /// 当前设计仅条件节点允许设置成可被打断
+    /// </summary>
+    public enum EAbortType
+    {
+        None = 1,                        // 不可被打断
+        Self,                            // 可被打断
+    }
+
     /// <summary>
     /// 行为树节点抽象
     /// </summary>
@@ -79,6 +90,11 @@ namespace LuaBehaviourTree
         /// 子节点UID列表
         /// </summary>
         public List<int> ChildNodesUIDList;
+
+        /// <summary>
+        /// 打断类型
+        /// </summary>
+        public EAbortType AbortType;
         #endregion
 
         #region 运行时部分
@@ -86,6 +102,15 @@ namespace LuaBehaviourTree
         /// 行为树节点所属行为树
         /// </summary>
         public TBehaviourTree OwnerBT
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// 行为树节点所属BTGraph
+        /// </summary>
+        public BTGraph OwnerBTGraph
         {
             get;
             protected set;
@@ -159,6 +184,7 @@ namespace LuaBehaviourTree
 
         public BTNode()
         {
+
         }
 
         /// <summary>
@@ -169,8 +195,9 @@ namespace LuaBehaviourTree
         /// <param name="nodename">节点名字</param>
         /// <param name="nodetype">节点类型</param>
         /// <param name="parentnode">父节点</param>
-        /// <param name="allusednodeuidmap"></param>
-        public BTNode(Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode, Dictionary<int, int> allusednodeuidmap)
+        /// <param name="allusednodeuidmap">所有已使用的UID映射Map</param>
+        /// <param name="ownerbtgraph">所属BTGraph</param>
+        public BTNode(BTGraph ownerbtgraph, Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode, Dictionary<int, int> allusednodeuidmap)
         {
             // 确保生成的UID唯一
             UID = BTUtilities.GetNodeUID();
@@ -187,8 +214,10 @@ namespace LuaBehaviourTree
             NodeType = (int)nodetype;
             ParentNodeUID = parentnode != null ? parentnode.UID : 0;
             ChildNodesUIDList = new List<int>();
+            AbortType = GetNodeDefaultAbortType(nodetype);
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
+            OwnerBTGraph = ownerbtgraph;
         }
 
         #region 运行时部分
@@ -202,9 +231,11 @@ namespace LuaBehaviourTree
             NodeType = (int)node.NodeType;
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
+            AbortType = node.AbortType;
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = btowner;
+            OwnerBTGraph = btowner.BTRunningGraph;
             ParentNode = parentnode;
             InstanceID = instanceid;
         }
@@ -311,7 +342,7 @@ namespace LuaBehaviourTree
             LastNodeRunningState = NodeRunningState;
             NodeRunningState = EBTNodeRunningState.Invalide;
         }
-        
+
         /// <summary>
         /// 进入节点
         /// </summary>
@@ -344,7 +375,7 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         protected virtual bool CanReevaluate()
         {
-            return false;
+            return AbortType == EAbortType.Self;
         }
         #endregion
 
@@ -449,9 +480,9 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public bool IsValideNode()
         {
-            if(this.NodeType == (int)EBTNodeType.DecorationNodeType)
+            if (this.NodeType == (int)EBTNodeType.DecorationNodeType)
             {
-                if(this.ChildNodesUIDList.Count != 1)
+                if (this.ChildNodesUIDList.Count != 1)
                 {
                     Debug.LogError($"装饰节点UID:{this.UID}有且必须拥有一个子节点!");
                     return false;
@@ -476,6 +507,23 @@ namespace LuaBehaviourTree
             else
             {
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// 获取指定节点类型默认打断类型
+        /// </summary>
+        /// <param name="nodetype"></param>
+        /// <returns></returns>
+        public EAbortType GetNodeDefaultAbortType(EBTNodeType nodetype)
+        {
+            if(nodetype == EBTNodeType.ConditionNodeType)
+            {
+                return EAbortType.Self;
+            }
+            else
+            {
+                return EAbortType.None;
             }
         }
         #endregion

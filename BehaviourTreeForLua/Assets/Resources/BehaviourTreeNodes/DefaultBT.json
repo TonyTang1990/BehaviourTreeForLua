@@ -16,7 +16,8 @@
             "NodeParams": "",
             "NodeType": 4,
             "ParentNodeUID": -1983406368,
-            "ChildNodesUIDList": []
+            "ChildNodesUIDList": [],
+            "AbortType": 2
         },
         {
             "UID": -1983406368,
@@ -34,7 +35,8 @@
             "ParentNodeUID": 1910568900,
             "ChildNodesUIDList": [
                 1824697752
-            ]
+            ],
+            "AbortType": 1
         },
         {
             "UID": -1567445295,
@@ -50,7 +52,8 @@
             "NodeParams": "test log",
             "NodeType": 2,
             "ParentNodeUID": 1910568900,
-            "ChildNodesUIDList": []
+            "ChildNodesUIDList": [],
+            "AbortType": 1
         },
         {
             "UID": 1910568900,
@@ -70,7 +73,8 @@
                 -1983406368,
                 -10095761,
                 -1567445295
-            ]
+            ],
+            "AbortType": 1
         },
         {
             "UID": 245209634,
@@ -86,7 +90,8 @@
             "NodeParams": "5",
             "NodeType": 2,
             "ParentNodeUID": 899429594,
-            "ChildNodesUIDList": []
+            "ChildNodesUIDList": [],
+            "AbortType": 1
         },
         {
             "UID": 979634045,
@@ -102,7 +107,8 @@
             "NodeParams": "test log2",
             "NodeType": 2,
             "ParentNodeUID": 899429594,
-            "ChildNodesUIDList": []
+            "ChildNodesUIDList": [],
+            "AbortType": 1
         },
         {
             "UID": 899429594,
@@ -121,7 +127,8 @@
             "ChildNodesUIDList": [
                 245209634,
                 979634045
-            ]
+            ],
+            "AbortType": 1
         },
         {
             "UID": 440266860,
@@ -140,7 +147,8 @@
             "ChildNodesUIDList": [
                 1910568900,
                 899429594
-            ]
+            ],
+            "AbortType": 1
         },
         {
             "UID": 239323723,
@@ -158,7 +166,8 @@
             "ParentNodeUID": 0,
             "ChildNodesUIDList": [
                 440266860
-            ]
+            ],
+            "AbortType": 1
         },
         {
             "UID": -10095761,
@@ -174,7 +183,8 @@
             "NodeParams": "5",
             "NodeType": 2,
             "ParentNodeUID": 1910568900,
-            "ChildNodesUIDList": []
+            "ChildNodesUIDList": [],
+            "AbortType": 1
         }
     ],
     "AllBoolVariableDataList": [
@@ -191,13 +201,7 @@
             "VariableValue": 123
         }
     ],
-    "AllFloatVariableDataList": [
-        {
-            "VariableName": "testfloat",
-            "VariableType": 3,
-            "VariableValue": 1.100000023841858
-        }
-    ],
+    "AllFloatVariableDataList": [],
     "AllStringVariableDataList": [
         {
             "VariableName": "testfstring",

@@ -107,6 +107,42 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 打印所有黑板数据
+        /// </summary>
+        public void PrintAllBlackBoardDatas()
+        {
+            Debug.Log($"打印黑板数据:");
+            foreach (var blackboarddata in mBlackboardDataMap)
+            {
+                var blackboarddatatype = blackboarddata.Value.GetType();
+                if (blackboarddatatype == typeof(BlackboardData<bool>))
+                {
+                    var realblackboarddata = blackboarddata.Value as BlackboardData<bool>;
+                    Debug.Log($"变量名:{blackboarddata.Key}变量值:{realblackboarddata.Data}");
+                }
+                else if(blackboarddatatype == typeof(BlackboardData<int>))
+                {
+                    var realblackboarddata = blackboarddata.Value as BlackboardData<int>;
+                    Debug.Log($"变量名:{blackboarddata.Key}变量值:{realblackboarddata.Data}");
+                }
+                else if (blackboarddatatype == typeof(BlackboardData<float>))
+                {
+                    var realblackboarddata = blackboarddata.Value as BlackboardData<float>;
+                    Debug.Log($"变量名:{blackboarddata.Key}变量值:{realblackboarddata.Data}");
+                }
+                else if (blackboarddatatype == typeof(BlackboardData<string>))
+                {
+                    var realblackboarddata = blackboarddata.Value as BlackboardData<string>;
+                    Debug.Log($"变量名:{blackboarddata.Key}变量值:{realblackboarddata.Data}");
+                }
+                else
+                {
+                    Debug.LogError($"不支持的黑板数据类型:{blackboarddatatype},打印失败!");
+                }
+            }
+        }
+
+        /// <summary>
         /// 获取黑板指定数据
         /// </summary>
         /// <param name="key"></param>

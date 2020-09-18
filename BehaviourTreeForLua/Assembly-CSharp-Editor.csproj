@@ -354,9 +354,6 @@
     <Reference Include="UnityEditor.Purchasing">
       <HintPath>D:/TonyTang/Work/Projects/Unity/MyGitHubProjects/BehaivourTreeForLua/BehaviourTreeForLua/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>D:/TonyTang/Work/Projects/Unity/MyGitHubProjects/BehaivourTreeForLua/BehaviourTreeForLua/Assets/UnityPackages/JsonNet/Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>D:/TonyTang/Work/Software/Unity/Unity2018.4.14f1/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
