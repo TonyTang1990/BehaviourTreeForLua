@@ -31,7 +31,7 @@ namespace LuaBehaviourTree
     /// 自定义变量数据基类
     /// </summary>
     [Serializable]
-    public class CustomVariableData
+    public abstract class CustomVariableData
     {
         /// <summary>
         /// 变量名字
@@ -120,6 +120,104 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
+    /// 自定义变量节点数据基类
+    /// </summary>
+    [Serializable]
+    public abstract class ICustomVariableNodeData
+    {
+        /// <summary>
+        /// 节点UID
+        /// </summary>
+        public int NodeUID;
+
+        /// <summary>
+        /// 变量名
+        /// </summary>
+        public string VariableName;
+
+        /// <summary>
+        /// 变量类型
+        /// </summary>
+        public EVariableType VariableType;
+    }
+
+    /// <summary>
+    /// 黑板数据泛型基类
+    /// </summary>
+    public class CustomVariableNodeData<T> : ICustomVariableNodeData
+    {
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public T VariableValue
+        {
+            get;
+            set;
+        }
+        
+        private CustomVariableNodeData()
+        {
+
+        }
+
+        public CustomVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, T variablevalue)
+        {
+            NodeUID = nodeuid;
+            VariableName = variablename;
+            VariableType = variabletype;
+            VariableValue = variablevalue;
+        }
+    }
+
+    /// <summary>
+    /// 自定义Bool变量节点数据
+    /// </summary>
+    [Serializable]
+    public class CustomBoolVariableNodeData : CustomVariableNodeData<bool>
+    {
+        public CustomBoolVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, bool variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
+        {
+
+        }
+    }
+    
+    /// <summary>
+    /// 自定义Int变量节点数据
+    /// </summary>
+    [Serializable]
+    public class CustomIntVariableNodeData : CustomVariableNodeData<int>
+    {
+        public CustomIntVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, int variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// 自定义Float变量节点数据
+    /// </summary>
+    [Serializable]
+    public class CustomFloatVariableNodeData : CustomVariableNodeData<float>
+    {
+        public CustomFloatVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, float variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// 自定义String变量节点数据
+    /// </summary>
+    [Serializable]
+    public class CustomStringVariableNodeData : CustomVariableNodeData<string>
+    {
+        public CustomStringVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, string variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
+        {
+
+        }
+    }
+
+    /// <summary>
     /// BTGraph.cs
     /// 行为树图抽象
     /// </summary>
@@ -165,6 +263,40 @@ namespace LuaBehaviourTree
         /// </summary>
         public List<CustomStringVariableData> AllStringVariableDataList;
 
+        /// Note:
+        /// 为了减少单个节点不必要的序列化数据，针对自定义变量的数据存储直接存储到BTGraph上
+        /// 通过运行时加载后构建Dictionary<int, CustomVariableNodeData>来快速查询相关节点自定义变量数据
+        /// 核心是因为JsonUtility不支持object和Dictionary序列化
+        /// <summary>
+        /// 所有Bool变量节点定义数据列表
+        /// </summary>
+        public List<CustomBoolVariableNodeData> AllBoolVariableNodeDataList;
+
+        /// <summary>
+        /// 所有Int变量节点定义数据列表
+        /// </summary>
+        public List<CustomIntVariableNodeData> AllIntVariableNodeDataList;
+
+        /// <summary>
+        /// 所有Float变量节点定义数据列表
+        /// </summary>
+        public List<CustomFloatVariableNodeData> AllFloatVariableNodeDataList;
+
+        /// <summary>
+        /// 所有String变量节点定义数据列表
+        /// </summary>
+        public List<CustomStringVariableNodeData> AllStringVariableNodeDataList;
+
+        /// <summary>
+        /// 所有自定义变量节点映射Map(运行时数据)
+        /// Key为节点UID,Value为对应自定义变量节点数据
+        /// </summary>
+        public Dictionary<int, ICustomVariableNodeData> AllVariableNodeDataMaps
+        {
+            get;
+            protected set;
+        }
+
         /// <summary>
         /// 根节点
         /// </summary>
@@ -205,6 +337,11 @@ namespace LuaBehaviourTree
             AllIntVariableDataList = new List<CustomIntVariableData>();
             AllFloatVariableDataList = new List<CustomFloatVariableData>();
             AllStringVariableDataList = new List<CustomStringVariableData>();
+            AllBoolVariableNodeDataList = new List<CustomBoolVariableNodeData>();
+            AllIntVariableNodeDataList = new List<CustomIntVariableNodeData>();
+            AllFloatVariableNodeDataList = new List<CustomFloatVariableNodeData>();
+            AllStringVariableNodeDataList = new List<CustomStringVariableNodeData>();
+            AllVariableNodeDataMaps = new Dictionary<int, ICustomVariableNodeData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             BTBlackBoard = new Blackboard();
@@ -286,10 +423,12 @@ namespace LuaBehaviourTree
 
         /// <summary>
         /// 获取指定变量类型的默认值
+        /// Note:
+        /// 限非运行时用
         /// </summary>
         /// <param name="variabletype"></param>
         /// <returns></returns>
-        public CustomVariableData GetVariableDefaultValue(string variablename, EVariableType variabletype)
+        public CustomVariableData GetVariableDefaultValueInEditor(string variablename, EVariableType variabletype)
         {
             if (variabletype == EVariableType.Bool)
             {
@@ -367,7 +506,109 @@ namespace LuaBehaviourTree
             }
             else
             {
-                Debug.LogError($"不支持添加的自定义变量类型:{customvariabledata.VariableType},移除失败!");
+                Debug.LogError($"不支持移除的自定义变量类型:{customvariabledata.VariableType},移除失败!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 获取指定节点UID变量类型的节点数据
+        /// Note:
+        /// 编辑器模式下使用此接口，非运行时使用GetVariableNodeValueInRuntime
+        /// </summary>
+        /// <param name="variabletype"></param>
+        /// <returns></returns>
+        public ICustomVariableNodeData GetVariableNodeValueInEditor(int uid, EVariableType variabletype)
+        {
+            if (variabletype == EVariableType.Bool)
+            {
+                return AllBoolVariableNodeDataList.Find((variablenodedata) =>
+                {
+                    return variablenodedata.NodeUID == uid;
+                });
+            }
+            else if (variabletype == EVariableType.Int)
+            {
+                return AllIntVariableNodeDataList.Find((variablenodedata) =>
+                {
+                    return variablenodedata.NodeUID == uid;
+                });
+            }
+            else if (variabletype == EVariableType.String)
+            {
+                return AllStringVariableNodeDataList.Find((variablenodedata) =>
+                {
+                    return variablenodedata.NodeUID == uid;
+                });
+            }
+            else if (variabletype == EVariableType.Float)
+            {
+                return AllFloatVariableNodeDataList.Find((variablenodedata) =>
+                {
+                    return variablenodedata.NodeUID == uid;
+                });
+            }
+            else
+            {
+                Debug.LogError($"不支持的变量类型:{variabletype},获取节点数据失败!");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 添加自定义节点数据
+        /// </summary>
+        /// <param name="customvariablenodedata"></param>
+        public void AddCustomVariableNodeData(ICustomVariableNodeData customvariablenodedata)
+        {
+            if (customvariablenodedata.VariableType == EVariableType.Bool)
+            {
+                AllBoolVariableNodeDataList.Add(customvariablenodedata as CustomBoolVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.Int)
+            {
+                AllIntVariableNodeDataList.Add(customvariablenodedata as CustomIntVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.Float)
+            {
+                AllFloatVariableNodeDataList.Add(customvariablenodedata as CustomFloatVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.String)
+            {
+                AllStringVariableNodeDataList.Add(customvariablenodedata as CustomStringVariableNodeData);
+            }
+            else
+            {
+                Debug.LogError($"不支持添加的自定义变量类型:{customvariablenodedata.VariableType}的节点数据,添加失败!");
+            }
+        }
+
+        /// <summary>
+        /// 移除指定自定义变量节点数据
+        /// </summary>
+        /// <param name="customvariablenodedata"></param>
+        /// <returns></returns>
+        public bool RemoveCustomVariableNodeData(ICustomVariableNodeData customvariablenodedata)
+        {
+            if (customvariablenodedata.VariableType == EVariableType.Bool)
+            {
+                return AllBoolVariableNodeDataList.Remove(customvariablenodedata as CustomBoolVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.Int)
+            {
+                return AllIntVariableNodeDataList.Remove(customvariablenodedata as CustomIntVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.Float)
+            {
+                return AllFloatVariableNodeDataList.Remove(customvariablenodedata as CustomFloatVariableNodeData);
+            }
+            else if (customvariablenodedata.VariableType == EVariableType.String)
+            {
+                return AllStringVariableNodeDataList.Remove(customvariablenodedata as CustomStringVariableNodeData);
+            }
+            else
+            {
+                Debug.LogError($"不支持移除的自定义变量类型:{customvariablenodedata.VariableType}节点数据,移除失败!");
                 return false;
             }
         }
@@ -405,6 +646,11 @@ namespace LuaBehaviourTree
             AllIntVariableDataList = new List<CustomIntVariableData>();
             AllFloatVariableDataList = new List<CustomFloatVariableData>();
             AllStringVariableDataList = new List<CustomStringVariableData>();
+            AllBoolVariableNodeDataList = new List<CustomBoolVariableNodeData>();
+            AllIntVariableNodeDataList = new List<CustomIntVariableNodeData>();
+            AllFloatVariableNodeDataList = new List<CustomFloatVariableNodeData>();
+            AllStringVariableNodeDataList = new List<CustomStringVariableNodeData>();
+            AllVariableNodeDataMaps = new Dictionary<int, ICustomVariableNodeData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             BTBlackBoard = new Blackboard();
@@ -432,11 +678,15 @@ namespace LuaBehaviourTree
             AllIntVariableDataList = btowner.BTOriginalGraph.AllIntVariableDataList;
             AllFloatVariableDataList = btowner.BTOriginalGraph.AllFloatVariableDataList;
             AllStringVariableDataList = btowner.BTOriginalGraph.AllStringVariableDataList;
+            AllBoolVariableNodeDataList = btowner.BTOriginalGraph.AllBoolVariableNodeDataList;
+            AllIntVariableNodeDataList = btowner.BTOriginalGraph.AllIntVariableNodeDataList;
+            AllFloatVariableNodeDataList = btowner.BTOriginalGraph.AllFloatVariableNodeDataList;
+            AllStringVariableNodeDataList = btowner.BTOriginalGraph.AllStringVariableNodeDataList;
             OwnerBT = btowner;
-            BTBlackBoard = new Blackboard();
-            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null, btowner.InstanceID);
-            RootNodeUID = btowner.BTOriginalGraph.RootNodeUID;
             InitBlackBoard();
+            InitCustomVariableNodeData();
+            RootNodeUID = btowner.BTOriginalGraph.RootNodeUID;
+            RootNode = BTUtilities.CreateRunningNodeByNode(btowner.BTOriginalGraph.RootNode, btowner, null, btowner.InstanceID);
         }
 
         /// <summary>
@@ -464,6 +714,33 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 初始化自定义变量节点数据Map
+        /// </summary>
+        private void InitCustomVariableNodeData()
+        {
+            foreach (var boolvariablenodedata in AllBoolVariableNodeDataList)
+            {
+                Debug.Log($"节点UID:{boolvariablenodedata.NodeUID}自定义变量值:{(boolvariablenodedata as CustomBoolVariableNodeData).VariableValue}");
+                AllVariableNodeDataMaps.Add(boolvariablenodedata.NodeUID, boolvariablenodedata);
+            }
+            foreach (var intvariablenodedata in AllIntVariableNodeDataList)
+            {
+                Debug.Log($"节点UID:{intvariablenodedata.NodeUID}自定义变量值:{(intvariablenodedata as CustomIntVariableNodeData).VariableValue}");
+                AllVariableNodeDataMaps.Add(intvariablenodedata.NodeUID, intvariablenodedata);
+            }
+            foreach (var floatvariablenodedata in AllFloatVariableNodeDataList)
+            {
+                Debug.Log($"节点UID:{floatvariablenodedata.NodeUID}自定义变量值:{(floatvariablenodedata as CustomFloatVariableNodeData).VariableValue}");
+                AllVariableNodeDataMaps.Add(floatvariablenodedata.NodeUID, floatvariablenodedata);
+            }
+            foreach (var stringvariablenodedata in AllStringVariableNodeDataList)
+            {
+                Debug.Log($"节点UID:{stringvariablenodedata.NodeUID}自定义变量值:{(stringvariablenodedata as CustomStringVariableNodeData).VariableValue}");
+                AllVariableNodeDataMaps.Add(stringvariablenodedata.NodeUID, stringvariablenodedata);
+            }
+        }
+
+        /// <summary>
         /// 释放
         /// </summary>
         public void Dispose()
@@ -479,9 +756,18 @@ namespace LuaBehaviourTree
                     //ObjectPool.Singleton.PushAsObj(AllNodesList[i]);
                 }
             }
-            AllNodesList.Clear();
+            AllNodesList = null;
             RootNode = null;
             RootNodeUID = 0;
+            AllBoolVariableDataList = null;
+            AllIntVariableDataList = null;
+            AllFloatVariableDataList = null;
+            AllStringVariableDataList = null;
+            AllBoolVariableNodeDataList = null;
+            AllIntVariableNodeDataList = null;
+            AllFloatVariableNodeDataList = null;
+            AllStringVariableNodeDataList = null;
+            AllVariableNodeDataMaps = null;
         }
 
         /// <summary>
@@ -660,6 +946,48 @@ namespace LuaBehaviourTree
                 }
             }
             ClearRunningDatas();
+        }
+
+        /// <summary>
+        /// 获取指定自定义变量值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="variablename"></param>
+        /// <returns></returns>
+        public T GetData<T>(string variablename)
+        {
+            return BTBlackBoard.GetData<T>(variablename);
+        }
+
+        /// <summary>
+        /// 更新指定自定义变量值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="variablename"></param>
+        /// <param name="newvalue"></param>
+        /// <returns></returns>
+        public bool UpdateData<T>(string variablename, T newvalue)
+        {
+            return BTBlackBoard.UpdateData<T>(variablename, newvalue);
+        }
+
+        /// <summary>
+        /// 获取指定节点UID变量类型的数据
+        /// Note:
+        /// 运行时模式下使用此接口，非运行时使用GetVariableNodeValueInEditor
+        /// </summary>
+        /// <returns></returns>
+        public CustomVariableNodeData<T> GetVariableNodeValueInRuntime<T>(int uid)
+        {
+            if(AllVariableNodeDataMaps.ContainsKey(uid))
+            {
+                return AllVariableNodeDataMaps[uid] as CustomVariableNodeData<T>;
+            }
+            else
+            {
+                Debug.LogError($"找不到的UID:{uid}自定义变量节点数据,获取节点数据失败!");
+                return null;
+            }
         }
 
         /// <summary>

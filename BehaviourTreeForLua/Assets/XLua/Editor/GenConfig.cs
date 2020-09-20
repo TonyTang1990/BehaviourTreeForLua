@@ -257,8 +257,8 @@ public static class GenConfig
         typeof(TBehaviourTree),
         typeof(EBTNodeRunningState),
         typeof(BTNode),
-        typeof(BTActionNode),
-        typeof(BTConditionNode),
+        typeof(BTLuaActionNode),
+        typeof(BTLuaConditionNode),
         typeof(GameLauncherLua),
         #endregion
 

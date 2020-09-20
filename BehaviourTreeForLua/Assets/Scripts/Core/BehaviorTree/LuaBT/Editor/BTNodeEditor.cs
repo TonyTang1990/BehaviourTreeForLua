@@ -702,7 +702,7 @@ namespace LuaBehaviourTree
                         {
                             if (mCurrentSelectionBTGraph.IsVariableNameAvalible(mCurrentVariableName))
                             {
-                                var customvariabledata = mCurrentSelectionBTGraph.GetVariableDefaultValue(mCurrentVariableName, mCurrentSelectedVariableType);
+                                var customvariabledata = mCurrentSelectionBTGraph.GetVariableDefaultValueInEditor(mCurrentVariableName, mCurrentSelectedVariableType);
                                 mCurrentSelectionBTGraph.AddCustomVariableData(customvariabledata);
                             }
                             else
@@ -717,24 +717,21 @@ namespace LuaBehaviourTree
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                if(mCurrentSelectionBTGraph.AllBoolVariableDataList != null)
+                for (int i = 0, length = mCurrentSelectionBTGraph.AllBoolVariableDataList.Count; i < length; i++)
                 {
-                    for(int i = 0, length = mCurrentSelectionBTGraph.AllBoolVariableDataList.Count; i < length; i++)
-                    {
-                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllBoolVariableDataList[i]);
-                    }
-                    for (int i = 0, length = mCurrentSelectionBTGraph.AllIntVariableDataList.Count; i < length; i++)
-                    {
-                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllIntVariableDataList[i]);
-                    }
-                    for (int i = 0, length = mCurrentSelectionBTGraph.AllFloatVariableDataList.Count; i < length; i++)
-                    {
-                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllFloatVariableDataList[i]);
-                    }
-                    for (int i = 0, length = mCurrentSelectionBTGraph.AllStringVariableDataList.Count; i < length; i++)
-                    {
-                        DrawOneCustomVariable(mCurrentSelectionBTGraph.AllStringVariableDataList[i]);
-                    }
+                    DrawOneCustomVariable(mCurrentSelectionBTGraph.AllBoolVariableDataList[i]);
+                }
+                for (int i = 0, length = mCurrentSelectionBTGraph.AllIntVariableDataList.Count; i < length; i++)
+                {
+                    DrawOneCustomVariable(mCurrentSelectionBTGraph.AllIntVariableDataList[i]);
+                }
+                for (int i = 0, length = mCurrentSelectionBTGraph.AllFloatVariableDataList.Count; i < length; i++)
+                {
+                    DrawOneCustomVariable(mCurrentSelectionBTGraph.AllFloatVariableDataList[i]);
+                }
+                for (int i = 0, length = mCurrentSelectionBTGraph.AllStringVariableDataList.Count; i < length; i++)
+                {
+                    DrawOneCustomVariable(mCurrentSelectionBTGraph.AllStringVariableDataList[i]);
                 }
                 EditorGUILayout.EndVertical();
             }
@@ -942,46 +939,82 @@ namespace LuaBehaviourTree
         {
             if (btnode.NodeType == (int)EBTNodeType.ActionNodeType)
             {
-                var index = Array.FindIndex<string>(BTNodeData.BTActionNodeNameArray, (name) =>
+                var index = Array.FindIndex<string>(BTNodeData.BTLuaActionNodeNameArray, (name) =>
                 {
                     return name.Equals(btnode.NodeName);
                 });
                 if (index != -1)
                 {
-                    if (index < BTNodeData.BTActionNodeParamsIntroArray.Length)
+                    if (index < BTNodeData.BTLuaActionNodeParamsIntroArray.Length)
                     {
-                        return BTNodeData.BTActionNodeParamsIntroArray[index];
+                        return BTNodeData.BTLuaActionNodeParamsIntroArray[index];
                     }
                     else
                     {
-                        return "请在BTNodeData.cs BTActionNodeParamsIntroArray里添加对应介绍!";
+                        return "请在BTNodeData.cs BTLuaActionNodeParamsIntroArray里添加对应介绍!";
                     }
                 }
                 else
                 {
-                    return $"找不到节点名:{btnode.NodeName}定义";
+                    var index2 = Array.FindIndex<string>(BTNodeData.BTCSActionNodeNameArray, (name) =>
+                    {
+                        return name.Equals(btnode.NodeName);
+                    });
+                    if (index != -1)
+                    {
+                        if (index < BTNodeData.BTCSActionNodeParamsIntroArray.Length)
+                        {
+                            return BTNodeData.BTCSActionNodeParamsIntroArray[index];
+                        }
+                        else
+                        {
+                            return "请在BTNodeData.cs BTCSActionNodeParamsIntroArray里添加对应介绍!";
+                        }
+                    }
+                    else
+                    {
+                        return $"找不到节点名:{btnode.NodeName}定义";
+                    }
                 }
             }
             else if (btnode.NodeType == (int)EBTNodeType.ConditionNodeType)
             {
-                var index = Array.FindIndex<string>(BTNodeData.BTConditionNodeNameArray, (name) =>
+                var index = Array.FindIndex<string>(BTNodeData.BTLuaConditionNodeNameArray, (name) =>
                 {
                     return name.Equals(btnode.NodeName);
                 });
                 if (index != -1)
                 {
-                    if (index < BTNodeData.BTConditionNodeParamsIntroArray.Length)
+                    if (index < BTNodeData.BTLuaConditionNodeParamsIntroArray.Length)
                     {
-                        return BTNodeData.BTConditionNodeParamsIntroArray[index];
+                        return BTNodeData.BTLuaConditionNodeParamsIntroArray[index];
                     }
                     else
                     {
-                        return "请在BTNodeData.cs BTConditionNodeParamsIntroArray里添加对应介绍!";
+                        return "请在BTNodeData.cs BTLuaConditionNodeParamsIntroArray里添加对应介绍!";
                     }
                 }
                 else
                 {
-                    return $"找不到节点名:{btnode.NodeName}定义";
+                    var index2 = Array.FindIndex<string>(BTNodeData.BTCSConditionNodeNameArray, (name) =>
+                    {
+                        return name.Equals(btnode.NodeName);
+                    });
+                    if (index != -1)
+                    {
+                        if (index < BTNodeData.BTCSConditionNodeParamsIntroArray.Length)
+                        {
+                            return BTNodeData.BTCSConditionNodeParamsIntroArray[index];
+                        }
+                        else
+                        {
+                            return "请在BTNodeData.cs BTCSConditionNodeParamsIntroArray里添加对应介绍!";
+                        }
+                    }
+                    else
+                    {
+                        return $"找不到节点名:{btnode.NodeName}定义";
+                    }
                 }
             }
             else if (btnode.NodeType == (int)EBTNodeType.DecorationNodeType)
@@ -1043,15 +1076,15 @@ namespace LuaBehaviourTree
             }
             else if (btnode.NodeType == (int)EBTNodeType.ActionNodeType)
             {
-                var index = Array.FindIndex<string>(BTNodeData.BTActionNodeNameArray, (name) =>
+                var index = Array.FindIndex<string>(BTNodeData.BTLuaActionNodeNameArray, (name) =>
                 {
                     return name.Equals(btnode.NodeName);
                 });
                 if (index != -1)
                 {
-                    if (index < BTNodeData.BTActionNodeIntroArray.Length)
+                    if (index < BTNodeData.BTLuaActionNodeIntroArray.Length)
                     {
-                        return BTNodeData.BTActionNodeIntroArray[index];
+                        return BTNodeData.BTLuaActionNodeIntroArray[index];
                     }
                     else
                     {
@@ -1065,15 +1098,15 @@ namespace LuaBehaviourTree
             }
             else if (btnode.NodeType == (int)EBTNodeType.ConditionNodeType)
             {
-                var index = Array.FindIndex<string>(BTNodeData.BTConditionNodeNameArray, (name) =>
+                var index = Array.FindIndex<string>(BTNodeData.BTLuaConditionNodeNameArray, (name) =>
                 {
                     return name.Equals(btnode.NodeName);
                 });
                 if (index != -1)
                 {
-                    if (index < BTNodeData.BTConditionNodeIntroArray.Length)
+                    if (index < BTNodeData.BTLuaConditionNodeIntroArray.Length)
                     {
-                        return BTNodeData.BTConditionNodeIntroArray[index];
+                        return BTNodeData.BTLuaConditionNodeIntroArray[index];
                     }
                     else
                     {
@@ -1364,20 +1397,30 @@ namespace LuaBehaviourTree
         /// <param name="operationnode"></param>
         private void AddAllAvalibleAddBTNodeMenu(GenericMenu menu, BTNode operationnode)
         {
-            foreach (var actionnodename in BTNodeData.BTActionNodeNameArray)
+            foreach (var luaactionnodename in BTNodeData.BTLuaActionNodeNameArray)
             {
-                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, actionnodename);
-                menu.AddItem(new GUIContent($"添加子节点/行为节点/{actionnodename}"), false, OnCreateBTActionNode, nodeinfo);
+                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, luaactionnodename);
+                menu.AddItem(new GUIContent($"添加子节点/行为节点/{luaactionnodename}"), false, OnCreateBTActionNode, nodeinfo);
+            }
+            foreach (var csactionnodename in BTNodeData.BTCSActionNodeNameArray)
+            {
+                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, csactionnodename);
+                menu.AddItem(new GUIContent($"添加子节点/行为节点/{csactionnodename}"), false, OnCreateBTActionNode, nodeinfo);
             }
             foreach (var compositenodename in BTNodeData.BTCompositeNodeNameArray)
             {
                 var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, compositenodename);
                 menu.AddItem(new GUIContent($"添加子节点/组合节点/{compositenodename}"), false, OnCreateBTCompositeNode, nodeinfo);
             }
-            foreach (var conditionnodename in BTNodeData.BTConditionNodeNameArray)
+            foreach (var luaconditionnodename in BTNodeData.BTLuaConditionNodeNameArray)
             {
-                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, conditionnodename);
-                menu.AddItem(new GUIContent($"添加子节点/条件节点/{conditionnodename}"), false, OnCreateBTConditionNode, nodeinfo);
+                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, luaconditionnodename);
+                menu.AddItem(new GUIContent($"添加子节点/条件节点/{luaconditionnodename}"), false, OnCreateBTConditionNode, nodeinfo);
+            }
+            foreach (var csconditionnodename in BTNodeData.BTCSConditionNodeNameArray)
+            {
+                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, csconditionnodename);
+                menu.AddItem(new GUIContent($"添加子节点/条件节点/{csconditionnodename}"), false, OnCreateBTConditionNode, nodeinfo);
             }
             foreach (var decorationnodename in BTNodeData.BTDecorationNodeNameArray)
             {
@@ -1401,7 +1444,7 @@ namespace LuaBehaviourTree
         if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
         {
             validereplacetypename = "行为节点";
-            validereplacenodenamearray = BTNodeData.BTActionNodeNameArray;
+            validereplacenodenamearray = BTNodeData.BTLuaActionNodeNameArray;
         }
         else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
         {
@@ -1411,7 +1454,7 @@ namespace LuaBehaviourTree
         else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
         {
             validereplacetypename = "条件节点";
-            validereplacenodenamearray = BTNodeData.BTConditionNodeNameArray;
+            validereplacenodenamearray = BTNodeData.BTLuaConditionNodeNameArray;
         }
         else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
         {

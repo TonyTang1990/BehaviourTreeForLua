@@ -32,6 +32,16 @@ namespace LuaBehaviourTree
         public static string[] BTDecorationNodeNameArray = { "InverterDecoration", "RepeatedDecoration" };
 
         /// <summary>
+        /// CS条件节点名数据(注意和BTNodeData.cs里保持一致)
+        /// </summary>
+        public static string[] BTCSConditionNodeNameArray = { "CompareShareBool", "CompareShareInt", "CompareShareFloat", "CompareShareString" };
+
+        /// <summary>
+        /// CS行为节点名数据(注意和BTNodeData.cs里保持一致)
+        /// </summary>
+        public static string[] BTCSActionNodeNameArray = { "SetShareBool", "SetShareInt", "SetShareFloat", "SetShareString" };
+
+        /// <summary>
         /// Lua脚本相对目录
         /// </summary>
         public const string BTLuaScriptFolderRelativePath = "LuaScripts/Core/BehaviourTree/";

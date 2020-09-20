@@ -1,5 +1,5 @@
 ﻿/*
- * Description:             BTConditionNode.cs
+ * Description:             BTLuaConditionNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/19
  */
@@ -11,17 +11,17 @@ using UnityEngine;
 namespace LuaBehaviourTree
 {
     /// <summary>
-    /// BTConditionNode.cs
-    /// 条件节点
+    /// BTLuaConditionNode.cs
+    /// Lua条件节点
     /// </summary>
-    public class BTConditionNode : BTNode
+    public class BTLuaConditionNode : BTBaseConditionNode
     {
         /// <summary>
         /// Lua对应的脚本对象
         /// </summary>
         protected LuaBTNode mLuaBTNode;
 
-        public BTConditionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
+        public BTLuaConditionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
             mLuaBTNode = BTUtilities.CreateLuaNode(this, instanceid);
         }
@@ -63,6 +63,15 @@ namespace LuaBehaviourTree
         {
             base.OnExit();
             mLuaBTNode.OnExit();
+        }
+
+        /// <summary>
+        /// 是否可被重新评估
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CanReevaluate()
+        {
+            return AbortType == EAbortType.Self;
         }
     }
 }

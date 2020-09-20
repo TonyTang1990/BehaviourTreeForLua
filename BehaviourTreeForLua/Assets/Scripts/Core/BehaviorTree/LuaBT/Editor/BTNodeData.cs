@@ -16,6 +16,7 @@ namespace LuaBehaviourTree
     /// </summary>
     public static class BTNodeData
     {
+        #region CS节点部分
         /// <summary>
         /// 组合节点名数据
         /// </summary>
@@ -33,61 +34,6 @@ namespace LuaBehaviourTree
             "随机选择一个子节点来执行",                             // 随机节点
         };
 
-        /// <summary>
-        /// 行为节点名数据
-        /// </summary>
-        public static string[] BTActionNodeNameArray = {
-            "LogAction",
-            "MoveToPostion",
-            "WaitForSeconds",
-        };
-
-        /// <summary>
-        /// 行为节点描述数据(和BTActionNodeNameArray一一对应)
-        /// </summary>
-        public static string[] BTActionNodeIntroArray =
-        {
-            "打印log",                                              // 打印log
-            "移动到指定位置",                                       // 移动到指定位置
-            "等待执行一段时间",                                     // 等待执行一段时间
-        };
-
-        /// <summary>
-        /// 行为节点描述数据(和BTActionNodeNameArray一一对应)
-        /// </summary>
-        public static string[] BTActionNodeParamsIntroArray =
-        {
-            "Log内容",
-            "坐标X,坐标Y,坐标Z",
-            "等待指定时长(s)",
-            "无需参数(保持空闲，直到条件有变化时)",
-        };
-
-        /// <summary>
-        /// 条件节点名数据
-        /// </summary>
-        public static string[] BTConditionNodeNameArray = {
-            "ActiveSelfCondition",                                  // 自身是否激活
-            "HasTaskCondition"                                      // 是否拥有任务
-        };
-
-        /// <summary>
-        /// 条件节点描述数据(和BTConditionNodeNameArray一一对应)
-        /// </summary>
-        public static string[] BTConditionNodeIntroArray =
-        {
-            "自身显示出来",                                      // 自身显示出来
-            "正在执行指定任务",                                  // 正在执行指定任务
-        };
-        
-        /// <summary>
-        /// 条件节点描述数据(和BTConditionNodeNameArray一一对应)
-        /// </summary>
-        public static string[] BTConditionNodeParamsIntroArray =
-        {
-            "目标对象UID(0表示玩家)",
-            "是否拥有任务",
-        };
 
         /// <summary>
         /// 修饰节点名数据
@@ -111,5 +57,128 @@ namespace LuaBehaviourTree
             "翻转结果修饰节点",                                  // 翻转结果修饰节点
             "重复执行修饰节点",                                  // 重复执行修饰节点
         };
+
+        /// <summary>
+        /// CS行为节点名数据
+        /// </summary>
+        public static string[] BTCSActionNodeNameArray = {
+            "SetShareBool",                                     // 设置自定义Bool变量值
+            "SetShareInt",                                      // 设置自定义Int变量值
+            "SetShareFloat",                                    // 设置自定义Float变量值
+            "SetShareString",                                   // 设置自定义String变量值
+        };
+
+        /// <summary>
+        /// CS行为节点描述数据(和BTCSActionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTCSActionNodeIntroArray =
+        {
+            "设置自定义Bool变量值",                             // 设置自定义Bool变量值节点描述数据
+            "设置自定义Int变量值",                              // 设置自定义Int变量值节点描述数据
+            "设置自定义Float变量值",                            // 设置自定义Float变量值节点描述数据
+            "设置自定义String变量值",                           // 设置自定义String变量值节点描述数据
+        };
+
+        /// <summary>
+        /// CS行为节点参数介绍(和BTCSActionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTCSActionNodeParamsIntroArray =
+        {
+            "True or False",                                     // 设置自定义Bool变量值节点参数介绍
+            "整数",                                              // 设置自定义Int变量值节点参数介绍
+            "浮点数",                                            // 设置自定义Float变量值节参数点介绍
+            "字符串",                                            // 设置自定义String变量值节点参数介绍
+        };
+
+        /// <summary>
+        /// CS条件节点名数据
+        /// </summary>
+        public static string[] BTCSConditionNodeNameArray = {
+            "CompareShareBool",                                   // 比较自定义Bool变量值
+            "CompareShareInt",                                    // 比较自定义Int变量值
+            "CompareShareFloat",                                  // 比较自定义Float变量值
+            "CompareShareString",                                 // 比较自定义String变量值
+        };
+
+        /// <summary>
+        /// CS条件节点描述数据(和BTConditionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTCSConditionNodeIntroArray =
+        {
+            "比较自定义Bool变量值",                                 // 比较自定义Bool变量值
+            "比较自定义Int变量值",                                  // 比较自定义Int变量值
+            "比较自定义Float变量值",                                // 比较自定义Float变量值
+            "比较自定义String变量值",                               // 比较自定义String变量值
+        };
+
+        /// <summary>
+        /// CS条件节点参数介绍(和BTCSConditionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTCSConditionNodeParamsIntroArray =
+        {
+            "True or False",                                        // 比较自定义Bool变量值参数点介绍
+            "整数",                                                 // 比较自定义Int变量值参数点介绍
+            "浮点数",                                               // 比较自定义Float变量值参数点介绍
+            "字符串",                                               // 比较自定义String变量值参数点介绍
+        };
+        #endregion
+
+        #region Lua节点部分
+        /// <summary>
+        /// Lua行为节点名数据
+        /// </summary>
+        public static string[] BTLuaActionNodeNameArray = {
+            "LogAction",
+            "MoveToPostion",
+            "WaitForSeconds",
+        };
+
+        /// <summary>
+        /// Lua行为节点描述数据(和BTLuaActionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTLuaActionNodeIntroArray =
+        {
+            "打印log",                                              // 打印log
+            "移动到指定位置",                                       // 移动到指定位置
+            "等待执行一段时间",                                     // 等待执行一段时间
+        };
+
+        /// <summary>
+        /// Lua行为节点参数介绍(和BTLuaActionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTLuaActionNodeParamsIntroArray =
+        {
+            "Log内容",
+            "坐标X,坐标Y,坐标Z",
+            "等待指定时长(s)",
+            "无需参数(保持空闲，直到条件有变化时)",
+        };
+
+        /// <summary>
+        /// Lua条件节点名数据
+        /// </summary>
+        public static string[] BTLuaConditionNodeNameArray = {
+            "ActiveSelfCondition",                                  // 自身是否激活
+            "HasTaskCondition"                                      // 是否拥有任务
+        };
+
+        /// <summary>
+        /// Lua条件节点描述数据(和BTLuaConditionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTLuaConditionNodeIntroArray =
+        {
+            "自身显示出来",                                      // 自身显示出来
+            "正在执行指定任务",                                  // 正在执行指定任务
+        };
+
+        /// <summary>
+        /// Lua条件节点参数介绍(和BTLuaConditionNodeNameArray一一对应)
+        /// </summary>
+        public static string[] BTLuaConditionNodeParamsIntroArray =
+        {
+            "目标对象UID(0表示玩家)",
+            "是否拥有任务",
+        };
+        #endregion
     }
 }

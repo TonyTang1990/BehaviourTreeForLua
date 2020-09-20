@@ -45,6 +45,18 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
+    /// 自定义变量类型
+    /// </summary>
+    public enum EShareVariableType
+    {
+        Invalide = 0,                      // 无效类型
+        Bool,                              // bool类型
+        Int,                               // int类型
+        Float,                             // float类型
+        String,                            // string类型
+    }
+
+    /// <summary>
     /// 行为树节点抽象
     /// </summary>
     [Serializable]
@@ -95,6 +107,12 @@ namespace LuaBehaviourTree
         /// 打断类型
         /// </summary>
         public EAbortType AbortType;
+
+        /// <summary>
+        /// 是否是CS节点(反之是Lua节点)
+        /// 为了优化节点创建判定，避免循环比较判定
+        /// </summary>
+        public bool IsCSNode;
         #endregion
 
         #region 运行时部分
@@ -215,6 +233,7 @@ namespace LuaBehaviourTree
             ParentNodeUID = parentnode != null ? parentnode.UID : 0;
             ChildNodesUIDList = new List<int>();
             AbortType = GetNodeDefaultAbortType(nodetype);
+            IsCSNode = CheckIsCSNodeInEditor();
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBTGraph = ownerbtgraph;
@@ -232,6 +251,7 @@ namespace LuaBehaviourTree
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
             AbortType = node.AbortType;
+            IsCSNode = node.IsCSNode;
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = btowner;
@@ -375,7 +395,16 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         protected virtual bool CanReevaluate()
         {
-            return AbortType == EAbortType.Self;
+            return false;
+        }
+
+        /// <summary>
+        /// 运行时检查是否是CS节点
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckIsCSNodeInRunTime()
+        {
+            return IsCSNode;
         }
         #endregion
 
@@ -525,6 +554,40 @@ namespace LuaBehaviourTree
             {
                 return EAbortType.None;
             }
+        }
+
+        /// <summary>
+        /// 编辑器检查是否是CS节点
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckIsCSNodeInEditor()
+        {
+            var index = Array.FindIndex(BTData.BTCSActionNodeNameArray, (nodename) =>
+            {
+                return string.Equals(nodename, NodeName);
+            });
+            if(index == -1)
+            {
+                index = Array.FindIndex(BTData.BTCSConditionNodeNameArray, (nodename) =>
+                {
+                    return string.Equals(nodename, NodeName);
+                });
+            }
+            if (index == -1)
+            {
+                index = Array.FindIndex(BTData.BTCompositeNodeNameArray, (nodename) =>
+                {
+                    return string.Equals(nodename, NodeName);
+                });
+            }
+            if (index == -1)
+            {
+                index = Array.FindIndex(BTData.BTDecorationNodeNameArray, (nodename) =>
+                {
+                    return string.Equals(nodename, NodeName);
+                });
+            }
+            return index != -1;
         }
         #endregion
 

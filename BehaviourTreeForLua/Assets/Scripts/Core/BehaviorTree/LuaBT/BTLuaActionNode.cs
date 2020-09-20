@@ -1,5 +1,5 @@
 ﻿/*
- * Description:             BTActionNode.cs
+ * Description:             BTLuaActionNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/08/19
  */
@@ -12,9 +12,9 @@ namespace LuaBehaviourTree
 {
     /// <summary>
     /// BTActionNode.cs
-    /// 行为节点
+    /// Lua行为节点
     /// </summary>
-    public class BTActionNode : BTNode
+    public class BTLuaActionNode : BTBaseActionNode
     {
         #region 运行时部分
         /// <summary>
@@ -22,7 +22,7 @@ namespace LuaBehaviourTree
         /// </summary>
         protected LuaBTNode mLuaBTNode;
 
-        public BTActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
+        public BTLuaActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
             mLuaBTNode = BTUtilities.CreateLuaNode(this, instanceid);
         }
