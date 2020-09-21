@@ -131,7 +131,7 @@ namespace LuaBehaviourTree
         public BTGraph OwnerBTGraph
         {
             get;
-            protected set;
+            set;
         }
 
         /// <summary>

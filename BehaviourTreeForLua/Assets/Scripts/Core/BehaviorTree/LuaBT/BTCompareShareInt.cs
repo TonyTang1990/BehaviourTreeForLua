@@ -30,7 +30,7 @@ namespace LuaBehaviourTree
         #region 运行时部分
         public BTCompareShareInt(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
-            var variablenodedata = OwnerBTGraph.GetVariableNodeValueInRuntime<int>(this.UID) as CustomIntVariableNodeData;
+            var variablenodedata = OwnerBTGraph.GetVariableNodeValueInRuntime(this.UID) as CustomIntVariableNodeData;
             mVariableName = variablenodedata.VariableName;
             mTargetVariableValue = variablenodedata.VariableValue;
         }

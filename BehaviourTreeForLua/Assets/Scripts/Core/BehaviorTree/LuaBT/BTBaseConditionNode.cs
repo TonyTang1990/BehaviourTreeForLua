@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTBaseConditionNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/09/20
@@ -12,7 +12,7 @@ namespace LuaBehaviourTree
 {
     /// <summary>
     /// BTBaseConditionNode.cs
-    /// Ìõ¼ş½Úµã»ùÀà
+    /// æ¡ä»¶èŠ‚ç‚¹åŸºç±»
     /// </summary>
     public abstract class BTBaseConditionNode : BTNode
     {
@@ -22,7 +22,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÊÍ·Å
+        /// é‡Šæ”¾
         /// </summary>
         public override void Dispose()
         {
@@ -30,7 +30,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÖØÖÃ½Úµã×´Ì¬
+        /// é‡ç½®èŠ‚ç‚¹çŠ¶æ€
         /// </summary>
         public override void Reset()
         {
@@ -48,7 +48,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÍË³ö½Úµã
+        /// é€€å‡ºèŠ‚ç‚¹
         /// </summary>
         protected override void OnExit()
         {
@@ -56,7 +56,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÊÇ·ñ¿É±»ÖØĞÂÆÀ¹À
+        /// æ˜¯å¦å¯è¢«é‡æ–°è¯„ä¼°
         /// </summary>
         /// <returns></returns>
         protected override bool CanReevaluate()

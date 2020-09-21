@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             Blackboard.cs
  * Author:                  TANGHUAN
  * Create Date:             2020/09/16
@@ -11,12 +11,12 @@ using UnityEngine;
 namespace LuaBehaviourTree
 {
     /// <summary>
-    /// ºÚ°åÄ£Ê½£¬Êı¾İ¹²ÏíÖĞĞÄ
+    /// é»‘æ¿æ¨¡å¼ï¼Œæ•°æ®å…±äº«ä¸­å¿ƒ
     /// </summary>
     public class Blackboard
     {
         /// <summary>
-        /// ºÚ°åÊı¾İ¼¯ºÏÖĞĞÄ
+        /// é»‘æ¿æ•°æ®é›†åˆä¸­å¿ƒ
         /// </summary>
         protected Dictionary<string, IBlackboardData> mBlackboardDataMap;
 
@@ -26,7 +26,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// Ìí¼ÓºÚ°åÊı¾İ
+        /// æ·»åŠ é»‘æ¿æ•°æ®
         /// </summary>
         /// <param name="key"></param>
         /// <param name="data"></param>
@@ -41,13 +41,13 @@ namespace LuaBehaviourTree
             }
             else
             {
-                Debug.LogError(string.Format("ºÚ°åÊı¾İÀïÒÑ´æÔÚKey:{0}µÄÊı¾İ£¬Ìí¼ÓÊı¾İÊ§°Ü!", key));
+                Debug.LogError(string.Format("é»‘æ¿æ•°æ®é‡Œå·²å­˜åœ¨Key:{0}çš„æ•°æ®ï¼Œæ·»åŠ æ•°æ®å¤±è´¥!", key));
                 return false;
             }
         }
 
         /// <summary>
-        /// ÒÆ³ıºÚ°åÊı¾İ
+        /// ç§»é™¤é»‘æ¿æ•°æ®
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -57,7 +57,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// »ñÈ¡Ö¸¶¨ºÚ°åÊı¾İ
+        /// è·å–æŒ‡å®šé»‘æ¿æ•°æ®
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -71,13 +71,13 @@ namespace LuaBehaviourTree
             }
             else
             {
-                Debug.LogError("·µ»ØÄ¬ÈÏÖµ!");
+                Debug.LogError($"é»‘æ¿é‡Œæ‰¾ä¸åˆ°æ•°æ®Key:{key},è¿”å›é»˜è®¤å€¼!");
                 return default(T);
             }
         }
 
         /// <summary>
-        /// ¸üĞÂºÚ°åÊı¾İ
+        /// æ›´æ–°é»‘æ¿æ•°æ®
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -93,13 +93,13 @@ namespace LuaBehaviourTree
             }
             else
             {
-                Debug.LogError(string.Format("¸üĞÂKey:{0}µÄÊı¾İÊ§°Ü!", key));
+                Debug.LogError(string.Format("æ›´æ–°Key:{0}çš„æ•°æ®å¤±è´¥!", key));
                 return false;
             }
         }
 
         /// <summary>
-        /// Çå³ıºÚ°åÊı¾İ
+        /// æ¸…é™¤é»‘æ¿æ•°æ®
         /// </summary>
         public void ClearData()
         {
@@ -107,43 +107,61 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ´òÓ¡ËùÓĞºÚ°åÊı¾İ
+        /// è·å–æ‰€æœ‰çš„é»‘æ¿æ•°æ®Keyåˆ—è¡¨
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetAllBlackBoardKeysList()
+        {
+            return new List<string>(mBlackboardDataMap.Keys);
+        }
+
+        /// <summary>
+        /// è·å–æ‰€æœ‰çš„é»‘æ¿æ•°æ®Valueåˆ—è¡¨
+        /// </summary>
+        /// <returns></returns>
+        public List<IBlackboardData> GetAllBlackBoardValuesList()
+        {
+            return new List<IBlackboardData>(mBlackboardDataMap.Values);
+        }
+
+        /// <summary>
+        /// æ‰“å°æ‰€æœ‰é»‘æ¿æ•°æ®
         /// </summary>
         public void PrintAllBlackBoardDatas()
         {
-            Debug.Log($"´òÓ¡ºÚ°åÊı¾İ:");
+            Debug.Log($"æ‰“å°é»‘æ¿æ•°æ®:");
             foreach (var blackboarddata in mBlackboardDataMap)
             {
                 var blackboarddatatype = blackboarddata.Value.GetType();
                 if (blackboarddatatype == typeof(BlackboardData<bool>))
                 {
                     var realblackboarddata = blackboarddata.Value as BlackboardData<bool>;
-                    Debug.Log($"±äÁ¿Ãû:{blackboarddata.Key}±äÁ¿Öµ:{realblackboarddata.Data}");
+                    Debug.Log($"å˜é‡å:{blackboarddata.Key}å˜é‡å€¼:{realblackboarddata.Data}");
                 }
                 else if(blackboarddatatype == typeof(BlackboardData<int>))
                 {
                     var realblackboarddata = blackboarddata.Value as BlackboardData<int>;
-                    Debug.Log($"±äÁ¿Ãû:{blackboarddata.Key}±äÁ¿Öµ:{realblackboarddata.Data}");
+                    Debug.Log($"å˜é‡å:{blackboarddata.Key}å˜é‡å€¼:{realblackboarddata.Data}");
                 }
                 else if (blackboarddatatype == typeof(BlackboardData<float>))
                 {
                     var realblackboarddata = blackboarddata.Value as BlackboardData<float>;
-                    Debug.Log($"±äÁ¿Ãû:{blackboarddata.Key}±äÁ¿Öµ:{realblackboarddata.Data}");
+                    Debug.Log($"å˜é‡å:{blackboarddata.Key}å˜é‡å€¼:{realblackboarddata.Data}");
                 }
                 else if (blackboarddatatype == typeof(BlackboardData<string>))
                 {
                     var realblackboarddata = blackboarddata.Value as BlackboardData<string>;
-                    Debug.Log($"±äÁ¿Ãû:{blackboarddata.Key}±äÁ¿Öµ:{realblackboarddata.Data}");
+                    Debug.Log($"å˜é‡å:{blackboarddata.Key}å˜é‡å€¼:{realblackboarddata.Data}");
                 }
                 else
                 {
-                    Debug.LogError($"²»Ö§³ÖµÄºÚ°åÊı¾İÀàĞÍ:{blackboarddatatype},´òÓ¡Ê§°Ü!");
+                    Debug.LogError($"ä¸æ”¯æŒçš„é»‘æ¿æ•°æ®ç±»å‹:{blackboarddatatype},æ‰“å°å¤±è´¥!");
                 }
             }
         }
 
         /// <summary>
-        /// »ñÈ¡ºÚ°åÖ¸¶¨Êı¾İ
+        /// è·å–é»‘æ¿æŒ‡å®šæ•°æ®
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -152,14 +170,14 @@ namespace LuaBehaviourTree
             IBlackboardData value;
             if (!mBlackboardDataMap.TryGetValue(key, out value))
             {
-                Debug.LogError(string.Format("ÕÒ²»µ½Key:{0}µÄºÚ°åÊı¾İ!", key));
+                Debug.LogError(string.Format("æ‰¾ä¸åˆ°Key:{0}çš„é»‘æ¿æ•°æ®!", key));
             }
             return value;
         }
     }
 
     /// <summary>
-    /// ºÚ°åÊı¾İ½Ó¿Ú³éÏó
+    /// é»‘æ¿æ•°æ®æ¥å£æŠ½è±¡
     /// </summary>
     public interface IBlackboardData
     {
@@ -167,12 +185,12 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
-    /// ºÚ°åÊı¾İ·ºĞÍ»ùÀà
+    /// é»‘æ¿æ•°æ®æ³›å‹åŸºç±»
     /// </summary>
     public class BlackboardData<T> : IBlackboardData
     {
         /// <summary>
-        /// Êı¾İ
+        /// æ•°æ®
         /// </summary>
         public T Data
         {
@@ -190,9 +208,9 @@ namespace LuaBehaviourTree
         }
     }
 
-    #region ºÚ°åÊı¾İ³£ÓÃÊı¾İÀàĞÍ¶¨Òå
+    #region é»‘æ¿æ•°æ®å¸¸ç”¨æ•°æ®ç±»å‹å®šä¹‰
     /// <summary>
-    /// ºÚ°åÊı¾İÕûĞÎÊı¾İ
+    /// é»‘æ¿æ•°æ®æ•´å½¢æ•°æ®
     /// </summary>
     public class IntBlackboardData : BlackboardData<int>
     {
@@ -202,7 +220,7 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
-    /// ºÚ°åÊı¾İ¸¡µãĞÍÊı¾İ
+    /// é»‘æ¿æ•°æ®æµ®ç‚¹å‹æ•°æ®
     /// </summary>
     public class FloatBlackboardData : BlackboardData<float>
     {
@@ -212,7 +230,7 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
-    /// ºÚ°åÊı¾İBooleanĞÍÊı¾İ
+    /// é»‘æ¿æ•°æ®Booleanå‹æ•°æ®
     /// </summary>
     public class BoolBlackboardData : BlackboardData<bool>
     {
@@ -222,7 +240,7 @@ namespace LuaBehaviourTree
     }
 
     /// <summary>
-    /// ºÚ°åÊı¾İ×Ö·û´®ĞÍÊı¾İ
+    /// é»‘æ¿æ•°æ®å­—ç¬¦ä¸²å‹æ•°æ®
     /// </summary>
     public class StringBlackboardData : BlackboardData<string>
     {

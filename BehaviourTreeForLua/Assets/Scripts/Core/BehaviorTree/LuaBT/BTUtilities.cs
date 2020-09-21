@@ -270,6 +270,109 @@ namespace LuaBehaviourTree
             int uid = BitConverter.ToInt32(buffer, 0);
             return uid;
         }
+        
+        /// <summary>
+        /// 指定节点名是否是否设置公共变量行为节点
+        /// </summary>
+        /// <param name="nodename"></param>
+        /// <returns></returns>
+        public static bool IsSetShareVariableAction(string nodename)
+        {
+            if (string.Equals(nodename, "SetShareBool") ||
+                string.Equals(nodename, "SetShareInt") ||
+                string.Equals(nodename, "SetShareFloat") ||
+                string.Equals(nodename, "SetShareString"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 指定节点名是否是否比较公共变量条件节点
+        /// </summary>
+        /// <param name="nodename"></param>
+        /// <returns></returns>
+        public static bool IsCompareToShareVariableCondition(string nodename)
+        {
+            if (string.Equals(nodename, "CompareShareBool") ||
+                string.Equals(nodename, "CompareShareInt") ||
+                string.Equals(nodename, "CompareShareFloat") ||
+                string.Equals(nodename, "CompareShareString"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 获取节点的变量类型
+        /// </summary>
+        /// <param name="nodename"></param>
+        /// <returns></returns>
+        public static EVariableType GetNodeVariableType(string nodename)
+        {
+            if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[0]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[0]))
+            {
+                return EVariableType.Bool;
+            }
+            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[1]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[1]))
+            {
+                return EVariableType.Int;
+            }
+            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[2]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[2]))
+            {
+                return EVariableType.Float;
+            }
+            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[3]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[3]))
+            {
+                return EVariableType.String;
+            }
+            else
+            {
+                return EVariableType.Invalide;
+            }
+        }
+
+        /// <summary>
+        /// 获取指定变量类型的节点变量默认值
+        /// Note:
+        /// 限非运行时用
+        /// </summary>
+        /// <param name="nodeuid"></param>
+        /// <param name="variabletype"></param>
+        /// <param name="variablename"></param>
+        /// <returns></returns>
+        public static CustomVariableNodeData GetVariableNodeDefaultValueInEditor(int nodeuid, string variablename, EVariableType variabletype)
+        {
+            if (variabletype == EVariableType.Bool)
+            {
+                return new CustomBoolVariableNodeData(nodeuid, variablename, variabletype, default(bool));
+            }
+            else if (variabletype == EVariableType.Int)
+            {
+                return new CustomIntVariableNodeData(nodeuid, variablename, variabletype, default(int));
+            }
+            else if (variabletype == EVariableType.String)
+            {
+                return new CustomStringVariableNodeData(nodeuid, variablename, variabletype, default(string));
+            }
+            else if (variabletype == EVariableType.Float)
+            {
+                return new CustomFloatVariableNodeData(nodeuid, variablename, variabletype, default(float));
+            }
+            else
+            {
+                Debug.LogError($"不支持的变量类型:{variabletype},获取节点变量默认值失败!");
+                return null;
+            }
+        }
         #endregion
     }
 }

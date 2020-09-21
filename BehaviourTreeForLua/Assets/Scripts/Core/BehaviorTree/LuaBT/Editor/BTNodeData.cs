@@ -84,10 +84,10 @@ namespace LuaBehaviourTree
         /// </summary>
         public static string[] BTCSActionNodeParamsIntroArray =
         {
-            "True or False",                                     // 设置自定义Bool变量值节点参数介绍
-            "整数",                                              // 设置自定义Int变量值节点参数介绍
-            "浮点数",                                            // 设置自定义Float变量值节参数点介绍
-            "字符串",                                            // 设置自定义String变量值节点参数介绍
+            "无",                                                // 设置自定义Bool变量值节点参数介绍
+            "无",                                                // 设置自定义Int变量值节点参数介绍
+            "无",                                                // 设置自定义Float变量值节参数点介绍
+            "无",                                                // 设置自定义String变量值节点参数介绍
         };
 
         /// <summary>
@@ -116,10 +116,10 @@ namespace LuaBehaviourTree
         /// </summary>
         public static string[] BTCSConditionNodeParamsIntroArray =
         {
-            "True or False",                                        // 比较自定义Bool变量值参数点介绍
-            "整数",                                                 // 比较自定义Int变量值参数点介绍
-            "浮点数",                                               // 比较自定义Float变量值参数点介绍
-            "字符串",                                               // 比较自定义String变量值参数点介绍
+            "无",                                                    // 比较自定义Bool变量值参数点介绍
+            "无",                                                    // 比较自定义Int变量值参数点介绍
+            "无",                                                    // 比较自定义Float变量值参数点介绍
+            "无",                                                    // 比较自定义String变量值参数点介绍
         };
         #endregion
 

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             TBehaviourTreeManager.cs
  * Author:                  TANGHUAN
  * Create Date:             2020/08/31
@@ -11,12 +11,12 @@ using UnityEngine;
 namespace LuaBehaviourTree
 {
     /// <summary>
-    /// ĞĞÎªÊ÷¹ÜÀíµ¥ÀıÀà
+    /// è¡Œä¸ºæ ‘ç®¡ç†å•ä¾‹ç±»
     /// </summary>
     public class TBehaviourTreeManager : SingletonMonoBehaviourTemplate<TBehaviourTreeManager>
     {
         /// <summary>
-        /// ËùÓĞÓĞĞ§µÄĞĞÎªÊ÷ÁĞ±í
+        /// æ‰€æœ‰æœ‰æ•ˆçš„è¡Œä¸ºæ ‘åˆ—è¡¨
         /// </summary>
         public List<TBehaviourTree> AllBehaviourTreeList
         {
@@ -25,7 +25,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÊÇ·ñÔİÍ£ËùÓĞ
+        /// æ˜¯å¦æš‚åœæ‰€æœ‰
         /// </summary>
         public bool IsPauseAll
         {
@@ -51,7 +51,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ×¢²áÖ¸¶¨ĞĞÎªÊ÷¶ÔÏó
+        /// æ³¨å†ŒæŒ‡å®šè¡Œä¸ºæ ‘å¯¹è±¡
         /// </summary>
         /// <param name="bt"></param>
         /// <returns></returns>
@@ -59,32 +59,32 @@ namespace LuaBehaviourTree
         {
             if(AllBehaviourTreeList.Contains(bt) == false)
             {
-                Debug.Log($"×¢²áÖ¸¶¨ĞĞÎªÊ÷£¬¹ÒÔØ¶ÔÏóÃû:{bt.name}");
+                Debug.Log($"æ³¨å†ŒæŒ‡å®šè¡Œä¸ºæ ‘ï¼ŒæŒ‚è½½å¯¹è±¡å:{bt.name}");
                 AllBehaviourTreeList.Add(bt);
                 return true;
             }
             else
             {
-                Debug.LogError($"ÖØ¸´×¢²áÖ¸¶¨ĞĞÎªÊ÷£¬¹ÒÔØ¶ÔÏóÃû:{bt.name}!");
+                Debug.LogError($"é‡å¤æ³¨å†ŒæŒ‡å®šè¡Œä¸ºæ ‘ï¼ŒæŒ‚è½½å¯¹è±¡å:{bt.name}!");
                 return false;
             }
         }
 
         /// <summary>
-        /// È¡Ïû×¢²áÖ¸¶¨ĞĞÎªÊ÷¶ÔÏó
+        /// å–æ¶ˆæ³¨å†ŒæŒ‡å®šè¡Œä¸ºæ ‘å¯¹è±¡
         /// </summary>
         /// <param name="bt"></param>
         /// <returns></returns>
         public bool UnregisterTBhaviourTree(TBehaviourTree bt)
         {
 #if UNITY_EDITOR
-            Debug.Log($"È¡Ïû×¢²áÖ¸¶¨ĞĞÎªÊ÷£¬¹ÒÔØ¶ÔÏóÃû:{bt.name}");
+            Debug.Log($"å–æ¶ˆæ³¨å†ŒæŒ‡å®šè¡Œä¸ºæ ‘ï¼ŒæŒ‚è½½å¯¹è±¡å:{bt.name}");
 #endif
             return AllBehaviourTreeList.Remove(bt);
         }
 
         /// <summary>
-        /// ÔİÍ£ËùÓĞĞĞÎªÊ÷
+        /// æš‚åœæ‰€æœ‰è¡Œä¸ºæ ‘
         /// </summary>
         public void PauseAll()
         {
@@ -96,7 +96,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ¼ÌĞøËùÓĞĞĞÎªÊ÷
+        /// ç»§ç»­æ‰€æœ‰è¡Œä¸ºæ ‘
         /// </summary>
         public void ResumeAll()
         {

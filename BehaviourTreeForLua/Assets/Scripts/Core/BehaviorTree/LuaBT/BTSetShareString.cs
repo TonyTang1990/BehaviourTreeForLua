@@ -29,7 +29,7 @@ namespace LuaBehaviourTree
         #region 运行时部分
         public BTSetShareString(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
-            var variablenodedata = OwnerBTGraph.GetVariableNodeValueInRuntime<string>(this.UID) as CustomStringVariableNodeData;
+            var variablenodedata = OwnerBTGraph.GetVariableNodeValueInRuntime(this.UID) as CustomStringVariableNodeData;
             mVariableName = variablenodedata.VariableName;
             mTargetVariableValue = variablenodedata.VariableValue;
         }

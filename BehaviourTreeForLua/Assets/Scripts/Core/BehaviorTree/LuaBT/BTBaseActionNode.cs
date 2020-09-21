@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Description:             BTBaseActionNode.cs
  * Author:                  TONYTANG
  * Create Date:             2020/09/20
@@ -12,17 +12,17 @@ namespace LuaBehaviourTree
 {
     /// <summary>
     /// BTActionNode.cs
-    /// ĞĞÎª½Úµã»ùÀà
+    /// è¡Œä¸ºèŠ‚ç‚¹åŸºç±»
     /// </summary>
     public abstract class BTBaseActionNode : BTNode
     {
-        #region ÔËĞĞÊ±²¿·Ö
+        #region è¿è¡Œæ—¶éƒ¨åˆ†
         public BTBaseActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
         }
 
         /// <summary>
-        /// ÊÍ·Å
+        /// é‡Šæ”¾
         /// </summary>
         public override void Dispose()
         {
@@ -30,7 +30,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÖØÖÃ½Úµã×´Ì¬
+        /// é‡ç½®èŠ‚ç‚¹çŠ¶æ€
         /// </summary>
         public override void Reset()
         {
@@ -48,7 +48,7 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// ÍË³ö½Úµã
+        /// é€€å‡ºèŠ‚ç‚¹
         /// </summary>
         protected override void OnExit()
         {

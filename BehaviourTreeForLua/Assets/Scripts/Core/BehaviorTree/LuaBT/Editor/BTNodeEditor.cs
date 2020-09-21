@@ -480,13 +480,13 @@ namespace LuaBehaviourTree
         /// </summary>
         private void HandleInteraction()
         {
-            if (Application.isPlaying == false)
+            if (Event.current.type == EventType.ContextClick)
             {
-                if (Event.current.type == EventType.ContextClick)
+                var nodeareamouseposition = Event.current.mousePosition;
+                nodeareamouseposition.x = nodeareamouseposition.x - InspectorWindowWidth;
+                mCurrentClickNode = mCurrentSelectionBTGraph.FindNodeByMousePos(nodeareamouseposition + mWindowScrollPos);
+                if (Application.isPlaying == false)
                 {
-                    var nodeareamouseposition = Event.current.mousePosition;
-                    nodeareamouseposition.x = nodeareamouseposition.x - InspectorWindowWidth;
-                    mCurrentClickNode = mCurrentSelectionBTGraph.FindNodeByMousePos(nodeareamouseposition + mWindowScrollPos);
                     if (mCurrentClickNode == null)
                     {
                         Debug.Log($"显示空白区域菜单!");
@@ -515,8 +515,8 @@ namespace LuaBehaviourTree
                         var menu = GetNodeTypeMenu(EBTMenuType.ActionLeafNodeAreaMenu);
                         menu.ShowAsContext();
                     }
-                    Event.current.Use();
                 }
+                Event.current.Use();
             }
         }
 
@@ -592,7 +592,6 @@ namespace LuaBehaviourTree
                 }
             }
             IsEnableMoveWithChildNodes = EditorGUILayout.Toggle("子节点一起移动开关:", IsEnableMoveWithChildNodes, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
-            IsDebugMode = EditorGUILayout.Toggle("调试开关:", IsDebugMode, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
             mCurrentCreateNodeStrategy = (ECreateNodeStrategy)EditorGUILayout.EnumPopup("节点添加策略:", mCurrentCreateNodeStrategy, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
             if (GUILayout.Button("新建", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
             {
@@ -628,9 +627,66 @@ namespace LuaBehaviourTree
                     EditorGUILayout.LabelField("需要重新评估节点数:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
                     GUILayout.Label(mCurrentSelectionBTGraph.ExecutedReevaluatedNodesResultMap.Count.ToString(), "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
                     EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.LabelField("黑板数据:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                    var allblackboardkeyslist = mCurrentSelectionBTGraph.BTBlackBoard.GetAllBlackBoardKeysList();
+                    var allblackboardvalueslist = mCurrentSelectionBTGraph.BTBlackBoard.GetAllBlackBoardValuesList();
+                    if (allblackboardkeyslist.Count > 0)
+                    {
+                        for(int i = 0, length = allblackboardkeyslist.Count; i < length; i++)
+                        {
+                            DisplayOneBlackBoardKeyInfo(allblackboardkeyslist[i], allblackboardvalueslist[i]);
+                        }
+                    }
+                    else
+                    {
+                        EditorGUILayout.LabelField("无", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                    }
                 }
             }
             EditorGUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// 显示一个黑板指定Key数据
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        private void DisplayOneBlackBoardKeyInfo(string key, IBlackboardData value)
+        {
+            DrawUILine();
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField(key, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("变量值:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            var blackboarddatatype = value.GetType();
+            if (blackboarddatatype == typeof(BlackboardData<bool>))
+            {
+                var realblackboarddata = value as BlackboardData<bool>;
+                EditorGUILayout.Toggle(realblackboarddata.Data, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (blackboarddatatype == typeof(BlackboardData<int>))
+            {
+                var realblackboarddata = value as BlackboardData<int>;
+                EditorGUILayout.IntField(realblackboarddata.Data, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (blackboarddatatype == typeof(BlackboardData<float>))
+            {
+                var realblackboarddata = value as BlackboardData<float>;
+                EditorGUILayout.FloatField(realblackboarddata.Data, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else if (blackboarddatatype == typeof(BlackboardData<string>))
+            {
+                var realblackboarddata = value as BlackboardData<string>;
+                EditorGUILayout.LabelField(realblackboarddata.Data, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            else
+            {
+                EditorGUILayout.LabelField($"不支持的黑板数据类型:{blackboarddatatype}!", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+            }
+            EditorGUILayout.EndHorizontal();
         }
 
         /// <summary>
@@ -643,20 +699,20 @@ namespace LuaBehaviourTree
             {
                 EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("节点名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
-                GUILayout.Label(mCurrentClickNode != null ? mCurrentClickNode.NodeName : string.Empty, "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                EditorGUILayout.LabelField("节点名:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+                GUILayout.Label(mCurrentClickNode != null ? mCurrentClickNode.NodeName : string.Empty, "textarea", GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
                 if (mCurrentClickNode.NodeType == (int)EBTNodeType.ConditionNodeType)
                 {
-                    EditorGUILayout.LabelField("打断类型:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                    EditorGUILayout.LabelField("打断类型:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
                     if (Application.isPlaying == false)
                     {
-                        mCurrentClickNode.AbortType = (EAbortType)EditorGUILayout.EnumPopup("", mCurrentClickNode.AbortType, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        mCurrentClickNode.AbortType = (EAbortType)EditorGUILayout.EnumPopup("", mCurrentClickNode.AbortType, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
                     }
                     else
                     {
-                        EditorGUILayout.EnumPopup("", mCurrentClickNode.AbortType, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                        EditorGUILayout.EnumPopup("", mCurrentClickNode.AbortType, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
                     }
                 }
                 EditorGUILayout.EndHorizontal();
@@ -668,6 +724,7 @@ namespace LuaBehaviourTree
                 EditorGUILayout.LabelField("节点介绍:", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                 var nodeintroduction = GetNodeIntroduction(mCurrentClickNode);
                 GUILayout.Label(nodeintroduction, "textarea", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(40.0f));
+                DisplayNodeVariableInspector(mCurrentClickNode);
                 EditorGUILayout.EndVertical();
             }
             else
@@ -675,6 +732,140 @@ namespace LuaBehaviourTree
                 EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                 EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                 EditorGUILayout.EndVertical();
+            }
+        }
+
+        /// <summary>
+        /// 显示指定节点的自定义变量数据显示
+        /// </summary>
+        /// <param name="node"></param>
+        private void DisplayNodeVariableInspector(BTNode node)
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            EditorGUILayout.BeginVertical();
+            if (BTUtilities.IsSetShareVariableAction(mCurrentClickNode.NodeName))
+            {
+                var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
+                if(variablenodevalue != null)
+                {
+                    DrawOneVariableNodeName(variablenodevalue);
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("目标值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+                    DrawOneVariableNodeValue(variablenodevalue);
+                    EditorGUILayout.EndHorizontal();
+                }
+                else
+                {
+                    EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                    EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                    EditorGUILayout.EndVertical();
+                }
+            }
+            else if (BTUtilities.IsCompareToShareVariableCondition(mCurrentClickNode.NodeName))
+            {
+                var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
+                if (variablenodevalue != null)
+                {
+                    DrawOneVariableNodeName(variablenodevalue);
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("比较值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+                    DrawOneVariableNodeValue(variablenodevalue);
+                }
+                else
+                {
+                    EditorGUILayout.BeginVertical("box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                    EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
+                    EditorGUILayout.EndVertical();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// 绘制一个节点自定义变量名字
+        /// </summary>
+        /// <param name="variablenodevalue"></param>
+        private void DrawOneVariableNodeName(CustomVariableNodeData variablenodevalue)
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            EditorGUILayout.BeginHorizontal();
+            var allavaliblevariablenames = mCurrentClickNode.OwnerBTGraph.GetCustomVariableNames(variablenodevalue.VariableType);
+            EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+            var variablenameindex = Array.FindIndex<string>(allavaliblevariablenames, (variablename) =>
+            {
+                return variablename == variablenodevalue.VariableName;
+            });
+            // 如果当前用到的自定义变量名被删除了默认置空
+            if (variablenameindex == -1)
+            {
+                variablenameindex = 0;
+            }
+            var prevariablenameindex = variablenameindex;
+            variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+            // 实时更新变量名
+            variablenodevalue.VariableName = allavaliblevariablenames[variablenameindex];
+            EditorGUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        /// 绘制一个节点自定义变量值选项
+        /// </summary>
+        /// <param name="variablenodedata"></param>
+        private void DrawOneVariableNodeValue(CustomVariableNodeData variablenodevalue)
+        {
+            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
+            if (variablenodevalue.VariableType == EVariableType.Bool)
+            {
+                var customboolvariablenodedata = variablenodevalue as CustomBoolVariableNodeData;
+                if (Application.isPlaying == false)
+                {
+                    customboolvariablenodedata.VariableValue = EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+                else
+                {
+                    EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+            }
+            else if (variablenodevalue.VariableType == EVariableType.Int)
+            {
+                var customintvariablenodedata = variablenodevalue as CustomIntVariableNodeData;
+                if (Application.isPlaying == false)
+                {
+                    customintvariablenodedata.VariableValue = EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+                else
+                {
+                    EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+            }
+            else if (variablenodevalue.VariableType == EVariableType.String)
+            {
+                var customstringvariablenodedata = variablenodevalue as CustomStringVariableNodeData;
+                if (Application.isPlaying == false)
+                {
+                    customstringvariablenodedata.VariableValue = EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+                else
+                {
+                    EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+            }
+            else if (variablenodevalue.VariableType == EVariableType.Float)
+            {
+                var customfloatvariablenodedata = variablenodevalue as CustomFloatVariableNodeData;
+                if (Application.isPlaying == false)
+                {
+                    customfloatvariablenodedata.VariableValue = EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+                else
+                {
+                    EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                }
+            }
+            else
+            {
+                EditorGUILayout.LabelField($"不支持的变量类型:{variablenodevalue.VariableType}", "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
             }
         }
 
@@ -912,6 +1103,12 @@ namespace LuaBehaviourTree
                     {
                         node.AbortType = node.GetNodeDefaultAbortType((EBTNodeType)node.NodeType);
                     }
+                    var iscsnode = node.CheckIsCSNodeInEditor();
+                    if(iscsnode != node.IsCSNode)
+                    {
+                        node.IsCSNode = iscsnode;
+                        Debug.Log($"矫正节点UID:{node.UID}的IsCSNode:{node.IsCSNode}");
+                    }
                 }
             }
         }
@@ -960,11 +1157,11 @@ namespace LuaBehaviourTree
                     {
                         return name.Equals(btnode.NodeName);
                     });
-                    if (index != -1)
+                    if (index2 != -1)
                     {
                         if (index < BTNodeData.BTCSActionNodeParamsIntroArray.Length)
                         {
-                            return BTNodeData.BTCSActionNodeParamsIntroArray[index];
+                            return BTNodeData.BTCSActionNodeParamsIntroArray[index2];
                         }
                         else
                         {
@@ -1000,11 +1197,11 @@ namespace LuaBehaviourTree
                     {
                         return name.Equals(btnode.NodeName);
                     });
-                    if (index != -1)
+                    if (index2 != -1)
                     {
                         if (index < BTNodeData.BTCSConditionNodeParamsIntroArray.Length)
                         {
-                            return BTNodeData.BTCSConditionNodeParamsIntroArray[index];
+                            return BTNodeData.BTCSConditionNodeParamsIntroArray[index2];
                         }
                         else
                         {
@@ -1088,12 +1285,30 @@ namespace LuaBehaviourTree
                     }
                     else
                     {
-                        return "请在BTNodeData.cs BTActionNodeIntroArray里添加对应介绍!";
+                        return "请在BTNodeData.cs BTLuaActionNodeIntroArray里添加对应介绍!";
                     }
                 }
                 else
                 {
-                    return $"找不到节点名:{btnode.NodeName}定义";
+                    var index2 = Array.FindIndex<string>(BTNodeData.BTCSActionNodeNameArray, (name) =>
+                    {
+                        return name.Equals(btnode.NodeName);
+                    });
+                    if(index2 != -1)
+                    {
+                        if (index2 < BTNodeData.BTCSActionNodeIntroArray.Length)
+                        {
+                            return BTNodeData.BTCSActionNodeIntroArray[index2];
+                        }
+                        else
+                        {
+                            return "请在BTNodeData.cs BTCSActionNodeIntroArray里添加对应介绍!";
+                        }
+                    }
+                    else
+                    {
+                        return $"找不到节点名:{btnode.NodeName}定义";
+                    }
                 }
             }
             else if (btnode.NodeType == (int)EBTNodeType.ConditionNodeType)
@@ -1110,12 +1325,30 @@ namespace LuaBehaviourTree
                     }
                     else
                     {
-                        return "请在BTNodeData.cs BTConditionNodeIntroArray里添加对应介绍!";
+                        return "请在BTNodeData.cs BTLuaConditionNodeIntroArray里添加对应介绍!";
                     }
                 }
                 else
                 {
-                    return $"找不到节点名:{btnode.NodeName}定义";
+                    var index2 = Array.FindIndex<string>(BTNodeData.BTCSConditionNodeNameArray, (name) =>
+                    {
+                        return name.Equals(btnode.NodeName);
+                    });
+                    if (index2 != -1)
+                    {
+                        if (index2 < BTNodeData.BTCSConditionNodeIntroArray.Length)
+                        {
+                            return BTNodeData.BTCSConditionNodeIntroArray[index2];
+                        }
+                        else
+                        {
+                            return "请在BTNodeData.cs BTCSConditionNodeIntroArray里添加对应介绍!";
+                        }
+                    }
+                    else
+                    {
+                        return $"找不到节点名:{btnode.NodeName}定义";
+                    }
                 }
             }
             else if (btnode.NodeType == (int)EBTNodeType.DecorationNodeType)
@@ -1436,40 +1669,40 @@ namespace LuaBehaviourTree
         /// <param name="operationnode"></param>
         private void AddAllAvalibleReplaceBTNodeMenu(GenericMenu menu, BTNode operationnode)
         {
-    if (operationnode != null)
-    {
-        // 替换节点只允许替换同类型节点
-        string validereplacetypename = "";
-        string[] validereplacenodenamearray = null;
-        if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
-        {
-            validereplacetypename = "行为节点";
-            validereplacenodenamearray = BTNodeData.BTLuaActionNodeNameArray;
-        }
-        else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
-        {
-            validereplacetypename = "组合节点";
-            validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
-        }
-        else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
-        {
-            validereplacetypename = "条件节点";
-            validereplacenodenamearray = BTNodeData.BTLuaConditionNodeNameArray;
-        }
-        else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
-        {
-            validereplacetypename = "装饰节点";
-            validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
-        }
-        if (string.IsNullOrEmpty(validereplacetypename) == false)
-        {
-            foreach (var nodename in validereplacenodenamearray)
+            if (operationnode != null)
             {
-                var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
-                menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);
+                // 替换节点只允许替换同类型节点
+                string validereplacetypename = "";
+                string[] validereplacenodenamearray = null;
+                if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
+                {
+                    validereplacetypename = "行为节点";
+                    validereplacenodenamearray = BTNodeData.BTLuaActionNodeNameArray;
+                }
+                else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
+                {
+                    validereplacetypename = "组合节点";
+                    validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
+                }
+                else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
+                {
+                    validereplacetypename = "条件节点";
+                    validereplacenodenamearray = BTNodeData.BTLuaConditionNodeNameArray;
+                }
+                else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
+                {
+                    validereplacetypename = "装饰节点";
+                    validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
+                }
+                if (string.IsNullOrEmpty(validereplacetypename) == false)
+                {
+                    foreach (var nodename in validereplacenodenamearray)
+                    {
+                        var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
+                        menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);
+                    }
+                }
             }
-        }
-    }
         }
 
         /// <summary>
@@ -1507,6 +1740,7 @@ namespace LuaBehaviourTree
                     );
                 if (mCurrentSelectionBTGraph.AddNode(childnode))
                 {
+                    TryAddCustomVariableNodeData(childnode);
                     nodeinfo.OperateNode.AddChildNode(childnode.UID, nodeinfo.Graph, childnode.NodeIndex);
                 }
                 Debug.Log($"OnCreateBTActionNode()");
@@ -1599,6 +1833,7 @@ namespace LuaBehaviourTree
                     );
                 if (mCurrentSelectionBTGraph.AddNode(childnode))
                 {
+                    TryAddCustomVariableNodeData(childnode);
                     nodeinfo.OperateNode.AddChildNode(childnode.UID, nodeinfo.Graph, childnode.NodeIndex);
                 }
                 Debug.Log($"OnCreateBTConditionNode()");
@@ -1653,6 +1888,26 @@ namespace LuaBehaviourTree
             else
             {
                 Debug.LogError($"未支持的创建情况!");
+            }
+        }
+        
+        /// <summary>
+        /// 尝试添加自定义变量节点数据
+        /// </summary>
+        /// <param name="node"></param>
+        private void TryAddCustomVariableNodeData(BTNode node)
+        {
+            if (node.NodeType == (int)EBTNodeType.ConditionNodeType && BTUtilities.IsCompareToShareVariableCondition(node.NodeName))
+            {
+                var variabletype = BTUtilities.GetNodeVariableType(node.NodeName);
+                var variablenodedata = BTUtilities.GetVariableNodeDefaultValueInEditor(node.UID, string.Empty, variabletype);
+                node.OwnerBTGraph.AddCustomVariableNodeData(variablenodedata);
+            }
+            else if (node.NodeType == (int)EBTNodeType.ActionNodeType && BTUtilities.IsSetShareVariableAction(node.NodeName))
+            {
+                var variabletype = BTUtilities.GetNodeVariableType(node.NodeName);
+                var variablenodedata = BTUtilities.GetVariableNodeDefaultValueInEditor(node.UID, string.Empty, variabletype);
+                node.OwnerBTGraph.AddCustomVariableNodeData(variablenodedata);
             }
         }
 

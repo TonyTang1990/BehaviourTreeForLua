@@ -21,7 +21,8 @@ namespace LuaBehaviourTree
     /// </summary>
     public enum EVariableType
     {
-        Bool = 1,           // bool类型
+        Invalide = 0,       // 无效类型
+        Bool,               // bool类型
         String,             // string类型
         Float,              // float类型
         Int,                // int类型
@@ -123,7 +124,7 @@ namespace LuaBehaviourTree
     /// 自定义变量节点数据基类
     /// </summary>
     [Serializable]
-    public abstract class ICustomVariableNodeData
+    public class CustomVariableNodeData
     {
         /// <summary>
         /// 节点UID
@@ -139,45 +140,29 @@ namespace LuaBehaviourTree
         /// 变量类型
         /// </summary>
         public EVariableType VariableType;
-    }
 
-    /// <summary>
-    /// 黑板数据泛型基类
-    /// </summary>
-    public class CustomVariableNodeData<T> : ICustomVariableNodeData
-    {
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public T VariableValue
-        {
-            get;
-            set;
-        }
-        
-        private CustomVariableNodeData()
-        {
-
-        }
-
-        public CustomVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, T variablevalue)
+        public CustomVariableNodeData(int nodeuid, string variablename, EVariableType variabletype)
         {
             NodeUID = nodeuid;
             VariableName = variablename;
             VariableType = variabletype;
-            VariableValue = variablevalue;
         }
     }
-
+    
     /// <summary>
     /// 自定义Bool变量节点数据
     /// </summary>
     [Serializable]
-    public class CustomBoolVariableNodeData : CustomVariableNodeData<bool>
+    public class CustomBoolVariableNodeData : CustomVariableNodeData
     {
-        public CustomBoolVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, bool variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
-        {
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public bool VariableValue;
 
+        public CustomBoolVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, bool variablevalue) : base(nodeuid, variablename, variabletype)
+        {
+            VariableValue = variablevalue;
         }
     }
     
@@ -185,11 +170,16 @@ namespace LuaBehaviourTree
     /// 自定义Int变量节点数据
     /// </summary>
     [Serializable]
-    public class CustomIntVariableNodeData : CustomVariableNodeData<int>
+    public class CustomIntVariableNodeData : CustomVariableNodeData
     {
-        public CustomIntVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, int variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
-        {
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public int VariableValue;
 
+        public CustomIntVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, int variablevalue) : base(nodeuid, variablename, variabletype)
+        {
+            VariableValue = variablevalue;
         }
     }
 
@@ -197,11 +187,16 @@ namespace LuaBehaviourTree
     /// 自定义Float变量节点数据
     /// </summary>
     [Serializable]
-    public class CustomFloatVariableNodeData : CustomVariableNodeData<float>
+    public class CustomFloatVariableNodeData : CustomVariableNodeData
     {
-        public CustomFloatVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, float variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
-        {
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public float VariableValue;
 
+        public CustomFloatVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, float variablevalue) : base(nodeuid, variablename, variabletype)
+        {
+            VariableValue = variablevalue;
         }
     }
 
@@ -209,11 +204,16 @@ namespace LuaBehaviourTree
     /// 自定义String变量节点数据
     /// </summary>
     [Serializable]
-    public class CustomStringVariableNodeData : CustomVariableNodeData<string>
+    public class CustomStringVariableNodeData : CustomVariableNodeData
     {
-        public CustomStringVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, string variablevalue) : base(nodeuid, variablename, variabletype, variablevalue)
-        {
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public string VariableValue;
 
+        public CustomStringVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, string variablevalue) : base(nodeuid, variablename, variabletype)
+        {
+            VariableValue = variablevalue;
         }
     }
 
@@ -291,7 +291,7 @@ namespace LuaBehaviourTree
         /// 所有自定义变量节点映射Map(运行时数据)
         /// Key为节点UID,Value为对应自定义变量节点数据
         /// </summary>
-        public Dictionary<int, ICustomVariableNodeData> AllVariableNodeDataMaps
+        public Dictionary<int, CustomVariableNodeData> AllVariableNodeDataMaps
         {
             get;
             protected set;
@@ -341,7 +341,7 @@ namespace LuaBehaviourTree
             AllIntVariableNodeDataList = new List<CustomIntVariableNodeData>();
             AllFloatVariableNodeDataList = new List<CustomFloatVariableNodeData>();
             AllStringVariableNodeDataList = new List<CustomStringVariableNodeData>();
-            AllVariableNodeDataMaps = new Dictionary<int, ICustomVariableNodeData>();
+            AllVariableNodeDataMaps = new Dictionary<int, CustomVariableNodeData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             BTBlackBoard = new Blackboard();
@@ -418,6 +418,11 @@ namespace LuaBehaviourTree
             {
                 return false;
             }
+            // Invalide作为默认无效参数名字特殊存在
+            if (string.Equals(name, "Invalide"))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -454,6 +459,46 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 获取指定变量类型的自定义变量名可选列表
+        /// </summary>
+        /// <param name="variabletype"></param>
+        /// <returns></returns>
+        public string[] GetCustomVariableNames(EVariableType variabletype)
+        {
+            List<CustomVariableData> targetvariabledatalist = new List<CustomVariableData>();
+            if (variabletype == EVariableType.Bool)
+            {
+                targetvariabledatalist.AddRange(AllBoolVariableDataList);
+            }
+            else if (variabletype == EVariableType.Int)
+            {
+                targetvariabledatalist.AddRange(AllIntVariableDataList);
+            }
+            else if (variabletype == EVariableType.Float)
+            {
+                targetvariabledatalist.AddRange(AllFloatVariableDataList);
+            }
+            else if (variabletype == EVariableType.String)
+            {
+                targetvariabledatalist.AddRange(AllStringVariableDataList);
+            }
+            else
+            {
+                Debug.LogError($"不支持添加的自定义变量类型:{variabletype},获取选项失败!");
+                return null;
+            }
+            // 默认第一个是空选项
+            var allavaliblenames = new string[targetvariabledatalist.Count + 1];
+            allavaliblenames[0] = "Invalide";
+            for (int i = 0, length = targetvariabledatalist.Count; i < length; i++)
+            {
+                allavaliblenames[i + 1] = targetvariabledatalist[i].VariableName;
+            }
+            return allavaliblenames;
+
+        }
+
+        /// <summary>
         /// 添加自定义数据
         /// </summary>
         /// <param name="customvariabledata"></param>
@@ -462,18 +507,22 @@ namespace LuaBehaviourTree
             if (customvariabledata.VariableType == EVariableType.Bool)
             {
                 AllBoolVariableDataList.Add(customvariabledata as CustomBoolVariableData);
+                Debug.Log($"添加变量名:{customvariabledata.VariableName}Bool类型自定义变量节点数据!");
             }
             else if (customvariabledata.VariableType == EVariableType.Int)
             {
                 AllIntVariableDataList.Add(customvariabledata as CustomIntVariableData);
+                Debug.Log($"添加变量名:{customvariabledata.VariableName}Int类型自定义变量节点数据!");
             }
             else if (customvariabledata.VariableType == EVariableType.Float)
             {
                 AllFloatVariableDataList.Add(customvariabledata as CustomFloatVariableData);
+                Debug.Log($"添加变量名:{customvariabledata.VariableName}Float类型自定义变量节点数据!");
             }
             else if (customvariabledata.VariableType == EVariableType.String)
             {
                 AllStringVariableDataList.Add(customvariabledata as CustomStringVariableData);
+                Debug.Log($"添加变量名:{customvariabledata.VariableName}String类型自定义变量节点数据!");
             }
             else
             {
@@ -490,18 +539,22 @@ namespace LuaBehaviourTree
         {
             if (customvariabledata.VariableType == EVariableType.Bool)
             {
+                Debug.Log($"移除变量名:{customvariabledata.VariableName}Bool类型自定义变量节点数据!");
                 return AllBoolVariableDataList.Remove(customvariabledata as CustomBoolVariableData);
             }
             else if (customvariabledata.VariableType == EVariableType.Int)
             {
+                Debug.Log($"移除变量名:{customvariabledata.VariableName}Bool类型自定义变量节点数据!");
                 return AllIntVariableDataList.Remove(customvariabledata as CustomIntVariableData);
             }
             else if (customvariabledata.VariableType == EVariableType.Float)
             {
+                Debug.Log($"移除变量名:{customvariabledata.VariableName}Bool类型自定义变量节点数据!");
                 return AllFloatVariableDataList.Remove(customvariabledata as CustomFloatVariableData);
             }
             else if (customvariabledata.VariableType == EVariableType.String)
             {
+                Debug.Log($"移除变量名:{customvariabledata.VariableName}Bool类型自定义变量节点数据!");
                 return AllStringVariableDataList.Remove(customvariabledata as CustomStringVariableData);
             }
             else
@@ -516,66 +569,69 @@ namespace LuaBehaviourTree
         /// Note:
         /// 编辑器模式下使用此接口，非运行时使用GetVariableNodeValueInRuntime
         /// </summary>
-        /// <param name="variabletype"></param>
         /// <returns></returns>
-        public ICustomVariableNodeData GetVariableNodeValueInEditor(int uid, EVariableType variabletype)
+        public CustomVariableNodeData GetVariableNodeValueInEditor(int uid)
         {
-            if (variabletype == EVariableType.Bool)
+            var boolvariablenodedata = AllBoolVariableNodeDataList.Find((variablenodedata) =>
             {
-                return AllBoolVariableNodeDataList.Find((variablenodedata) =>
-                {
-                    return variablenodedata.NodeUID == uid;
-                });
-            }
-            else if (variabletype == EVariableType.Int)
+                return variablenodedata.NodeUID == uid;
+            });
+            if(boolvariablenodedata != null)
             {
-                return AllIntVariableNodeDataList.Find((variablenodedata) =>
-                {
-                    return variablenodedata.NodeUID == uid;
-                });
+                return boolvariablenodedata;
             }
-            else if (variabletype == EVariableType.String)
+            var intvariablenodedata = AllIntVariableNodeDataList.Find((variablenodedata) =>
             {
-                return AllStringVariableNodeDataList.Find((variablenodedata) =>
-                {
-                    return variablenodedata.NodeUID == uid;
-                });
-            }
-            else if (variabletype == EVariableType.Float)
+                return variablenodedata.NodeUID == uid;
+            });
+            if(intvariablenodedata != null)
             {
-                return AllFloatVariableNodeDataList.Find((variablenodedata) =>
-                {
-                    return variablenodedata.NodeUID == uid;
-                });
+                return intvariablenodedata;
             }
-            else
+            var stringvariablenodedata =  AllStringVariableNodeDataList.Find((variablenodedata) =>
             {
-                Debug.LogError($"不支持的变量类型:{variabletype},获取节点数据失败!");
-                return null;
+                return variablenodedata.NodeUID == uid;
+            });
+            if(stringvariablenodedata != null)
+            {
+                return stringvariablenodedata;
             }
+            var floatvariablenodedata = AllFloatVariableNodeDataList.Find((variablenodedata) =>
+            {
+                return variablenodedata.NodeUID == uid;
+            });
+            if(floatvariablenodedata != null)
+            {
+                return floatvariablenodedata;
+            }
+            return null;
         }
 
         /// <summary>
         /// 添加自定义节点数据
         /// </summary>
         /// <param name="customvariablenodedata"></param>
-        public void AddCustomVariableNodeData(ICustomVariableNodeData customvariablenodedata)
+        public void AddCustomVariableNodeData(CustomVariableNodeData customvariablenodedata)
         {
             if (customvariablenodedata.VariableType == EVariableType.Bool)
             {
                 AllBoolVariableNodeDataList.Add(customvariablenodedata as CustomBoolVariableNodeData);
+                Debug.Log($"添加节点UID:{customvariablenodedata.NodeUID} Bool类型自定义变量节点数据!");
             }
             else if (customvariablenodedata.VariableType == EVariableType.Int)
             {
                 AllIntVariableNodeDataList.Add(customvariablenodedata as CustomIntVariableNodeData);
+                Debug.Log($"添加节点UID:{customvariablenodedata.NodeUID} Int类型自定义变量节点数据!");
             }
             else if (customvariablenodedata.VariableType == EVariableType.Float)
             {
                 AllFloatVariableNodeDataList.Add(customvariablenodedata as CustomFloatVariableNodeData);
+                Debug.Log($"添加节点UID:{customvariablenodedata.NodeUID} Floatl类型自定义变量节点数据!");
             }
             else if (customvariablenodedata.VariableType == EVariableType.String)
             {
                 AllStringVariableNodeDataList.Add(customvariablenodedata as CustomStringVariableNodeData);
+                Debug.Log($"添加节点UID:{customvariablenodedata.NodeUID} String类型自定义变量节点数据!");
             }
             else
             {
@@ -588,22 +644,26 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="customvariablenodedata"></param>
         /// <returns></returns>
-        public bool RemoveCustomVariableNodeData(ICustomVariableNodeData customvariablenodedata)
+        public bool RemoveCustomVariableNodeData(CustomVariableNodeData customvariablenodedata)
         {
             if (customvariablenodedata.VariableType == EVariableType.Bool)
             {
+                Debug.Log($"移除节点UID:{customvariablenodedata.NodeUID} Bool类型自定义变量节点数据!");
                 return AllBoolVariableNodeDataList.Remove(customvariablenodedata as CustomBoolVariableNodeData);
             }
             else if (customvariablenodedata.VariableType == EVariableType.Int)
             {
+                Debug.Log($"移除节点UID:{customvariablenodedata.NodeUID} Int类型自定义变量节点数据!");
                 return AllIntVariableNodeDataList.Remove(customvariablenodedata as CustomIntVariableNodeData);
             }
             else if (customvariablenodedata.VariableType == EVariableType.Float)
             {
+                Debug.Log($"移除节点UID:{customvariablenodedata.NodeUID} Float类型自定义变量节点数据!");
                 return AllFloatVariableNodeDataList.Remove(customvariablenodedata as CustomFloatVariableNodeData);
             }
             else if (customvariablenodedata.VariableType == EVariableType.String)
             {
+                Debug.Log($"移除节点UID:{customvariablenodedata.NodeUID} String类型自定义变量节点数据!");
                 return AllStringVariableNodeDataList.Remove(customvariablenodedata as CustomStringVariableNodeData);
             }
             else
@@ -611,6 +671,172 @@ namespace LuaBehaviourTree
                 Debug.LogError($"不支持移除的自定义变量类型:{customvariablenodedata.VariableType}节点数据,移除失败!");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 删除节点
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="needdeleteduidlist">需要删除的UID列表</param>
+        /// <returns></returns>
+        public bool DeleteNode(BTNode node, List<int> needdeleteduidlist)
+        {
+            if (node.Equals(RootNode) == false)
+            {
+                if (AllNodesList.Remove(node))
+                {
+                    if (node.ChildNodesUIDList.Count > 0)
+                    {
+                        for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
+                        {
+                            var childnode = FindNodeByUID(node.ChildNodesUIDList[i]);
+                            needdeleteduidlist.Add(node.ChildNodesUIDList[i]);
+                            DeleteNode(childnode, needdeleteduidlist);
+                        }
+                        node.DeleteAllChildNodes();
+                    }
+                    // 让节点的父节点删除该子节点并重新排节点顺序
+                    var parentnode = FindNodeByUID(node.ParentNodeUID);
+                    if (parentnode != null)
+                    {
+                        parentnode.DeleteChildNode(node.UID, this);
+                    }
+                    // 清除节点自定义变量相关数据
+                    if (node.NodeType == (int)EBTNodeType.ConditionNodeType && BTUtilities.IsCompareToShareVariableCondition(node.NodeName))
+                    {
+                        var variablenodedata = GetVariableNodeValueInEditor(node.UID);
+                        RemoveCustomVariableNodeData(variablenodedata);
+                    }
+                    else if (node.NodeType == (int)EBTNodeType.ActionNodeType && BTUtilities.IsSetShareVariableAction(node.NodeName))
+                    {
+                        var variablenodedata = GetVariableNodeValueInEditor(node.UID);
+                        RemoveCustomVariableNodeData(variablenodedata);
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log($"不允许删除根节点!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 根据鼠标位置获取对应操作的行为节点
+        /// </summary>
+        /// <param name="btgraph"></param>
+        /// <param name="mpos"></param>
+        /// <returns></returns>
+        public BTNode FindNodeByMousePos(Vector3 mpos)
+        {
+            var findnode = AllNodesList.Find((btnode) =>
+            {
+                return btnode.NodeDisplayRect.Contains(mpos);
+            });
+            return findnode;
+        }
+
+        /// <summary>
+        /// 向前移动指定子节点
+        /// </summary>
+        /// <param name="parentnodeuid"></param>
+        /// <param name="childnodeuid"></param>
+        /// <returns></returns>
+        public bool MoveChildNodeForward(int parentnodeuid, int childnodeuid)
+        {
+            var parentnode = FindNodeByUID(parentnodeuid);
+            var childnode = FindNodeByUID(childnodeuid);
+            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
+            {
+                return nodeuid == childnodeuid;
+            });
+            if (childnodeindex != -1)
+            {
+                if (childnodeindex > 0)
+                {
+                    var forwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex - 1]);
+                    parentnode.ChildNodesUIDList[childnodeindex - 1] = childnodeuid;
+                    childnode.NodeIndex = childnodeindex - 1;
+                    parentnode.ChildNodesUIDList[childnodeindex] = forwardchild.UID;
+                    forwardchild.NodeIndex = childnodeindex;
+                    var moveoffset = Vector2.zero;
+                    moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                    moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                    // 移动当前两个节点及其所有子节点
+                    childnode.Move(this, moveoffset, true);
+                    forwardchild.Move(this, -moveoffset, true);
+                    return true;
+                }
+                else
+                {
+                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是第一个子节点,无法再向前移动!");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 向后移动指定子节点
+        /// </summary>
+        /// <param name="parentnodeuid"></param>
+        /// <param name="childnodeuid"></param>
+        /// <returns></returns>
+        public bool MoveChildNodeBackward(int parentnodeuid, int childnodeuid)
+        {
+            var parentnode = FindNodeByUID(parentnodeuid);
+            var childnode = FindNodeByUID(childnodeuid);
+            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
+            {
+                return nodeuid == childnodeuid;
+            });
+            if (childnodeindex != -1)
+            {
+                if (childnodeindex < parentnode.ChildNodesUIDList.Count - 1)
+                {
+                    var backwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex + 1]);
+                    parentnode.ChildNodesUIDList[childnodeindex + 1] = childnodeuid;
+                    childnode.NodeIndex = childnodeindex + 1;
+                    parentnode.ChildNodesUIDList[childnodeindex] = backwardchild.UID;
+                    backwardchild.NodeIndex = childnodeindex;
+                    var moveoffset = Vector2.zero;
+                    moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                    moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                    // 移动当前两个节点及其所有子节点
+                    childnode.Move(this, moveoffset, true);
+                    backwardchild.Move(this, -moveoffset, true);
+                    return true;
+                }
+                else
+                {
+                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是最后一个子节点,无法再向后移动!");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 节点是否在运行
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public bool IsNodeRunning(int uid)
+        {
+            return ExecutingNodesMap.ContainsKey(uid);
         }
         #endregion
 
@@ -640,7 +866,7 @@ namespace LuaBehaviourTree
         /// <param name="btowner"></param>
         public BTGraph()
         {
-            Debug.Log("BTGraph()");
+            //Debug.Log("BTGraph()");
             AllNodesList = new List<BTNode>();
             AllBoolVariableDataList = new List<CustomBoolVariableData>();
             AllIntVariableDataList = new List<CustomIntVariableData>();
@@ -650,7 +876,7 @@ namespace LuaBehaviourTree
             AllIntVariableNodeDataList = new List<CustomIntVariableNodeData>();
             AllFloatVariableNodeDataList = new List<CustomFloatVariableNodeData>();
             AllStringVariableNodeDataList = new List<CustomStringVariableNodeData>();
-            AllVariableNodeDataMaps = new Dictionary<int, ICustomVariableNodeData>();
+            AllVariableNodeDataMaps = new Dictionary<int, CustomVariableNodeData>();
             ExecutingNodesMap = new Dictionary<int, BTNode>();
             ExecutedReevaluatedNodesResultMap = new Dictionary<BTNode, EBTNodeRunningState>();
             BTBlackBoard = new Blackboard();
@@ -662,6 +888,11 @@ namespace LuaBehaviourTree
         public void Init()
         {
             RootNode = FindNodeByUID(RootNodeUID);
+            // 确保反序列化后OwnerGraph指向正确对象
+            foreach(var node in AllNodesList)
+            {
+                node.OwnerBTGraph = this;
+            }
         }
 
         /// <summary>
@@ -756,18 +987,18 @@ namespace LuaBehaviourTree
                     //ObjectPool.Singleton.PushAsObj(AllNodesList[i]);
                 }
             }
-            AllNodesList = null;
+            AllNodesList.Clear();
             RootNode = null;
             RootNodeUID = 0;
-            AllBoolVariableDataList = null;
-            AllIntVariableDataList = null;
-            AllFloatVariableDataList = null;
-            AllStringVariableDataList = null;
-            AllBoolVariableNodeDataList = null;
-            AllIntVariableNodeDataList = null;
-            AllFloatVariableNodeDataList = null;
-            AllStringVariableNodeDataList = null;
-            AllVariableNodeDataMaps = null;
+            AllBoolVariableDataList.Clear();
+            AllIntVariableDataList.Clear();
+            AllFloatVariableDataList.Clear();
+            AllStringVariableDataList.Clear();
+            AllBoolVariableNodeDataList.Clear();
+            AllIntVariableNodeDataList.Clear();
+            AllFloatVariableNodeDataList.Clear();
+            AllStringVariableNodeDataList.Clear();
+            AllVariableNodeDataMaps.Clear();
         }
 
         /// <summary>
@@ -977,11 +1208,11 @@ namespace LuaBehaviourTree
         /// 运行时模式下使用此接口，非运行时使用GetVariableNodeValueInEditor
         /// </summary>
         /// <returns></returns>
-        public CustomVariableNodeData<T> GetVariableNodeValueInRuntime<T>(int uid)
+        public CustomVariableNodeData GetVariableNodeValueInRuntime(int uid)
         {
             if(AllVariableNodeDataMaps.ContainsKey(uid))
             {
-                return AllVariableNodeDataMaps[uid] as CustomVariableNodeData<T>;
+                return AllVariableNodeDataMaps[uid];
             }
             else
             {
@@ -1033,163 +1264,6 @@ namespace LuaBehaviourTree
                 Debug.Log($"不允许添加空或UID:{node.UID}的重复节点!");
                 return false;
             }
-        }
-        #endregion
-
-        #region 编辑器部分
-        /// <summary>
-        /// 删除节点
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="needdeleteduidlist">需要删除的UID列表</param>
-        /// <returns></returns>
-        public bool DeleteNode(BTNode node, List<int> needdeleteduidlist)
-        {
-            if (node.Equals(RootNode) == false)
-            {
-                if (AllNodesList.Remove(node))
-                {
-                    if (node.ChildNodesUIDList.Count > 0)
-                    {
-                        for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
-                        {
-                            var childnode = FindNodeByUID(node.ChildNodesUIDList[i]);
-                            needdeleteduidlist.Add(node.ChildNodesUIDList[i]);
-                            DeleteNode(childnode, needdeleteduidlist);
-                        }
-                        node.DeleteAllChildNodes();
-                    }
-                    // 让节点的父节点删除该子节点并重新排节点顺序
-                    var parentnode = FindNodeByUID(node.ParentNodeUID);
-                    if (parentnode != null)
-                    {
-                        parentnode.DeleteChildNode(node.UID, this);
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Debug.Log($"不允许删除根节点!");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 根据鼠标位置获取对应操作的行为节点
-        /// </summary>
-        /// <param name="btgraph"></param>
-        /// <param name="mpos"></param>
-        /// <returns></returns>
-        public BTNode FindNodeByMousePos(Vector3 mpos)
-        {
-            var findnode = AllNodesList.Find((btnode) =>
-            {
-                return btnode.NodeDisplayRect.Contains(mpos);
-            });
-            return findnode;
-        }
-
-        /// <summary>
-        /// 向前移动指定子节点
-        /// </summary>
-        /// <param name="parentnodeuid"></param>
-        /// <param name="childnodeuid"></param>
-        /// <returns></returns>
-        public bool MoveChildNodeForward(int parentnodeuid, int childnodeuid)
-        {
-            var parentnode = FindNodeByUID(parentnodeuid);
-            var childnode = FindNodeByUID(childnodeuid);
-            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
-            {
-                return nodeuid == childnodeuid;
-            });
-            if (childnodeindex != -1)
-            {
-                if (childnodeindex > 0)
-                {
-                    var forwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex - 1]);
-                    parentnode.ChildNodesUIDList[childnodeindex - 1] = childnodeuid;
-                    childnode.NodeIndex = childnodeindex - 1;
-                    parentnode.ChildNodesUIDList[childnodeindex] = forwardchild.UID;
-                    forwardchild.NodeIndex = childnodeindex;
-                    var moveoffset = Vector2.zero;
-                    moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
-                    moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
-                    // 移动当前两个节点及其所有子节点
-                    childnode.Move(this, moveoffset, true);
-                    forwardchild.Move(this, -moveoffset, true);
-                    return true;
-                }
-                else
-                {
-                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是第一个子节点,无法再向前移动!");
-                    return false;
-                }
-            }
-            else
-            {
-                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 向后移动指定子节点
-        /// </summary>
-        /// <param name="parentnodeuid"></param>
-        /// <param name="childnodeuid"></param>
-        /// <returns></returns>
-        public bool MoveChildNodeBackward(int parentnodeuid, int childnodeuid)
-        {
-            var parentnode = FindNodeByUID(parentnodeuid);
-            var childnode = FindNodeByUID(childnodeuid);
-            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
-            {
-                return nodeuid == childnodeuid;
-            });
-            if (childnodeindex != -1)
-            {
-                if (childnodeindex < parentnode.ChildNodesUIDList.Count - 1)
-                {
-                    var backwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex + 1]);
-                    parentnode.ChildNodesUIDList[childnodeindex + 1] = childnodeuid;
-                    childnode.NodeIndex = childnodeindex + 1;
-                    parentnode.ChildNodesUIDList[childnodeindex] = backwardchild.UID;
-                    backwardchild.NodeIndex = childnodeindex;
-                    var moveoffset = Vector2.zero;
-                    moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
-                    moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
-                    // 移动当前两个节点及其所有子节点
-                    childnode.Move(this, moveoffset, true);
-                    backwardchild.Move(this, -moveoffset, true);
-                    return true;
-                }
-                else
-                {
-                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是最后一个子节点,无法再向后移动!");
-                    return false;
-                }
-            }
-            else
-            {
-                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 节点是否在运行
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <returns></returns>
-        public bool IsNodeRunning(int uid)
-        {
-            return ExecutingNodesMap.ContainsKey(uid);
         }
         #endregion
     }
