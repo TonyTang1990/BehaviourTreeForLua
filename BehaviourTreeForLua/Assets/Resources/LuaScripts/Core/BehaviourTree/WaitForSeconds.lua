@@ -37,7 +37,7 @@ end
 ---@return EBTNodeRunningState @执行状态
 function WaitForSeconds:OnExecute()
     _G.LuaBTActionNode.OnExecute(self)
-    print(string.format("WaitForSeconds:OnExecute() 节点UID:%s WaitForSeconds参数:%s", self.CSBTNode.UID, self.WaitTime))
+    print(string.format("WaitForSeconds:OnExecute() 节点UID:%s WaitForSeconds参数:%s TimePassed:%s", self.CSBTNode.UID, self.WaitTime, self.TimePassed))
     if self.TimePassed < self.WaitTime then
         self.TimePassed = self.TimePassed + CS.UnityEngine.Time.deltaTime
         return _G.EBTNodeRunningState.Running

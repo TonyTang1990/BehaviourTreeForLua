@@ -18,23 +18,38 @@ namespace LuaBehaviourTree
         {
             ParalPolicy = EBTParalPolicy.AllSuccess;
         }
+
         protected override EBTNodeRunningState OnExecute()
         {
             var successcount = 0;
-            foreach (var childnode in ChildNodes)
+            for (int i = 0, length = ChildNodes.Count; i < length; i++)
             {
-                EBTNodeRunningState childnodestate = childnode.NodeRunningState;
-                if (!childnode.IsTerminated)
+                // 已经执行完成的直接采用之前的结果
+                if (mChildNodeExecuteStateList[i] == EBTNodeRunningState.Failed)
                 {
-                    childnodestate = childnode.OnUpdate();
+                    return EBTNodeRunningState.Failed;
                 }
-                if (childnodestate == EBTNodeRunningState.Success)
+                else if (mChildNodeExecuteStateList[i] == EBTNodeRunningState.Success)
                 {
                     successcount++;
                 }
-                else if (childnodestate == EBTNodeRunningState.Failed)
+                else
                 {
-                    return EBTNodeRunningState.Failed;
+                    EBTNodeRunningState childnodestate = ChildNodes[i].NodeRunningState;
+                    if (!ChildNodes[i].IsTerminated)
+                    {
+                        childnodestate = ChildNodes[i].OnUpdate();
+                    }
+                    if (childnodestate == EBTNodeRunningState.Success)
+                    {
+                        successcount++;
+                        mChildNodeExecuteStateList[i] = EBTNodeRunningState.Success;
+                    }
+                    else if (childnodestate == EBTNodeRunningState.Failed)
+                    {
+                        mChildNodeExecuteStateList[i] = EBTNodeRunningState.Failed;
+                        return EBTNodeRunningState.Failed;
+                    }
                 }
             }
             if (successcount == ChildNodes.Count)

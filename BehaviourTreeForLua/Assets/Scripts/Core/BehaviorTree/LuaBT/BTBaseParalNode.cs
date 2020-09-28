@@ -34,9 +34,44 @@ namespace LuaBehaviourTree
             protected set;
         }
 
+        /// <summary>
+        /// 子节点执行结果列表
+        /// </summary>
+        protected List<EBTNodeRunningState> mChildNodeExecuteStateList;
+
         public BTBaseParalNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid) : base(node, btowner, parentnode, instanceid)
         {
+            mChildNodeExecuteStateList = new List<EBTNodeRunningState>();
+            foreach (var childnode in ChildNodes)
+            {
+                mChildNodeExecuteStateList.Add(childnode.NodeRunningState);
+            }
+        }
 
+        /// <summary>
+        /// 重置所有子节点执行状态
+        /// </summary>
+        protected void ResetAllChildNodeRunningState()
+        {
+            for(int i = 0, length = mChildNodeExecuteStateList.Count; i < length; i++)
+            {
+                mChildNodeExecuteStateList[i] = EBTNodeRunningState.Invalide;
+            }
+        }
+
+        protected override void OnExit()
+        {
+            base.OnExit();
+            ResetAllChildNodeRunningState();
+        }
+
+        /// <summary>
+        /// 释放
+        /// </summary>
+        public override void Dispose()
+        {
+            base.Dispose();
+            mChildNodeExecuteStateList = null;
         }
 
         //protected override EBTNodeRunningState OnExecute()
