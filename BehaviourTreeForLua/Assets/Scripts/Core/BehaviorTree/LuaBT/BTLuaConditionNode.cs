@@ -64,14 +64,5 @@ namespace LuaBehaviourTree
             base.OnExit();
             mLuaBTNode.OnExit();
         }
-
-        /// <summary>
-        /// 是否可被重新评估
-        /// </summary>
-        /// <returns></returns>
-        protected override bool CanReevaluate()
-        {
-            return AbortType == EAbortType.Self;
-        }
     }
 }

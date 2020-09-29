@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCompareShareInt.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCompareShareString.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCompositionNode.cs" />
+    <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTCustomVariable.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTData.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTDecorationNode.cs" />
     <Compile Include="Assets\Scripts\Core\BehaviorTree\LuaBT\BTEntryNode.cs" />

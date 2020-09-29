@@ -653,7 +653,7 @@ namespace LuaBehaviourTree
         /// <param name="value"></param>
         private void DisplayOneBlackBoardKeyInfo(string key, IBlackboardData value)
         {
-            DrawUILine();
+            EditorUtilities.DrawUILine();
             var halftoolbarwidth = ToolBarWidth / 2 - 10f;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
@@ -770,6 +770,7 @@ namespace LuaBehaviourTree
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("比较值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
                     DrawOneVariableNodeValue(variablenodevalue);
+                    EditorGUILayout.EndHorizontal();
                 }
                 else
                 {
@@ -777,7 +778,6 @@ namespace LuaBehaviourTree
                     EditorGUILayout.LabelField("未选中有效节点!", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
                     EditorGUILayout.EndVertical();
                 }
-                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
         }
@@ -940,7 +940,7 @@ namespace LuaBehaviourTree
         /// <param name="customvariabledata"></param>
         private void DrawOneCustomVariable(CustomVariableData customvariabledata)
         {
-            DrawUILine();
+            EditorUtilities.DrawUILine();
             var halftoolbarwidth = ToolBarWidth / 2 - 10;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
@@ -1019,22 +1019,6 @@ namespace LuaBehaviourTree
                 EditorGUILayout.LabelField($"不支持的变量类型:{customvariabledata.VariableType}", "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
             }
             EditorGUILayout.EndHorizontal();
-        }
-
-        /// <summary>
-        /// 绘制UI分割线
-        /// </summary>
-        /// <param name="color"></param>
-        /// <param name="thickness"></param>
-        /// <param name="padding"></param>
-        public static void DrawUILine(int thickness = 2, int padding = 10)
-        {
-            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            r.height = thickness;
-            r.y += padding / 2;
-            r.x -= 2;
-            r.width += 6;
-            EditorGUI.DrawRect(r, GUI.color);
         }
 
         /// <summary>
@@ -1673,30 +1657,32 @@ namespace LuaBehaviourTree
             {
                 // 替换节点只允许替换同类型节点
                 string validereplacetypename = "";
-                string[] validereplacenodenamearray = null;
+                List<string> validereplacenodenamelist = new List<string>();
                 if (operationnode.NodeType == (int)EBTNodeType.ActionNodeType)
                 {
                     validereplacetypename = "行为节点";
-                    validereplacenodenamearray = BTNodeData.BTLuaActionNodeNameArray;
+                    validereplacenodenamelist.AddRange(BTNodeData.BTLuaActionNodeNameArray);
+                    validereplacenodenamelist.AddRange(BTNodeData.BTCSActionNodeNameArray);
                 }
                 else if (operationnode.NodeType == (int)EBTNodeType.CompositeNodeType)
                 {
                     validereplacetypename = "组合节点";
-                    validereplacenodenamearray = BTNodeData.BTCompositeNodeNameArray;
+                    validereplacenodenamelist.AddRange(BTNodeData.BTCompositeNodeNameArray);
                 }
                 else if (operationnode.NodeType == (int)EBTNodeType.ConditionNodeType)
                 {
                     validereplacetypename = "条件节点";
-                    validereplacenodenamearray = BTNodeData.BTLuaConditionNodeNameArray;
+                    validereplacenodenamelist.AddRange(BTNodeData.BTLuaConditionNodeNameArray);
+                    validereplacenodenamelist.AddRange(BTNodeData.BTCSConditionNodeNameArray);
                 }
                 else if (operationnode.NodeType == (int)EBTNodeType.DecorationNodeType)
                 {
                     validereplacetypename = "装饰节点";
-                    validereplacenodenamearray = BTNodeData.BTDecorationNodeNameArray;
+                    validereplacenodenamelist.AddRange(BTNodeData.BTDecorationNodeNameArray);
                 }
                 if (string.IsNullOrEmpty(validereplacetypename) == false)
                 {
-                    foreach (var nodename in validereplacenodenamearray)
+                    foreach (var nodename in validereplacenodenamelist)
                     {
                         var nodeinfo = new CreateNodeInfo(mCurrentSelectionBTGraph, operationnode, nodename);
                         menu.AddItem(new GUIContent($"替换/{validereplacetypename}/{nodename}"), false, OnReplaceBTNode, nodeinfo);

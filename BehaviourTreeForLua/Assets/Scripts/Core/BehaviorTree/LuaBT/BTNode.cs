@@ -208,13 +208,13 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="ownerbtgraph">所属BTGraph</param>
         /// <param name="noderect">节点编辑器显示Rect</param>
         /// <param name="nodeindex">节点索引</param>
         /// <param name="nodename">节点名字</param>
         /// <param name="nodetype">节点类型</param>
         /// <param name="parentnode">父节点</param>
         /// <param name="allusednodeuidmap">所有已使用的UID映射Map</param>
-        /// <param name="ownerbtgraph">所属BTGraph</param>
         public BTNode(BTGraph ownerbtgraph, Rect noderect, int nodeindex, string nodename, EBTNodeType nodetype, BTNode parentnode, Dictionary<int, int> allusednodeuidmap)
         {
             // 确保生成的UID唯一
@@ -225,6 +225,7 @@ namespace LuaBehaviourTree
             }
             allusednodeuidmap.Add(UID, UID);
             Debug.Log($"新增使用UID:{UID}");
+            OwnerBTGraph = ownerbtgraph;
             NodeDisplayRect = noderect;
             NodeIndex = nodeindex;
             NodeName = nodename;
@@ -236,7 +237,6 @@ namespace LuaBehaviourTree
             IsCSNode = CheckIsCSNodeInEditor();
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
-            OwnerBTGraph = ownerbtgraph;
         }
 
         #region 运行时部分

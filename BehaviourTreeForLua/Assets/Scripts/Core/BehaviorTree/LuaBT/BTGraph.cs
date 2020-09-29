@@ -17,207 +17,6 @@ using UnityEngine;
 namespace LuaBehaviourTree
 {
     /// <summary>
-    /// 变量类型枚举
-    /// </summary>
-    public enum EVariableType
-    {
-        Invalide = 0,       // 无效类型
-        Bool,               // bool类型
-        String,             // string类型
-        Float,              // float类型
-        Int,                // int类型
-    }
-
-    /// <summary>
-    /// 自定义变量数据基类
-    /// </summary>
-    [Serializable]
-    public abstract class CustomVariableData
-    {
-        /// <summary>
-        /// 变量名字
-        /// </summary>
-        public string VariableName;
-
-        /// <summary>
-        /// 变量类型
-        /// </summary>
-        public EVariableType VariableType;
-
-        public CustomVariableData(string variablename, EVariableType variabletype)
-        {
-            VariableName = variablename;
-            VariableType = variabletype;
-        }
-    }
-
-    /// <summary>
-    /// 自定义Bool变量数据
-    /// </summary>
-    [Serializable]
-    public class CustomBoolVariableData : CustomVariableData
-    {
-        /// <summary>
-        /// 变量值
-        /// </summary>
-        public bool VariableValue;
-
-        public CustomBoolVariableData(string variablename, EVariableType variabletype, bool variablevalue) : base(variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-
-    /// <summary>
-    /// 自定义Int变量数据
-    /// </summary>
-    [Serializable]
-    public class CustomIntVariableData : CustomVariableData
-    {
-        /// <summary>
-        /// 变量值
-        /// </summary>
-        public int VariableValue;
-
-        public CustomIntVariableData(string variablename, EVariableType variabletype, int variablevalue) : base(variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
-    /// 自定义float变量数据
-    /// </summary>
-    [Serializable]
-    public class CustomFloatVariableData : CustomVariableData
-    {
-        /// <summary>
-        /// 变量值
-        /// </summary>
-        public float VariableValue;
-
-        public CustomFloatVariableData(string variablename, EVariableType variabletype, float variablevalue) : base(variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
-    /// 自定义string变量数据
-    /// </summary>
-    [Serializable]
-    public class CustomStringVariableData : CustomVariableData
-    {
-        /// <summary>
-        /// 变量值
-        /// </summary>
-        public string VariableValue;
-
-        public CustomStringVariableData(string variablename, EVariableType variabletype, string variablevalue) : base(variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
-    /// 自定义变量节点数据基类
-    /// </summary>
-    [Serializable]
-    public class CustomVariableNodeData
-    {
-        /// <summary>
-        /// 节点UID
-        /// </summary>
-        public int NodeUID;
-
-        /// <summary>
-        /// 变量名
-        /// </summary>
-        public string VariableName;
-
-        /// <summary>
-        /// 变量类型
-        /// </summary>
-        public EVariableType VariableType;
-
-        public CustomVariableNodeData(int nodeuid, string variablename, EVariableType variabletype)
-        {
-            NodeUID = nodeuid;
-            VariableName = variablename;
-            VariableType = variabletype;
-        }
-    }
-    
-    /// <summary>
-    /// 自定义Bool变量节点数据
-    /// </summary>
-    [Serializable]
-    public class CustomBoolVariableNodeData : CustomVariableNodeData
-    {
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public bool VariableValue;
-
-        public CustomBoolVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, bool variablevalue) : base(nodeuid, variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-    
-    /// <summary>
-    /// 自定义Int变量节点数据
-    /// </summary>
-    [Serializable]
-    public class CustomIntVariableNodeData : CustomVariableNodeData
-    {
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public int VariableValue;
-
-        public CustomIntVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, int variablevalue) : base(nodeuid, variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
-    /// 自定义Float变量节点数据
-    /// </summary>
-    [Serializable]
-    public class CustomFloatVariableNodeData : CustomVariableNodeData
-    {
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public float VariableValue;
-
-        public CustomFloatVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, float variablevalue) : base(nodeuid, variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
-    /// 自定义String变量节点数据
-    /// </summary>
-    [Serializable]
-    public class CustomStringVariableNodeData : CustomVariableNodeData
-    {
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public string VariableValue;
-
-        public CustomStringVariableNodeData(int nodeuid, string variablename, EVariableType variabletype, string variablevalue) : base(nodeuid, variablename, variabletype)
-        {
-            VariableValue = variablevalue;
-        }
-    }
-
-    /// <summary>
     /// BTGraph.cs
     /// 行为树图抽象
     /// </summary>
@@ -379,6 +178,7 @@ namespace LuaBehaviourTree
             AllNodesList.Add(rootnode);
         }
 
+        #region 自定义变量部分
         /// <summary>
         /// 指定成员变量名是否可以
         /// </summary>
@@ -672,6 +472,7 @@ namespace LuaBehaviourTree
                 return false;
             }
         }
+        #endregion
 
         /// <summary>
         /// 删除节点
@@ -904,7 +705,6 @@ namespace LuaBehaviourTree
             Dispose();
             // 通过编辑器构建的行为树图数据构建一颗运行时的行为树图数据
             BTFileName = btowner.BTOriginalGraph.BTFileName;
-            AllNodesList = new List<BTNode>();
             AllBoolVariableDataList = btowner.BTOriginalGraph.AllBoolVariableDataList;
             AllIntVariableDataList = btowner.BTOriginalGraph.AllIntVariableDataList;
             AllFloatVariableDataList = btowner.BTOriginalGraph.AllFloatVariableDataList;
@@ -1180,6 +980,15 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 清理运行数据
+        /// </summary>
+        protected void ClearRunningDatas()
+        {
+            ClearAllExecutingNodes();
+            ClearAllExectedReevaluatedNodes();
+        }
+
+        /// <summary>
         /// 获取指定自定义变量值
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1210,7 +1019,7 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public CustomVariableNodeData GetVariableNodeValueInRuntime(int uid)
         {
-            if(AllVariableNodeDataMaps.ContainsKey(uid))
+            if (AllVariableNodeDataMaps.ContainsKey(uid))
             {
                 return AllVariableNodeDataMaps[uid];
             }
@@ -1219,15 +1028,6 @@ namespace LuaBehaviourTree
                 Debug.LogError($"找不到的UID:{uid}自定义变量节点数据,获取节点数据失败!");
                 return null;
             }
-        }
-
-        /// <summary>
-        /// 清理运行数据
-        /// </summary>
-        protected void ClearRunningDatas()
-        {
-            ClearAllExecutingNodes();
-            ClearAllExectedReevaluatedNodes();
         }
         #endregion
 

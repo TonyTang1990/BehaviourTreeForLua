@@ -6,6 +6,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -29,5 +30,21 @@ public static class EditorUtilities
         GUILayout.Space(space);
         GUILayout.Label(title, "box", GUILayout.Width(width), GUILayout.Height(height));
         GUI.color = precolor;
+    }
+
+    /// <summary>
+    /// ªÊ÷∆UI∑÷∏Óœﬂ
+    /// </summary>
+    /// <param name="color"></param>
+    /// <param name="thickness"></param>
+    /// <param name="padding"></param>
+    public static void DrawUILine(int thickness = 2, int padding = 10)
+    {
+        Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
+        r.height = thickness;
+        r.y += padding / 2;
+        r.x -= 2;
+        r.width += 6;
+        EditorGUI.DrawRect(r, GUI.color);
     }
 }
