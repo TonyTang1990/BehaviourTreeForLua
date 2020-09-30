@@ -289,13 +289,55 @@ namespace LuaBehaviourTree
             }
             // 默认第一个是空选项
             var allavaliblenames = new string[targetvariabledatalist.Count + 1];
-            allavaliblenames[0] = "Invalide";
+            allavaliblenames[0] = EVariableType.Invalide.ToString();
             for (int i = 0, length = targetvariabledatalist.Count; i < length; i++)
             {
                 allavaliblenames[i + 1] = targetvariabledatalist[i].VariableName;
             }
             return allavaliblenames;
+        }
 
+        /// <summary>
+        /// 获取指定UID节点的自定义变量数据
+        /// </summary>
+        /// <param name="variabletype"></param>
+        /// <returns></returns>
+        public CustomVariableNodeData GetSpecificUIDCustomVariableNodeData(int nodeuid)
+        {
+            CustomVariableNodeData variablenodedata = null;
+            variablenodedata = AllBoolVariableNodeDataList.Find((vnode) =>
+            {
+                return vnode.NodeUID == nodeuid;
+            });
+            if (variablenodedata != null)
+            {
+                return variablenodedata;
+            }
+            variablenodedata = AllIntVariableNodeDataList.Find((vnode) =>
+            {
+                return vnode.NodeUID == nodeuid;
+            });
+            if (variablenodedata != null)
+            {
+                return variablenodedata;
+            }
+            variablenodedata = AllFloatVariableNodeDataList.Find((vnode) =>
+            {
+                return vnode.NodeUID == nodeuid;
+            });
+            if (variablenodedata != null)
+            {
+                return variablenodedata;
+            }
+            variablenodedata = AllStringVariableNodeDataList.Find((vnode) =>
+            {
+                return vnode.NodeUID == nodeuid;
+            });
+            if (variablenodedata != null)
+            {
+                return variablenodedata;
+            }
+            return null;
         }
 
         /// <summary>
@@ -638,6 +680,139 @@ namespace LuaBehaviourTree
         public bool IsNodeRunning(int uid)
         {
             return ExecutingNodesMap.ContainsKey(uid);
+        }
+
+        /// <summary>
+        /// 是否是有效的行为树图
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValideGraph()
+        {
+            foreach (var btnode in AllNodesList)
+            {
+                if (btnode.IsValideNode() == false)
+                {
+                    return false;
+                }
+            }
+            if (CheckVariableNodeDataValidation())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 检查自定义变量节点的有效性
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckVariableNodeDataValidation()
+        {
+            // 检查节点名有效性
+            // 刚创建没进入参数面板，默认变量名为空
+            var invalidestring = EVariableType.Invalide.ToString();
+            CustomVariableNodeData variablenodedata = null;
+            CustomVariableData variabledata = null;
+            variablenodedata = AllBoolVariableNodeDataList.Find((vnodedata) =>
+            {
+                return vnodedata.VariableName.Equals(invalidestring) || vnodedata.VariableName.Equals(string.Empty);
+            });
+            if (variablenodedata != null)
+            {
+                Debug.LogError($"节点UID:{variablenodedata.NodeUID}自定义变量未设置有效变量名:{variablenodedata.VariableName}!");
+                return false;
+            }
+            else
+            {
+                foreach (var boolvariablendoedata in AllBoolVariableNodeDataList)
+                {
+                    variabledata = AllBoolVariableDataList.Find((vnode) =>
+                    {
+                        return vnode.VariableName.Equals(boolvariablendoedata.VariableName);
+                    });
+                    if (variabledata == null)
+                    {
+                        Debug.LogError($"节点UID:{boolvariablendoedata.NodeUID}自定义变量:{boolvariablendoedata.VariableName}已经不存在了!");
+                        return false;
+                    }
+                }
+            }
+            variablenodedata = AllIntVariableNodeDataList.Find((vnodedata) =>
+            {
+                return vnodedata.VariableName.Equals(invalidestring) || vnodedata.VariableName.Equals(string.Empty);
+            });
+            if (variablenodedata != null)
+            {
+                Debug.LogError($"节点UID:{variablenodedata.NodeUID}自定义变量未设置有效变量名:{variablenodedata.VariableName}!");
+                return false;
+            }
+            else
+            {
+                foreach (var intvariablendoedata in AllIntVariableNodeDataList)
+                {
+                    variabledata = AllIntVariableDataList.Find((vnode) =>
+                    {
+                        return vnode.VariableName.Equals(intvariablendoedata.VariableName);
+                    });
+                    if (variabledata == null)
+                    {
+                        Debug.LogError($"节点UID:{intvariablendoedata.NodeUID}自定义变量:{intvariablendoedata.VariableName}已经不存在了!");
+                        return false;
+                    }
+                }
+            }
+            variablenodedata = AllFloatVariableNodeDataList.Find((vnodedata) =>
+            {
+                return vnodedata.VariableName.Equals(invalidestring) || vnodedata.VariableName.Equals(string.Empty);
+            });
+            if (variablenodedata != null)
+            {
+                Debug.LogError($"节点UID:{variablenodedata.NodeUID}自定义变量未设置有效变量名:{variablenodedata.VariableName}!");
+                return false;
+            }
+            else
+            {
+                foreach (var floatvariablendoedata in AllFloatVariableNodeDataList)
+                {
+                    variabledata = AllFloatVariableDataList.Find((vnode) =>
+                    {
+                        return vnode.VariableName.Equals(floatvariablendoedata.VariableName);
+                    });
+                    if (variabledata == null)
+                    {
+                        Debug.LogError($"节点UID:{floatvariablendoedata.NodeUID}自定义变量:{floatvariablendoedata.VariableName}已经不存在了!");
+                        return false;
+                    }
+                }
+            }
+            variablenodedata = AllStringVariableNodeDataList.Find((vnodedata) =>
+            {
+                return vnodedata.VariableName.Equals(invalidestring) || vnodedata.VariableName.Equals(string.Empty);
+            });
+            if (variablenodedata != null)
+            {
+                Debug.LogError($"节点UID:{variablenodedata.NodeUID}自定义变量未设置有效变量名:{variablenodedata.VariableName}!");
+                return false;
+            }
+            else
+            {
+                foreach (var stringvariablendoedata in AllStringVariableNodeDataList)
+                {
+                    variabledata = AllStringVariableDataList.Find((vnode) =>
+                    {
+                        return vnode.VariableName.Equals(stringvariablendoedata.VariableName);
+                    });
+                    if (variabledata == null)
+                    {
+                        Debug.LogError($"节点UID:{stringvariablendoedata.NodeUID}自定义变量:{stringvariablendoedata.VariableName}已经不存在了!");
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
         #endregion
 

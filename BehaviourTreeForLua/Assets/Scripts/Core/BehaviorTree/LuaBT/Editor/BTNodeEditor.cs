@@ -1369,15 +1369,8 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         private bool IsValideTree()
         {
-            if(mCurrentSelectionBTGraph != null)
+            if (mCurrentSelectionBTGraph != null && mCurrentSelectionBTGraph.IsValideGraph())
             {
-                foreach (var btnode in mCurrentSelectionBTGraph.AllNodesList)
-                {
-                    if(btnode.IsValideNode() == false)
-                    {
-                        return false;
-                    }
-                }
                 return true;
             }
             else
