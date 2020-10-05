@@ -748,10 +748,10 @@ namespace LuaBehaviourTree
                 var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
                 if(variablenodevalue != null)
                 {
-                    DrawOneVariableNodeName(variablenodevalue);
+                    DrawOneVariableNodeName(variablenodevalue, halftoolbarwidth);
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("目标值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
-                    DrawOneVariableNodeValue(variablenodevalue);
+                    DrawOneVariableNodeValue(variablenodevalue, halftoolbarwidth + 40.0f);
                     EditorGUILayout.EndHorizontal();
                 }
                 else
@@ -766,10 +766,10 @@ namespace LuaBehaviourTree
                 var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
                 if (variablenodevalue != null)
                 {
-                    DrawOneVariableNodeName(variablenodevalue);
+                    DrawOneVariableNodeName(variablenodevalue, halftoolbarwidth);
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("比较值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
-                    DrawOneVariableNodeValue(variablenodevalue);
+                    DrawOneVariableNodeValue(variablenodevalue, halftoolbarwidth + 40.0f);
                     EditorGUILayout.EndHorizontal();
                 }
                 else
@@ -786,12 +786,13 @@ namespace LuaBehaviourTree
         /// 绘制一个节点自定义变量名字
         /// </summary>
         /// <param name="variablenodevalue"></param>
-        private void DrawOneVariableNodeName(CustomVariableNodeData variablenodevalue)
+        /// <param name="width"></param>
+        /// <param name="allowchangevalue"></param>
+        private void DrawOneVariableNodeName(CustomVariableNodeData variablenodevalue, float width, bool allowchangevalue = true)
         {
-            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
             EditorGUILayout.BeginHorizontal();
             var allavaliblevariablenames = mCurrentClickNode.OwnerBTGraph.GetCustomVariableNames(variablenodevalue.VariableType);
-            EditorGUILayout.LabelField("变量名:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField("变量名:", GUILayout.Width(width), GUILayout.Height(20.0f));
             var variablenameindex = Array.FindIndex<string>(allavaliblevariablenames, (variablename) =>
             {
                 return variablename == variablenodevalue.VariableName;
@@ -802,7 +803,14 @@ namespace LuaBehaviourTree
                 variablenameindex = 0;
             }
             var prevariablenameindex = variablenameindex;
-            variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+            if(allowchangevalue)
+            {
+                variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(width), GUILayout.Height(20.0f));
+            }
+            else
+            {
+                EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(width), GUILayout.Height(20.0f));
+            }
             // 实时更新变量名
             variablenodevalue.VariableName = allavaliblevariablenames[variablenameindex];
             EditorGUILayout.EndHorizontal();
@@ -812,60 +820,61 @@ namespace LuaBehaviourTree
         /// 绘制一个节点自定义变量值选项
         /// </summary>
         /// <param name="variablenodedata"></param>
-        private void DrawOneVariableNodeValue(CustomVariableNodeData variablenodevalue)
+        /// <param name="width"></param>
+        /// <param name="allowchangevalue"></param>
+        private void DrawOneVariableNodeValue(CustomVariableNodeData variablenodevalue, float width, bool allowchangevalue = true)
         {
-            var halftoolbarwidth = ToolBarWidth / 2 - 10f;
             if (variablenodevalue.VariableType == EVariableType.Bool)
             {
                 var customboolvariablenodedata = variablenodevalue as CustomBoolVariableNodeData;
-                if (Application.isPlaying == false)
+                if (Application.isPlaying == false && allowchangevalue)
                 {
-                    customboolvariablenodedata.VariableValue = EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    customboolvariablenodedata.VariableValue = EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
                 else
                 {
-                    EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(width + 40f), GUILayout.Height(20.0f));
                 }
             }
             else if (variablenodevalue.VariableType == EVariableType.Int)
             {
                 var customintvariablenodedata = variablenodevalue as CustomIntVariableNodeData;
-                if (Application.isPlaying == false)
+                if (Application.isPlaying == false && allowchangevalue)
                 {
-                    customintvariablenodedata.VariableValue = EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    customintvariablenodedata.VariableValue = EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
                 else
                 {
-                    EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(width + 40f), GUILayout.Height(20.0f));
                 }
             }
             else if (variablenodevalue.VariableType == EVariableType.String)
             {
                 var customstringvariablenodedata = variablenodevalue as CustomStringVariableNodeData;
-                if (Application.isPlaying == false)
+                if (Application.isPlaying == false && allowchangevalue)
                 {
-                    customstringvariablenodedata.VariableValue = EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    customstringvariablenodedata.VariableValue = EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
                 else
                 {
-                    EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.TextField(customstringvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
             }
             else if (variablenodevalue.VariableType == EVariableType.Float)
             {
                 var customfloatvariablenodedata = variablenodevalue as CustomFloatVariableNodeData;
-                if (Application.isPlaying == false)
+                if (Application.isPlaying == false && allowchangevalue)
                 {
-                    customfloatvariablenodedata.VariableValue = EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    customfloatvariablenodedata.VariableValue = EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
                 else
                 {
-                    EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(halftoolbarwidth + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.FloatField(customfloatvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
             }
             else
             {
-                EditorGUILayout.LabelField($"不支持的变量类型:{variablenodevalue.VariableType}", "textarea", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
+                EditorGUILayout.LabelField($"不支持的变量类型:{variablenodevalue.VariableType}", "textarea", GUILayout.Width(width), GUILayout.Height(20.0f));
             }
         }
 
@@ -1484,6 +1493,7 @@ namespace LuaBehaviourTree
         /// <param name="uid"></param>
         private void DrawNodeWindow(int uid)
         {
+            var customvariablewidth = NodeWindowWidth / 2f;
             var btnode = mCurrentSelectionBTGraph.FindNodeByUID(uid);
             if (btnode == null)
             {
@@ -1513,8 +1523,29 @@ namespace LuaBehaviourTree
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField($"节点参数:", mLableAlignLeftStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
-            GUILayout.Label($"{btnode.NodeParams}", "textarea", GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(40.0f));
+            if(BTUtilities.IsSetShareVariableAction(btnode.NodeName))
+            {
+                var variablenodevalue = btnode.OwnerBTGraph.GetVariableNodeValueInEditor(btnode.UID);
+                DrawOneVariableNodeName(variablenodevalue, customvariablewidth - 10.0f, false);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("目标值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 5.0f, false);
+                EditorGUILayout.EndHorizontal();
+            }
+            else if(BTUtilities.IsCompareToShareVariableCondition(btnode.NodeName))
+            {
+                var variablenodevalue = btnode.OwnerBTGraph.GetVariableNodeValueInEditor(btnode.UID);
+                DrawOneVariableNodeName(variablenodevalue, customvariablewidth - 10.0f, false);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("比较值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 5.0f, false);
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                EditorGUILayout.LabelField($"节点参数:", mLableAlignLeftStyle, GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(20.0f));
+                GUILayout.Label($"{btnode.NodeParams}", "textarea", GUILayout.Width(NodeWindowWidth - 20f), GUILayout.Height(40.0f));
+            }
             EditorGUILayout.EndVertical();
             // 仅Editor非运行时允许拖拽
             if (Application.isPlaying == false)
