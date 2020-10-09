@@ -804,7 +804,6 @@ namespace LuaBehaviourTree
             {
                 variablenameindex = 0;
             }
-            var prevariablenameindex = variablenameindex;
             if(allowchangevalue)
             {
                 variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(contentwidth), GUILayout.Height(20.0f));
@@ -835,7 +834,7 @@ namespace LuaBehaviourTree
                 }
                 else
                 {
-                    EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(width + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.Toggle(customboolvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
             }
             else if (variablenodevalue.VariableType == EVariableType.Int)
@@ -847,7 +846,7 @@ namespace LuaBehaviourTree
                 }
                 else
                 {
-                    EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(width + 40f), GUILayout.Height(20.0f));
+                    EditorGUILayout.IntField(customintvariablenodedata.VariableValue, GUILayout.Width(width), GUILayout.Height(20.0f));
                 }
             }
             else if (variablenodevalue.VariableType == EVariableType.String)
@@ -1531,7 +1530,7 @@ namespace LuaBehaviourTree
                 DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 30.0f, customvariablewidth + 10.0f, false);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("目标值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
-                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 30.0f, false);
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 10.0f, false);
                 EditorGUILayout.EndHorizontal();
             }
             else if(BTUtilities.IsCompareToShareVariableCondition(btnode.NodeName))
@@ -1540,7 +1539,7 @@ namespace LuaBehaviourTree
                 DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 30.0f, customvariablewidth + 10.0f, false);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("比较值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
-                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 30.0f, false);
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 10.0f, false);
                 EditorGUILayout.EndHorizontal();
             }
             else
