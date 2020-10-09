@@ -748,7 +748,7 @@ namespace LuaBehaviourTree
                 var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
                 if(variablenodevalue != null)
                 {
-                    DrawOneVariableNodeName(mCurrentClickNode.OwnerBTGraph, variablenodevalue, halftoolbarwidth);
+                    DrawOneVariableNodeName(mCurrentClickNode.OwnerBTGraph, variablenodevalue, halftoolbarwidth - 40.0f, halftoolbarwidth + 40.0f);
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("目标值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
                     DrawOneVariableNodeValue(variablenodevalue, halftoolbarwidth + 40.0f);
@@ -766,7 +766,7 @@ namespace LuaBehaviourTree
                 var variablenodevalue = mCurrentClickNode.OwnerBTGraph.GetVariableNodeValueInEditor(mCurrentClickNode.UID);
                 if (variablenodevalue != null)
                 {
-                    DrawOneVariableNodeName(mCurrentClickNode.OwnerBTGraph, variablenodevalue, halftoolbarwidth);
+                    DrawOneVariableNodeName(mCurrentClickNode.OwnerBTGraph, variablenodevalue, halftoolbarwidth - 40.0f, halftoolbarwidth + 40.0f);
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("比较值:", GUILayout.Width(halftoolbarwidth - 40f), GUILayout.Height(20.0f));
                     DrawOneVariableNodeValue(variablenodevalue, halftoolbarwidth + 40.0f);
@@ -787,13 +787,14 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="ownergraph"></param>
         /// <param name="variablenodevalue"></param>
-        /// <param name="width"></param>
+        /// <param name="titlewidth"></param>
+        /// <param name="contentwidth"></param>
         /// <param name="allowchangevalue"></param>
-        private void DrawOneVariableNodeName(BTGraph ownergraph, CustomVariableNodeData variablenodevalue, float width, bool allowchangevalue = true)
+        private void DrawOneVariableNodeName(BTGraph ownergraph, CustomVariableNodeData variablenodevalue, float titlewidth, float contentwidth, bool allowchangevalue = true)
         {
             EditorGUILayout.BeginHorizontal();
             var allavaliblevariablenames = ownergraph.GetCustomVariableNames(variablenodevalue.VariableType);
-            EditorGUILayout.LabelField("变量名:", GUILayout.Width(width), GUILayout.Height(20.0f));
+            EditorGUILayout.LabelField("变量名:", GUILayout.Width(titlewidth), GUILayout.Height(20.0f));
             var variablenameindex = Array.FindIndex<string>(allavaliblevariablenames, (variablename) =>
             {
                 return variablename == variablenodevalue.VariableName;
@@ -806,11 +807,11 @@ namespace LuaBehaviourTree
             var prevariablenameindex = variablenameindex;
             if(allowchangevalue)
             {
-                variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(width), GUILayout.Height(20.0f));
+                variablenameindex = EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(contentwidth), GUILayout.Height(20.0f));
             }
             else
             {
-                EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(width), GUILayout.Height(20.0f));
+                EditorGUILayout.Popup(variablenameindex, allavaliblevariablenames, GUILayout.Width(contentwidth), GUILayout.Height(20.0f));
             }
             // 实时更新变量名
             variablenodevalue.VariableName = allavaliblevariablenames[variablenameindex];
@@ -1527,19 +1528,19 @@ namespace LuaBehaviourTree
             if(BTUtilities.IsSetShareVariableAction(btnode.NodeName))
             {
                 var variablenodevalue = btnode.OwnerBTGraph.GetVariableNodeValueInEditor(btnode.UID);
-                DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 10.0f, false);
+                DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 30.0f, customvariablewidth + 10.0f, false);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("目标值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
-                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 5.0f, false);
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 30.0f, false);
                 EditorGUILayout.EndHorizontal();
             }
             else if(BTUtilities.IsCompareToShareVariableCondition(btnode.NodeName))
             {
                 var variablenodevalue = btnode.OwnerBTGraph.GetVariableNodeValueInEditor(btnode.UID);
-                DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 10.0f, false);
+                DrawOneVariableNodeName(btnode.OwnerBTGraph, variablenodevalue, customvariablewidth - 30.0f, customvariablewidth + 10.0f, false);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("比较值:", GUILayout.Width(customvariablewidth - 30.0f), GUILayout.Height(20.0f));
-                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 5.0f, false);
+                DrawOneVariableNodeValue(variablenodevalue, customvariablewidth + 30.0f, false);
                 EditorGUILayout.EndHorizontal();
             }
             else
