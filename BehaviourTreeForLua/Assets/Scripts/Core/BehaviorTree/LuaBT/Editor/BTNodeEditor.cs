@@ -564,6 +564,7 @@ namespace LuaBehaviourTree
             EditorGUILayout.LabelField("行为树名:", GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
             mCurrentSelectionBTGraph.BTFileName = EditorGUILayout.TextField(mCurrentSelectionBTGraph.BTFileName, GUILayout.Width(halftoolbarwidth), GUILayout.Height(20.0f));
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginVertical();
             if (mCurrentSelectionBTGraphAsset != null)
             {
                 if (Application.isPlaying == false)
@@ -571,6 +572,10 @@ namespace LuaBehaviourTree
                     if (GUILayout.Button("保存", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
                     {
                         TrySaveBTAsset();
+                    }
+                    if (GUILayout.Button("重新生成所有UID", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
+                    {
+                        RecaculateAllNodesUID();
                     }
                 }
             }
@@ -591,6 +596,7 @@ namespace LuaBehaviourTree
                     }
                 }
             }
+            EditorGUILayout.EndVertical();
             IsEnableMoveWithChildNodes = EditorGUILayout.Toggle("子节点一起移动开关:", IsEnableMoveWithChildNodes, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
             mCurrentCreateNodeStrategy = (ECreateNodeStrategy)EditorGUILayout.EnumPopup("节点添加策略:", mCurrentCreateNodeStrategy, GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f));
             if (GUILayout.Button("新建", GUILayout.Width(ToolBarWidth - 10), GUILayout.Height(20.0f)))
@@ -1036,47 +1042,55 @@ namespace LuaBehaviourTree
         /// </summary>
         private bool TrySaveBTAsset()
         {
-            if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
+            if (Application.isPlaying == false)
             {
-                // 检查行为树的有效性
-                if (IsValideTree())
+                if (string.IsNullOrEmpty(mCurrentSelectionBTGraph.BTFileName) == false)
                 {
-                    if (string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetOriginalName) == false && !mCurrentSelectionBTGraph.BTFileName.Equals(mCurrentSelectionBTGraphAssetOriginalName))
+                    // 检查行为树的有效性
+                    if (IsValideTree())
                     {
-                        // 文件名有变化，自动删除老的文件
-                        var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
-                        Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件!");
-                        AssetDatabase.DeleteAsset(oldbtgraphassetpath);
+                        if (string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetOriginalName) == false && !mCurrentSelectionBTGraph.BTFileName.Equals(mCurrentSelectionBTGraphAssetOriginalName))
+                        {
+                            // 文件名有变化，自动删除老的文件
+                            var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
+                            Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件!");
+                            AssetDatabase.DeleteAsset(oldbtgraphassetpath);
+                        }
+                        // 矫正数据
+                        CorrectBTData();
+                        //var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                        var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                        var newbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraph.BTFileName}.json";
+                        var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
+                        var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
+                        mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraph.BTFileName;
+                        if (Directory.Exists(savefolderfullpath) == false)
+                        {
+                            Directory.CreateDirectory(savefolderfullpath);
+                        }
+                        File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
+                        Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
+                        mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(newbtgraphassetpath);
+                        LoadBTAsset(mCurrentSelectionBTGraphAsset);
+                        return true;
                     }
-                    // 矫正数据
-                    CorrectBTData();
-                    //var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                    var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                    var newbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraph.BTFileName}.json";
-                    var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                    var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
-                    mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraph.BTFileName;
-                    if (Directory.Exists(savefolderfullpath) == false)
+                    else
                     {
-                        Directory.CreateDirectory(savefolderfullpath);
+                        Debug.LogError($"行为树有不符合条件的节点设定,保存失败!");
+                        return false;
                     }
-                    File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                    Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-                    mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(newbtgraphassetpath);
-                    LoadBTAsset(mCurrentSelectionBTGraphAsset);
-                    return true;
                 }
                 else
                 {
-                    Debug.LogError($"行为树有不符合条件的节点设定,保存失败!");
+                    Debug.LogError($"不允许导出行为树名为空的行为树数据!");
                     return false;
                 }
             }
             else
             {
-                Debug.LogError($"不允许导出行为树名为空的行为树数据!");
+                Debug.LogError($"运行时不允许保存行为树文件!");
                 return false;
             }
         }
@@ -1104,6 +1118,84 @@ namespace LuaBehaviourTree
                         Debug.Log($"矫正节点UID:{node.UID}的IsCSNode:{node.IsCSNode}");
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// 所有节点重新计算生成新的UID
+        /// </summary>
+        private void RecaculateAllNodesUID()
+        {
+            if (Application.isPlaying == false)
+            {
+                if (mCurrentSelectionBTGraphAsset != null)
+                {
+                    // 新老UID映射Map，为了修改后矫正所有父节点子节点UID数据
+                    // Key为老的UID，Value为新的UID
+                    var oldrootuid = mCurrentSelectionBTGraph.RootNodeUID;
+                    var uidmap = new Dictionary<int, int>();
+                    foreach (var node in mCurrentSelectionBTGraph.AllNodesList)
+                    {
+                        var olduid = node.UID;
+                        var uid = BTUtilities.GetNodeUID();
+                        while (AllUsedNodeUIDMap.ContainsKey(uid))
+                        {
+                            uid = BTUtilities.GetNodeUID();
+                        }
+                        node.UID = uid;
+                        AllUsedNodeUIDMap.Add(uid, uid);
+                        //Debug.Log($"新增使用UID:{uid}");
+                        AllUsedNodeUIDMap.Remove(olduid);
+                        //Debug.Log($"移除使用UID:{olduid}");
+                        uidmap.Add(olduid, uid);
+                    }
+                    // 矫正节点父节点子节点UID数据
+                    foreach (var node in mCurrentSelectionBTGraph.AllNodesList)
+                    {
+                        if (node.IsRootNode() == false)
+                        {
+                            var newparentnodeuid = uidmap[node.ParentNodeUID];
+                            node.ParentNodeUID = newparentnodeuid;
+                        }
+                        for (int i = 0, length = node.ChildNodesUIDList.Count; i < length; i++)
+                        {
+                            var newchildnodeuid = uidmap[node.ChildNodesUIDList[i]];
+                            node.ChildNodesUIDList[i] = newchildnodeuid;
+                        }
+                    }
+                    // 还原正确的Root节点数据
+                    mCurrentSelectionBTGraph.RootNodeUID = uidmap[oldrootuid];
+                    //矫正自定义变量UID数据
+                    foreach (var variablenode in mCurrentSelectionBTGraph.AllBoolVariableNodeDataList)
+                    {
+                        var newnodeuid = uidmap[variablenode.NodeUID];
+                        variablenode.NodeUID = newnodeuid;
+                    }
+                    foreach (var variablenode in mCurrentSelectionBTGraph.AllIntVariableNodeDataList)
+                    {
+                        var newnodeuid = uidmap[variablenode.NodeUID];
+                        variablenode.NodeUID = newnodeuid;
+                    }
+                    foreach (var variablenode in mCurrentSelectionBTGraph.AllFloatVariableNodeDataList)
+                    {
+                        var newnodeuid = uidmap[variablenode.NodeUID];
+                        variablenode.NodeUID = newnodeuid;
+                    }
+                    foreach (var variablenode in mCurrentSelectionBTGraph.AllStringVariableNodeDataList)
+                    {
+                        var newnodeuid = uidmap[variablenode.NodeUID];
+                        variablenode.NodeUID = newnodeuid;
+                    }
+                    Debug.Log($"重新计算所有节点UID完成!");
+                }
+                else
+                {
+                    Debug.LogError($"未选中有效行为树文件,重新计算UID失败!");
+                }
+            }
+            else
+            {
+                Debug.LogError($"运行时不允许重新计算生成UID!");
             }
         }
 
