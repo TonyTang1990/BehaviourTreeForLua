@@ -268,6 +268,11 @@ namespace LuaBehaviourTree
         private string mCurrentSelectionBTGraphAssetOriginalName;
 
         /// <summary>
+        /// 当前选中的行为树Asset资源路径(新建的行为树对象此路径为空)
+        /// </summary>
+        private string mCurrentSelectionBTGraphAssetPath;
+
+        /// <summary>
         /// 所有已经使用的节点UID映射Map(Key为已使用的UID，Value为已使用的UID)
         /// </summary>
         private Dictionary<int, int> AllUsedNodeUIDMap;
@@ -397,16 +402,16 @@ namespace LuaBehaviourTree
                             mCurrentSelectionBTGraph = tbt.BTRunningGraph;
                             mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
                             mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                            var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
-                            Debug.Log($"选中运行时有行为树数据对象:{selectiongameobject.name} 行为树AssetPath:{currentselectionbtnodeassetpath}");
+                            mCurrentSelectionBTGraphAssetPath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            Debug.Log($"选中运行时有行为树数据对象:{selectiongameobject.name} 行为树AssetPath:{mCurrentSelectionBTGraphAssetPath}");
                         }
                         else
                         {
                             mCurrentSelectionBTGraph = tbt.BTOriginalGraph;
                             mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
                             mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                            var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
-                            Debug.Log($"非运行时选中的场景对象:{Selection.objects[0].name} AssetPath:{currentselectionbtnodeassetpath}!");
+                            mCurrentSelectionBTGraphAssetPath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            Debug.Log($"非运行时选中的场景对象:{Selection.objects[0].name} AssetPath:{mCurrentSelectionBTGraphAssetPath}!");
                         }
                     }
                     else
@@ -442,8 +447,8 @@ namespace LuaBehaviourTree
                 mCurrentSelectionBTGraph.Init();
                 mCurrentSelectionBTGraphAsset = asset;
                 mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                var currentselectionbtnodeassetpath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
-                Debug.Log($"非运行时选中的Asset:{asset.name} AssetPath:{currentselectionbtnodeassetpath}!");
+                mCurrentSelectionBTGraphAssetPath = assetpath;
+                Debug.Log($"非运行时选中的Asset:{asset.name} AssetPath:{mCurrentSelectionBTGraphAssetPath}!");
             }
             else
             {
@@ -1049,29 +1054,48 @@ namespace LuaBehaviourTree
                     // 检查行为树的有效性
                     if (IsValideTree())
                     {
-                        if (string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetOriginalName) == false && !mCurrentSelectionBTGraph.BTFileName.Equals(mCurrentSelectionBTGraphAssetOriginalName))
+                        if (string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetOriginalName) == false && !mCurrentSelectionBTGraph.BTFileName.Equals(mCurrentSelectionBTGraphAssetOriginalName) && !string.IsNullOrEmpty(mCurrentSelectionBTGraphAssetPath))
                         {
                             // 文件名有变化，自动删除老的文件
-                            var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
-                            Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件!");
-                            AssetDatabase.DeleteAsset(oldbtgraphassetpath);
+                            //var oldbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraphAssetOriginalName}.json";
+                            var oldbtgraphassetpath = mCurrentSelectionBTGraphAssetPath;
+                            Debug.Log($"文件名从:{mCurrentSelectionBTGraphAssetOriginalName}变到{mCurrentSelectionBTGraph.BTFileName},自动删除老文件:{mCurrentSelectionBTGraphAssetPath}!");
+                            AssetDatabase.DeleteAsset(mCurrentSelectionBTGraphAssetPath);
                         }
                         // 矫正数据
                         CorrectBTData();
-                        //var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
+                        var asset = AssetDatabase.LoadAssetAtPath(mCurrentSelectionBTGraphAssetPath, typeof(TextAsset));
+                        var isassetexist = asset != null;
                         var jsondata = JsonUtility.ToJson(mCurrentSelectionBTGraph, true);
-                        var newbtgraphassetpath = $"Assets/Resources/{BTData.BTNodeSaveFolderRelativePath}/{mCurrentSelectionBTGraph.BTFileName}.json";
-                        var savefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
-                        var assetfullpath = $"{savefolderfullpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
-                        mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraph.BTFileName;
-                        if (Directory.Exists(savefolderfullpath) == false)
+                        var assetsavefullpath = string.Empty;
+                        if (isassetexist)
                         {
-                            Directory.CreateDirectory(savefolderfullpath);
+                            //Asset存在
+                            var assetpath = mCurrentSelectionBTGraphAssetPath;
+                            assetsavefullpath = $"{Application.dataPath}{assetpath.Replace("Assets", string.Empty)}";
+                            File.WriteAllText(assetsavefullpath, jsondata, Encoding.UTF8);
+                            Debug.Log($"保存成功:{assetsavefullpath}");
                         }
-                        File.WriteAllText(assetfullpath, jsondata, Encoding.UTF8);
-                        Debug.Log($"保存成功:/nassetfullpath:{assetfullpath}");
+                        else
+                        {
+                            //Asset不存在
+                            var defaultsavefolderfullpath = $"{Application.dataPath}/Resources/{BTData.BTNodeSaveFolderRelativePath}";
+                            var savefolderpath = EditorUtility.OpenFolderPanel("选择保存目录", defaultsavefolderfullpath, "");
+                            if (!string.IsNullOrEmpty(savefolderpath))
+                            {
+                                assetsavefullpath = $"{savefolderpath}/{mCurrentSelectionBTGraph.BTFileName}.json";
+                                File.WriteAllText(assetsavefullpath, jsondata, Encoding.UTF8);
+                                Debug.Log($"保存成功:{assetsavefullpath}");
+                            }
+                            else
+                            {
+                                Debug.LogError("未选择有效存储目录,保存失败!");
+                                return false;
+                            }
+                        }
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
+                        var newbtgraphassetpath = $"Assets{assetsavefullpath.Replace(Application.dataPath, string.Empty)}";
                         mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(newbtgraphassetpath);
                         LoadBTAsset(mCurrentSelectionBTGraphAsset);
                         return true;
