@@ -4,6 +4,7 @@
  * Create Date:             2020/08/12
  */
 
+using GeneralModule.Pool;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,7 +61,7 @@ namespace LuaBehaviourTree
     /// 行为树节点抽象
     /// </summary>
     [Serializable]
-    public class BTNode
+    public class BTNode : IRecycle
     {
         #region 序列化存储部分
         /// <summary>
@@ -198,6 +199,33 @@ namespace LuaBehaviourTree
                 return NodeRunningState == EBTNodeRunningState.Success || NodeRunningState == EBTNodeRunningState.Failed;
             }
         }
+
+        #region Lua统一绑定回调(优化委托绑定问题)
+        /// <summary>
+        /// 行为树节点暂停回调
+        /// </summary>
+        public static Action<int, int, bool> LuaOnPause;
+        /// <summary>
+        /// 行为树节点重置回调
+        /// </summary>
+        public static Action<int, int> LuaReset;
+        /// <summary>
+        /// 行为树节点进入回调
+        /// </summary>
+        public static Action<int, int> LuaOnEnter;
+        /// <summary>
+        /// 行为树节点执行回调
+        /// </summary>
+        public static Func<int, int, int> LuaOnExecute;
+        /// <summary>
+        /// 行为树节点退出回调
+        /// </summary>
+        public static Action<int, int> LuaOnExit;
+        /// <summary>
+        /// 行为树节点释放回调
+        /// </summary>
+        public static Action<int, int> LuaDispose;
+        #endregion
         #endregion
 
         public BTNode()
@@ -251,6 +279,37 @@ namespace LuaBehaviourTree
             ParentNodeUID = node.ParentNodeUID;
             ChildNodesUIDList = node.ChildNodesUIDList;
             AbortType = node.AbortType;
+            IsCSNode = CheckIsCSNodeInEditor();
+            NodeRunningState = EBTNodeRunningState.Invalide;
+            LastNodeRunningState = EBTNodeRunningState.Invalide;
+            OwnerBT = btowner;
+            OwnerBTGraph = btowner.BTRunningGraph;
+            ParentNode = parentnode;
+            InstanceID = instanceid;
+        }
+
+        public virtual void OnCreate()
+        {
+            //Debug.Log("BTNode:onCreate()");
+        }
+        /// <summary>
+        /// 设置数据(运行时用对象池后的调用初始化数据)
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="btowner"></param>
+        /// <param name="parentnode"></param>
+        /// <param name="instanceid"></param>
+        public virtual void SetDatas(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        {
+            UID = node.UID;
+            NodeDisplayRect = node.NodeDisplayRect;
+            NodeIndex = node.NodeIndex;
+            NodeName = node.NodeName;
+            NodeParams = node.NodeParams;
+            NodeType = (int)node.NodeType;
+            ParentNodeUID = node.ParentNodeUID;
+            ChildNodesUIDList = node.ChildNodesUIDList;
+            AbortType = node.AbortType;
             IsCSNode = node.IsCSNode;
             NodeRunningState = EBTNodeRunningState.Invalide;
             LastNodeRunningState = EBTNodeRunningState.Invalide;
@@ -275,6 +334,23 @@ namespace LuaBehaviourTree
             LastNodeRunningState = EBTNodeRunningState.Invalide;
             OwnerBT = null;
             ParentNode = null;
+            InstanceID = 0;
+        }
+
+        public void OnDispose()
+        {
+            //Debug.Log("BTNode:onDispose()");
+            UID = 0;
+            NodeIndex = -1;
+            NodeName = null;
+            NodeType = 0;
+            ParentNodeUID = 0;
+            ChildNodesUIDList = null;
+            NodeRunningState = EBTNodeRunningState.Invalide;
+            LastNodeRunningState = EBTNodeRunningState.Invalide;
+            OwnerBT = null;
+            ParentNode = null;
+            InstanceID = 0;
         }
 
         /// <summary>
@@ -562,13 +638,13 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public bool CheckIsCSNodeInEditor()
         {
-            var index = Array.FindIndex(BTData.BTCSActionNodeNameArray, (nodename) =>
+            var index = Array.FindIndex(BTData.BTActionNodeNameArray, (nodename) =>
             {
                 return string.Equals(nodename, NodeName);
             });
             if(index == -1)
             {
-                index = Array.FindIndex(BTData.BTCSConditionNodeNameArray, (nodename) =>
+                index = Array.FindIndex(BTData.BTConditionNodeNameArray, (nodename) =>
                 {
                     return string.Equals(nodename, NodeName);
                 });

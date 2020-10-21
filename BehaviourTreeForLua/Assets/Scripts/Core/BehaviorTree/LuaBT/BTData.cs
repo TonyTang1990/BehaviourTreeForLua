@@ -22,24 +22,28 @@ namespace LuaBehaviourTree
         public const string BTNodeSaveFolderRelativePath = "BehaviourTreeNodes";
 
         /// <summary>
-        /// 组合节点名数据
+        /// CS组合节点名数据
         /// </summary>
-        public static string[] BTCompositeNodeNameArray = { "Selector", "Seqeunce", "ParalAllSuccess", "ParalOneSuccess", "RandomSelector" };
+        public static string[] BTCompositeNodeNameArray = { typeof(Selector).Name, typeof(Sequence).Name, typeof(ParalAllSuccess).Name, typeof(ParalOneSuccess).Name, typeof(RandomSelector).Name };
 
         /// <summary>
-        /// 修饰节点名数据
+        /// CS修饰节点名数据
         /// </summary>
-        public static string[] BTDecorationNodeNameArray = { "InverterDecoration", "RepeatedDecoration" };
+        public static string[] BTDecorationNodeNameArray = { typeof(InverterDecoration).Name, typeof(RepeatedDecoration).Name };
 
         /// <summary>
         /// CS条件节点名数据(注意和BTNodeData.cs里保持一致)
+        /// Note:
+        /// 前四个顺序必须是 CompareShareBool -> CompareShareInt -> CompareShareFloat -> CompareShareString
         /// </summary>
-        public static string[] BTCSConditionNodeNameArray = { "CompareShareBool", "CompareShareInt", "CompareShareFloat", "CompareShareString" };
+        public static string[] BTConditionNodeNameArray = { typeof(CompareShareBool).Name, typeof(CompareShareInt).Name, typeof(CompareShareFloat).Name, typeof(CompareShareString).Name };
 
         /// <summary>
         /// CS行为节点名数据(注意和BTNodeData.cs里保持一致)
+        /// Note:
+        /// 前四个顺序必须是 SetShareBool -> SetShareInt -> SetShareFloat -> SetShareString
         /// </summary>
-        public static string[] BTCSActionNodeNameArray = { "SetShareBool", "SetShareInt", "SetShareFloat", "SetShareString" };
+        public static string[] BTActionNodeNameArray = { typeof(SetShareBool).Name, typeof(SetShareInt).Name, typeof(SetShareFloat).Name, typeof(SetShareString).Name };
 
         /// <summary>
         /// Lua脚本相对目录

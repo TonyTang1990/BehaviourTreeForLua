@@ -68,7 +68,7 @@
                 "height": 150.0
             },
             "NodeIndex": 2,
-            "NodeName": "Seqeunce",
+            "NodeName": "Sequence",
             "NodeParams": "",
             "NodeType": 3,
             "ParentNodeUID": 440266860,
@@ -126,7 +126,7 @@
                 "height": 150.0
             },
             "NodeIndex": 3,
-            "NodeName": "Seqeunce",
+            "NodeName": "Sequence",
             "NodeParams": "",
             "NodeType": 3,
             "ParentNodeUID": 440266860,
@@ -208,7 +208,7 @@
                 "height": 150.0
             },
             "NodeIndex": 1,
-            "NodeName": "Seqeunce",
+            "NodeName": "Sequence",
             "NodeParams": "",
             "NodeType": 3,
             "ParentNodeUID": 440266860,

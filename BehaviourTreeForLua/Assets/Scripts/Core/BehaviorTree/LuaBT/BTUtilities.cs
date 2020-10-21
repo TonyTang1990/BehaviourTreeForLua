@@ -4,9 +4,11 @@
  * Create Date:             2020/08/13
  */
 
+using GeneralModule.Pool;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace LuaBehaviourTree
@@ -17,6 +19,24 @@ namespace LuaBehaviourTree
     /// </summary>
     public static class BTUtilities
     {
+        #region 静态成员
+        /// <summary>
+        /// 行为树节点名类型信息缓存映射Map(优化行为树节点反射创建)
+        /// Key为节点类名，Value为对应类型信息
+        /// </summary>
+        public static Dictionary<string, Type> BTNodeTypeCacheMap = new Dictionary<string, Type>();
+
+        /// <summary>
+        /// 当前类所在Assembly
+        /// </summary>
+        public static Assembly CurrentLocatedAssembly = typeof(BTUtilities).Assembly;
+
+        /// <summary>
+        /// BTNode类型
+        /// </summary>
+        public static Type BTNodeType = typeof(BTNode);
+        #endregion
+
         #region 静态方法
         /// <summary>
         /// 根据节点数据创建运行时节点
@@ -94,34 +114,39 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <param name="instanceid"></param>
         /// <returns></returns>
-        public static BTCompositionNode CreateCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        public static Composition CreateCompositionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
-            // 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
-            if (node.NodeName == BTData.BTCompositeNodeNameArray[0])
-            {
-                return new BTSelectorNode(node, btowner, parentnode, instanceid);
-            }
-            else if(node.NodeName == BTData.BTCompositeNodeNameArray[1])
-            {
-                return new BTSequenceNode(node, btowner, parentnode, instanceid);
-            }
-            else if(node.NodeName == BTData.BTCompositeNodeNameArray[2])
-            {
-                return new BTParalAllSuccessNode(node, btowner, parentnode, instanceid);
-            }
-            else if (node.NodeName == BTData.BTCompositeNodeNameArray[3])
-            {
-                return new BTParalOneSuccessNode(node, btowner, parentnode, instanceid);
-            }
-            else if (node.NodeName == BTData.BTCompositeNodeNameArray[4])
-            {
-                return new BTRandomSelectorNode(node, btowner, parentnode, instanceid);
-            }
-            else
-            {
-                Debug.LogError($"不支持的组合节点名:{node.NodeName},创建组合节点失败!");
-                return null;
-            }
+            // 考虑到扩展性，最终还是选择采用反射的形式创建CS节点类
+            var compositenode = TryGetBTNodeTypeInstance<Composition>(node.NodeName);
+            compositenode?.SetDatas(node, btowner, parentnode, instanceid);
+            return compositenode;
+
+            //// 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
+            //if (node.NodeName == BTData.BTCompositeNodeNameArray[0])
+            //{
+            //    return new BTSelectorNode(node, btowner, parentnode, instanceid);
+            //}
+            //else if(node.NodeName == BTData.BTCompositeNodeNameArray[1])
+            //{
+            //    return new BTSequenceNode(node, btowner, parentnode, instanceid);
+            //}
+            //else if(node.NodeName == BTData.BTCompositeNodeNameArray[2])
+            //{
+            //    return new BTParalAllSuccessNode(node, btowner, parentnode, instanceid);
+            //}
+            //else if (node.NodeName == BTData.BTCompositeNodeNameArray[3])
+            //{
+            //    return new BTParalOneSuccessNode(node, btowner, parentnode, instanceid);
+            //}
+            //else if (node.NodeName == BTData.BTCompositeNodeNameArray[4])
+            //{
+            //    return new BTRandomSelectorNode(node, btowner, parentnode, instanceid);
+            //}
+            //else
+            //{
+            //    Debug.LogError($"不支持的组合节点名:{node.NodeName},创建组合节点失败!");
+            //    return null;
+            //}
         }
 
         /// <summary>
@@ -132,22 +157,27 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <param name="instanceid"></param>
         /// <returns></returns>
-        public static BTDecorationNode CreateDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        public static Decoration CreateDecorationNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
-            // 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
-            if (node.NodeName == BTData.BTDecorationNodeNameArray[0])
-            {
-                return new BTInverterDecorationNode(node, btowner, parentnode, instanceid);
-            }
-            else if (node.NodeName == BTData.BTDecorationNodeNameArray[1])
-            {
-                return new BTRepeatedDecorationNode(node, btowner, parentnode, instanceid);
-            }
-            else
-            {
-                Debug.LogError($"不支持的修饰节点名:{node.NodeName},创建修饰节点失败!");
-                return null;
-            }
+            // 考虑到扩展性，最终还是选择采用反射的形式创建CS节点类
+            var decorationnode = TryGetBTNodeTypeInstance<Decoration>(node.NodeName);
+            decorationnode?.SetDatas(node, btowner, parentnode, instanceid);
+            return decorationnode;
+
+            //// 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
+            //if (node.NodeName == BTData.BTDecorationNodeNameArray[0])
+            //{
+            //    return new BTInverterDecorationNode(node, btowner, parentnode, instanceid);
+            //}
+            //else if (node.NodeName == BTData.BTDecorationNodeNameArray[1])
+            //{
+            //    return new BTRepeatedDecorationNode(node, btowner, parentnode, instanceid);
+            //}
+            //else
+            //{
+            //    Debug.LogError($"不支持的修饰节点名:{node.NodeName},创建修饰节点失败!");
+            //    return null;
+            //}
         }
 
         /// <summary>
@@ -158,37 +188,45 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <param name="instanceid"></param>
         /// <returns></returns>
-        public static BTBaseConditionNode CreateConditionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        public static BaseCondition CreateConditionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
             var iscsnode = Application.isPlaying ? node.CheckIsCSNodeInRunTime() : node.CheckIsCSNodeInEditor();
             if(!iscsnode)
             {
-                return new BTLuaConditionNode(node, btowner, parentnode, instanceid);
+                LuaCondition luaconditionnode = ObjectPool.Singleton.Pop<LuaCondition>();
+                luaconditionnode.SetDatas(node, btowner, parentnode, instanceid);
+                return luaconditionnode;
+                //return new BTLuaConditionNode(node, btowner, parentnode, instanceid);
             }
             else
             {
-                // 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
-                if(node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[0]))
-                {
-                    return new BTCompareShareBool(node, btowner, parentnode, instanceid);
-                }
-                else if(node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[1]))
-                {
-                    return new BTCompareShareInt(node, btowner, parentnode, instanceid);
-                }
-                else if (node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[2]))
-                {
-                    return new BTCompareShareFloat(node, btowner, parentnode, instanceid);
-                }
-                else if (node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[3]))
-                {
-                    return new BTCompareShareString(node, btowner, parentnode, instanceid);
-                }
-                else
-                {
-                    Debug.LogError($"不支持创建的CS条件节点名:{node.NodeName},请检查代码!");
-                    return null;
-                }
+                // 考虑到扩展性，最终还是选择采用反射的形式创建CS节点类
+                var conditionnode = TryGetBTNodeTypeInstance<BaseCondition>(node.NodeName);
+                conditionnode?.SetDatas(node, btowner, parentnode, instanceid);
+                return conditionnode;
+
+                //// 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
+                //if (node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[0]))
+                //{
+                //    return new BTCompareShareBool(node, btowner, parentnode, instanceid);
+                //}
+                //else if(node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[1]))
+                //{
+                //    return new BTCompareShareInt(node, btowner, parentnode, instanceid);
+                //}
+                //else if (node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[2]))
+                //{
+                //    return new BTCompareShareFloat(node, btowner, parentnode, instanceid);
+                //}
+                //else if (node.NodeName.Equals(BTData.BTCSConditionNodeNameArray[3]))
+                //{
+                //    return new BTCompareShareString(node, btowner, parentnode, instanceid);
+                //}
+                //else
+                //{
+                //    Debug.LogError($"不支持创建的CS条件节点名:{node.NodeName},请检查代码!");
+                //    return null;
+                //}
             }
         }
 
@@ -200,37 +238,45 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <param name="instanceid"></param>
         /// <returns></returns>
-        public static BTBaseActionNode CreateActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        public static BaseAction CreateActionNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
             var iscsnode = Application.isPlaying ? node.CheckIsCSNodeInRunTime() : node.CheckIsCSNodeInEditor();
             if (!iscsnode)
             {
-                return new BTLuaActionNode(node, btowner, parentnode, instanceid);
+                LuaAction luaactionnode = ObjectPool.Singleton.Pop<LuaAction>();
+                luaactionnode.SetDatas(node, btowner, parentnode, instanceid);
+                return luaactionnode;
+                //return new BTLuaActionNode(node, btowner, parentnode, instanceid);
             }
             else
             {
-                // 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
-                if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[0]))
-                {
-                    return new BTSetShareBool(node, btowner, parentnode, instanceid);
-                }
-                else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[1]))
-                {
-                    return new BTSetShareInt(node, btowner, parentnode, instanceid);
-                }
-                else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[2]))
-                {
-                    return new BTSetShareFloat(node, btowner, parentnode, instanceid);
-                }
-                else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[3]))
-                {
-                    return new BTSetShareString(node, btowner, parentnode, instanceid);
-                }
-                else
-                {
-                    Debug.LogError($"不支持创建的CS行为节点名:{node.NodeName},请检查代码!");
-                    return null;
-                }
+                // 考虑到扩展性，最终还是选择采用反射的形式创建CS节点类
+                var actionnode = TryGetBTNodeTypeInstance<BaseAction>(node.NodeName);
+                actionnode?.SetDatas(node, btowner, parentnode, instanceid);
+                return actionnode;
+
+                //// 为了避免反射带来的性能开销，这里采用穷举法判定创建具体CS节点类
+                //if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[0]))
+                //{
+                //    return new BTSetShareBool(node, btowner, parentnode, instanceid);
+                //}
+                //else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[1]))
+                //{
+                //    return new BTSetShareInt(node, btowner, parentnode, instanceid);
+                //}
+                //else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[2]))
+                //{
+                //    return new BTSetShareFloat(node, btowner, parentnode, instanceid);
+                //}
+                //else if (node.NodeName.Equals(BTData.BTCSActionNodeNameArray[3]))
+                //{
+                //    return new BTSetShareString(node, btowner, parentnode, instanceid);
+                //}
+                //else
+                //{
+                //    Debug.LogError($"不支持创建的CS行为节点名:{node.NodeName},请检查代码!");
+                //    return null;
+                //}
             }
         }
 
@@ -242,9 +288,12 @@ namespace LuaBehaviourTree
         /// <param name="parentnode"></param>
         /// <<param name="instanceid"></param>
         /// <returns></returns>
-        public static BTEntryNode CreateEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
+        public static Entry CreateEntryNode(BTNode node, TBehaviourTree btowner, BTNode parentnode, int instanceid)
         {
-            return new BTEntryNode(node, btowner, parentnode, instanceid);
+            Entry entrynode = ObjectPool.Singleton.Pop<Entry>();
+            entrynode.SetDatas(node, btowner, parentnode, instanceid);
+            return entrynode;
+            //return new BTEntryNode(node, btowner, parentnode, instanceid);
         }
 
         /// <summary>
@@ -253,9 +302,18 @@ namespace LuaBehaviourTree
         /// <param name="node"></param>
         /// <param name="instanceid"></param>
         /// <returns></returns>
-        public static LuaBTNode CreateLuaNode(BTNode node, int instanceid)
+        public static int CreateLuaNode(BTNode node, int instanceid)
         {
-            return XLuaManager.getInstance().LuaCreateLuaBTnode(node, instanceid);
+            if (TBehaviourTreeManager.LuaCreateLuaBTnode != null)
+            {
+                var uid = TBehaviourTreeManager.LuaCreateLuaBTnode(node, instanceid);
+                return uid;
+            }
+            else
+            {
+                Debug.LogError("未绑定创建Lua节点创建委托，创建Lua行为节点失败!");
+                return 0;
+            }
         }
 
         /// <summary>
@@ -278,10 +336,10 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static bool IsSetShareVariableAction(string nodename)
         {
-            if (string.Equals(nodename, "SetShareBool") ||
-                string.Equals(nodename, "SetShareInt") ||
-                string.Equals(nodename, "SetShareFloat") ||
-                string.Equals(nodename, "SetShareString"))
+            if (string.Equals(nodename, BTData.BTActionNodeNameArray[0]) ||
+                string.Equals(nodename, BTData.BTActionNodeNameArray[1]) ||
+                string.Equals(nodename, BTData.BTActionNodeNameArray[2]) ||
+                string.Equals(nodename, BTData.BTActionNodeNameArray[3]))
             {
                 return true;
             }
@@ -298,10 +356,10 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static bool IsCompareToShareVariableCondition(string nodename)
         {
-            if (string.Equals(nodename, "CompareShareBool") ||
-                string.Equals(nodename, "CompareShareInt") ||
-                string.Equals(nodename, "CompareShareFloat") ||
-                string.Equals(nodename, "CompareShareString"))
+            if (string.Equals(nodename, BTData.BTConditionNodeNameArray[0]) ||
+                string.Equals(nodename, BTData.BTConditionNodeNameArray[1]) ||
+                string.Equals(nodename, BTData.BTConditionNodeNameArray[2]) ||
+                string.Equals(nodename, BTData.BTConditionNodeNameArray[3]))
             {
                 return true;
             }
@@ -318,19 +376,19 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static EVariableType GetNodeVariableType(string nodename)
         {
-            if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[0]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[0]))
+            if (string.Equals(nodename, BTData.BTActionNodeNameArray[0]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[0]))
             {
                 return EVariableType.Bool;
             }
-            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[1]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[1]))
+            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[1]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[1]))
             {
                 return EVariableType.Int;
             }
-            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[2]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[2]))
+            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[2]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[2]))
             {
                 return EVariableType.Float;
             }
-            else if (string.Equals(nodename, BTData.BTCSActionNodeNameArray[3]) || string.Equals(nodename, BTData.BTCSConditionNodeNameArray[3]))
+            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[3]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[3]))
             {
                 return EVariableType.String;
             }
@@ -370,6 +428,43 @@ namespace LuaBehaviourTree
             else
             {
                 Debug.LogError($"不支持的变量类型:{variabletype},获取节点变量默认值失败!");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 尝试获取指定节点类型实例对象
+        /// </summary>
+        /// <param name="nodename"></param>
+        /// <returns></returns>
+        private static T TryGetBTNodeTypeInstance<T>(string nodename) where T : BTNode
+        {
+            // 考虑到扩展性，最终还是选择采用反射的形式创建CS节点类
+            Type nodetype;
+            if (!BTNodeTypeCacheMap.TryGetValue(nodename, out nodetype))
+            {
+                var nodefullname = $"LuaBehaviourTree.{nodename}";
+                nodetype = CurrentLocatedAssembly.GetType(nodefullname);
+                if (BTNodeType.IsAssignableFrom(nodetype))
+                {
+                    BTNodeTypeCacheMap.Add(nodename, nodetype);
+                    //Debug.Log($"添加行为树节点类型:{nodename}缓存!");
+                }
+                else
+                {
+                    nodetype = null;
+                }
+            }
+            if (nodetype != null)
+            {
+                // Note:
+                // 带参的反射构建比不带参的默认构造函数反射构建耗时更多
+                var btnode = ObjectPool.Singleton.PopWithType(nodetype);
+                return (T)btnode;
+            }
+            else
+            {
+                Debug.LogError($"节点名:{nodename}未继承至:BTNode类型，请检查代码!");
                 return null;
             }
         }

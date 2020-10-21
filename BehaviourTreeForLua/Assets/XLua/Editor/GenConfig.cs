@@ -257,8 +257,8 @@ public static class GenConfig
         typeof(TBehaviourTree),
         typeof(EBTNodeRunningState),
         typeof(BTNode),
-        typeof(BTLuaActionNode),
-        typeof(BTLuaConditionNode),
+        typeof(LuaAction),
+        typeof(LuaCondition),
         typeof(GameLauncherLua),
         #endregion
 
@@ -345,7 +345,9 @@ public static class GenConfig
         typeof(TBehaviourTree),
         typeof(LuaBTNode),
         typeof(EBTNodeRunningState),
-        typeof(Func<BTNode, int, LuaBTNode>),
+        typeof(Func<BTNode, int, int>),
+        typeof(Action<int, int, bool>),
+        typeof(Func<int, int, int>),
         #endregion
     };
 
