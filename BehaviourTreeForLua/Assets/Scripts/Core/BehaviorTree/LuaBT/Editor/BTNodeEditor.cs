@@ -293,10 +293,7 @@ namespace LuaBehaviourTree
 
         private void Init()
         {
-            mCurrentSelectionBTGraph = new BTGraph(DefaultBTGrapshFileName);
-            // 创建一个默认的空的BTNode
-            var rootnode = new BTNode(mCurrentSelectionBTGraph, GetNodeRect(new Vector2(ToolBarWidth, 50.0f)), 0, "Root", EBTNodeType.EntryNodeType, null, AllUsedNodeUIDMap);
-            mCurrentSelectionBTGraph.SetRootNode(rootnode);
+            CreateNewBTAsset();
         }
 
         /// <summary>
@@ -1230,6 +1227,7 @@ namespace LuaBehaviourTree
         {
             Debug.Log($"创建新的行为树!");
             mCurrentSelectionBTGraph = new BTGraph(DefaultBTGrapshFileName);
+            mCurrentSelectionBTGraphAssetPath = string.Empty;
             // 创建一个默认的空的BTNode
             var rootnode = new BTNode(mCurrentSelectionBTGraph, GetNodeRect(new Vector2(ToolBarWidth, 50.0f)), 0, "Root", EBTNodeType.EntryNodeType, null, AllUsedNodeUIDMap);
             mCurrentSelectionBTGraph.SetRootNode(rootnode);
