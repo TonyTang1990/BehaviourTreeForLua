@@ -61,12 +61,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// CS行为节点名数据
         /// </summary>
-        public static string[] BTCSActionNodeNameArray = {
-            "SetShareBool",                                     // 设置自定义Bool变量值
-            "SetShareInt",                                      // 设置自定义Int变量值
-            "SetShareFloat",                                    // 设置自定义Float变量值
-            "SetShareString",                                   // 设置自定义String变量值
-        };
+        public static string[] BTCSActionNodeNameArray = BTData.BTActionNodeNameArray;
 
         /// <summary>
         /// CS行为节点描述数据(和BTCSActionNodeNameArray一一对应)
@@ -93,12 +88,7 @@ namespace LuaBehaviourTree
         /// <summary>
         /// CS条件节点名数据
         /// </summary>
-        public static string[] BTCSConditionNodeNameArray = {
-            "CompareShareBool",                                   // 比较自定义Bool变量值
-            "CompareShareInt",                                    // 比较自定义Int变量值
-            "CompareShareFloat",                                  // 比较自定义Float变量值
-            "CompareShareString",                                 // 比较自定义String变量值
-        };
+        public static string[] BTCSConditionNodeNameArray = BTData.BTConditionNodeNameArray;
 
         /// <summary>
         /// CS条件节点描述数据(和BTConditionNodeNameArray一一对应)

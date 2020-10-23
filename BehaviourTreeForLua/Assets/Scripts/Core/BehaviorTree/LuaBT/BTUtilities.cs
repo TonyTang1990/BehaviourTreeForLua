@@ -35,6 +35,46 @@ namespace LuaBehaviourTree
         /// BTNode类型
         /// </summary>
         public static Type BTNodeType = typeof(BTNode);
+
+        /// <summary>
+        /// CompareShareBool类型名
+        /// </summary>
+        public static string CompareShareBoolTypeName = typeof(CompareShareBool).Name;
+
+        /// <summary>
+        /// CompareShareInt类型名
+        /// </summary>
+        public static string CompareShareIntTypeName = typeof(CompareShareInt).Name;
+
+        /// <summary>
+        /// CompareShareFloat类型名
+        /// </summary>
+        public static string CompareShareFloatTypeName = typeof(CompareShareFloat).Name;
+
+        /// <summary>
+        /// CompareShareString类型名
+        /// </summary>
+        public static string CompareShareStringTypeName = typeof(CompareShareString).Name;
+
+        /// <summary>
+        /// SetShareBool类型名
+        /// </summary>
+        public static string SetShareBoolTypeName = typeof(SetShareBool).Name;
+
+        /// <summary>
+        /// SetShareInt类型名
+        /// </summary>
+        public static string SetShareIntTypeName = typeof(SetShareInt).Name;
+
+        /// <summary>
+        /// SetShareFloat类型名
+        /// </summary>
+        public static string SetShareFloatTypeName = typeof(SetShareFloat).Name;
+
+        /// <summary>
+        /// SetShareString类型名
+        /// </summary>
+        public static string SetShareStringTypeName = typeof(SetShareString).Name;
         #endregion
 
         #region 静态方法
@@ -336,10 +376,10 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static bool IsSetShareVariableAction(string nodename)
         {
-            if (string.Equals(nodename, BTData.BTActionNodeNameArray[0]) ||
-                string.Equals(nodename, BTData.BTActionNodeNameArray[1]) ||
-                string.Equals(nodename, BTData.BTActionNodeNameArray[2]) ||
-                string.Equals(nodename, BTData.BTActionNodeNameArray[3]))
+            if (string.Equals(nodename, SetShareBoolTypeName) ||
+                string.Equals(nodename, SetShareIntTypeName) ||
+                string.Equals(nodename, SetShareFloatTypeName) ||
+                string.Equals(nodename, SetShareStringTypeName))
             {
                 return true;
             }
@@ -356,10 +396,10 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static bool IsCompareToShareVariableCondition(string nodename)
         {
-            if (string.Equals(nodename, BTData.BTConditionNodeNameArray[0]) ||
-                string.Equals(nodename, BTData.BTConditionNodeNameArray[1]) ||
-                string.Equals(nodename, BTData.BTConditionNodeNameArray[2]) ||
-                string.Equals(nodename, BTData.BTConditionNodeNameArray[3]))
+            if (string.Equals(nodename, CompareShareBoolTypeName) ||
+                string.Equals(nodename, CompareShareIntTypeName) ||
+                string.Equals(nodename, CompareShareFloatTypeName) ||
+                string.Equals(nodename, CompareShareStringTypeName))
             {
                 return true;
             }
@@ -376,19 +416,19 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public static EVariableType GetNodeVariableType(string nodename)
         {
-            if (string.Equals(nodename, BTData.BTActionNodeNameArray[0]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[0]))
+            if (string.Equals(nodename, SetShareBoolTypeName) || string.Equals(nodename, CompareShareBoolTypeName))
             {
                 return EVariableType.Bool;
             }
-            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[1]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[1]))
+            else if (string.Equals(nodename, SetShareIntTypeName) || string.Equals(nodename, CompareShareIntTypeName))
             {
                 return EVariableType.Int;
             }
-            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[2]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[2]))
+            else if (string.Equals(nodename, SetShareFloatTypeName) || string.Equals(nodename, CompareShareFloatTypeName))
             {
                 return EVariableType.Float;
             }
-            else if (string.Equals(nodename, BTData.BTActionNodeNameArray[3]) || string.Equals(nodename, BTData.BTConditionNodeNameArray[3]))
+            else if (string.Equals(nodename, SetShareStringTypeName) || string.Equals(nodename, CompareShareStringTypeName))
             {
                 return EVariableType.String;
             }
