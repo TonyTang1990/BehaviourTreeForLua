@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using GeneralModule.Pool;
 
 /// Lua行为树设计:
 /// 组合节点和装饰节点在CS测
@@ -954,12 +954,13 @@ namespace LuaBehaviourTree
             //只有运行时构建的BTGraph需要节点入池以及清理运行时相关数据
             if (OwnerBT != null)
             {
-                ClearRunningDatas();
+                // 退出时强制终止运行，避免各种运行节点逻辑异常
+                DoAbortBehaviourTree();
                 OwnerBT = null;
                 for (int i = 0, length = AllNodesList != null ? AllNodesList.Count : 0; i < length; i++)
                 {
                     AllNodesList[i].Dispose();
-                    //ObjectPool.Singleton.PushAsObj(AllNodesList[i]);
+                    ObjectPool.Singleton.PushAsObj(AllNodesList[i]);
                 }
             }
             AllNodesList.Clear();
