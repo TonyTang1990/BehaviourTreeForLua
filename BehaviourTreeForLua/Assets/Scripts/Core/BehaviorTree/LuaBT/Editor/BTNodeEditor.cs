@@ -467,7 +467,6 @@ namespace LuaBehaviourTree
             // mCurrentSelectionBTGraph.RootNodeUID在运行时选中查看AI对象后关闭运行会导致为0
             if (mCurrentSelectionBTGraph != null && mCurrentSelectionBTGraph.RootNodeUID != 0)
             {
-                HandleInteraction();
                 DrawOperationPanel();
                 DrawBTNode();
             }
@@ -478,47 +477,40 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 处理交互
+        /// 处理节点交互
         /// </summary>
-        private void HandleInteraction()
+        private void HandleNodeInteraction()
         {
-            if (Event.current.type == EventType.ContextClick)
+            if (Application.isPlaying == false)
             {
-                var nodeareamouseposition = Event.current.mousePosition;
-                nodeareamouseposition.x = nodeareamouseposition.x - InspectorWindowWidth;
-                mCurrentClickNode = mCurrentSelectionBTGraph.FindNodeByMousePos(nodeareamouseposition + mWindowScrollPos);
-                if (Application.isPlaying == false)
+                if (mCurrentClickNode == null)
                 {
-                    if (mCurrentClickNode == null)
-                    {
-                        Debug.Log($"显示空白区域菜单!");
-                        UpdateMenus();
-                        var menu = GetNodeTypeMenu(EBTMenuType.EmptyAreaMenu);
-                        menu.ShowAsContext();
-                    }
-                    else if (mCurrentClickNode != null && mCurrentClickNode.IsRootNode())
-                    {
-                        Debug.Log($"显示根节点区域菜单!");
-                        UpdateMenus();
-                        var menu = GetNodeTypeMenu(EBTMenuType.RootNodeAreaMenu);
-                        menu.ShowAsContext();
-                    }
-                    else if (mCurrentClickNode != null && !mCurrentClickNode.IsRootNode() && (!mCurrentClickNode.IsActionNode() && !mCurrentClickNode.IsConditionNode()))
-                    {
-                        Debug.Log($"显示子节点区域菜单!");
-                        UpdateMenus();
-                        var menu = GetNodeTypeMenu(EBTMenuType.ChildNodeAreaMenu);
-                        menu.ShowAsContext();
-                    }
-                    else if (mCurrentClickNode != null && !mCurrentClickNode.IsRootNode() && (mCurrentClickNode.IsActionNode() || mCurrentClickNode.IsConditionNode()))
-                    {
-                        Debug.Log($"显示行为叶节点区域菜单!");
-                        UpdateMenus();
-                        var menu = GetNodeTypeMenu(EBTMenuType.ActionLeafNodeAreaMenu);
-                        menu.ShowAsContext();
-                    }
+                    Debug.Log($"显示空白区域菜单!");
+                    UpdateMenus();
+                    var menu = GetNodeTypeMenu(EBTMenuType.EmptyAreaMenu);
+                    menu.ShowAsContext();
                 }
-                Event.current.Use();
+                else if (mCurrentClickNode != null && mCurrentClickNode.IsRootNode())
+                {
+                    Debug.Log($"显示根节点区域菜单!");
+                    UpdateMenus();
+                    var menu = GetNodeTypeMenu(EBTMenuType.RootNodeAreaMenu);
+                    menu.ShowAsContext();
+                }
+                else if (mCurrentClickNode != null && !mCurrentClickNode.IsRootNode() && (!mCurrentClickNode.IsActionNode() && !mCurrentClickNode.IsConditionNode()))
+                {
+                    Debug.Log($"显示子节点区域菜单!");
+                    UpdateMenus();
+                    var menu = GetNodeTypeMenu(EBTMenuType.ChildNodeAreaMenu);
+                    menu.ShowAsContext();
+                }
+                else if (mCurrentClickNode != null && !mCurrentClickNode.IsRootNode() && (mCurrentClickNode.IsActionNode() || mCurrentClickNode.IsConditionNode()))
+                {
+                    Debug.Log($"显示行为叶节点区域菜单!");
+                    UpdateMenus();
+                    var menu = GetNodeTypeMenu(EBTMenuType.ActionLeafNodeAreaMenu);
+                    menu.ShowAsContext();
+                }
             }
         }
 
@@ -1573,6 +1565,15 @@ namespace LuaBehaviourTree
                 GUI.color = GetNodeTypeColor((EBTNodeType)node.NodeType);
                 var prenodedisplayrect = node.NodeDisplayRect;
                 node.NodeDisplayRect = GUI.Window(node.UID, node.NodeDisplayRect, DrawNodeWindow, new GUIContent(title));
+                var clickevent = Event.current;
+                if (GUI.Button(node.NodeDisplayRect, GUIContent.none))
+                {
+                    mCurrentClickNode = node;
+                    if (clickevent.button == 1)
+                    {
+                        HandleNodeInteraction();
+                    }
+                }
                 if (node.NodeDisplayRect.Equals(prenodedisplayrect) == false)
                 {
                     node.NodeDisplayRect.x = Mathf.Clamp(node.NodeDisplayRect.x, 0, NodeAreaWindowWidth - NodeWindowWidth);
@@ -2088,7 +2089,7 @@ namespace LuaBehaviourTree
             }
             mNeedDeletedUIDList.Clear();
             Debug.Log($"OnDeleteBTNode({node.NodeName})");
-}
+        }
         #endregion
     }
 }
