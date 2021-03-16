@@ -1565,15 +1565,6 @@ namespace LuaBehaviourTree
                 GUI.color = GetNodeTypeColor((EBTNodeType)node.NodeType);
                 var prenodedisplayrect = node.NodeDisplayRect;
                 node.NodeDisplayRect = GUI.Window(node.UID, node.NodeDisplayRect, DrawNodeWindow, new GUIContent(title));
-                var clickevent = Event.current;
-                if (GUI.Button(node.NodeDisplayRect, GUIContent.none))
-                {
-                    mCurrentClickNode = node;
-                    if (clickevent.button == 1)
-                    {
-                        HandleNodeInteraction();
-                    }
-                }
                 if (node.NodeDisplayRect.Equals(prenodedisplayrect) == false)
                 {
                     node.NodeDisplayRect.x = Mathf.Clamp(node.NodeDisplayRect.x, 0, NodeAreaWindowWidth - NodeWindowWidth);
@@ -1614,6 +1605,15 @@ namespace LuaBehaviourTree
             if (btnode == null)
             {
                 return;
+            }
+            if (Event.current.button == 0 && Event.current.type == EventType.MouseDown)
+            {
+                mCurrentClickNode = btnode;
+            }
+            else if (Event.current.button == 1 && Event.current.type == EventType.MouseDown)
+            {
+                mCurrentClickNode = btnode;
+                HandleNodeInteraction();
             }
             BTGraph btgraph = null;
             if(btnode != null && btnode.OwnerBT != null && btnode.OwnerBT.BTRunningGraph != null)
