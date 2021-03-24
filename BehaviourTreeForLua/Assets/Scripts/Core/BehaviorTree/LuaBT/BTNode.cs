@@ -678,6 +678,15 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
+        /// 是否有父节点
+        /// </summary>
+        /// <returns></returns>
+        public bool HasParentNode()
+        {
+            return ParentNodeUID != 0;
+        }
+
+        /// <summary>
         /// 是否是叶子节点
         /// </summary>
         /// <returns></returns>
