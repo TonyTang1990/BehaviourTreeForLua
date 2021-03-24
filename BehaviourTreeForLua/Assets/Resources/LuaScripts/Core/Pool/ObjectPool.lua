@@ -73,6 +73,7 @@ function ObjectPool:Pop(cls, ...)
     else
         print(string.format("类:%s对象池无可用对象，实例化一个!", cls.__cname))
         local instance = _G.New(cls, ...)
+        instance:OnInit(...)
         return instance;
     end
 end

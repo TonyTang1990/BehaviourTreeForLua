@@ -29,7 +29,6 @@ function BehaviourTreeUtil.LuaReleaseLuaBTnode(luabtnode)
     ObjectPool:GetInstance():Push(luabtnode)
 end
 
-
 --- 行为树委托回调绑定Map
 local BehaviourTreeCallMap = {}
 

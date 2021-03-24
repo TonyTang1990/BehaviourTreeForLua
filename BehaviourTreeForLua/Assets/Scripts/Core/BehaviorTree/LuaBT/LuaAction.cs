@@ -48,7 +48,7 @@ namespace LuaBehaviourTree
             // 因为base.Dispose()会重置数据，导致UnbindLuaBTNodeCall无法正确解除回调绑定
             // 所以必须在父类Dispose()之前调用
             LuaDispose?.Invoke(InstanceID, UID);
-            TBehaviourTreeManager.UnbindLuaBTNodeCall(InstanceID, UID);
+            TBehaviourTreeManager.UnbindLuaBTNodeCall?.Invoke(InstanceID, UID);
             // Lua对象池(入池时机改到解绑Lua节点时了)
             //TBehaviourTreeManager.LuaReleaseLuaBTnode(InstanceID, UID);
             base.Dispose();
@@ -70,7 +70,7 @@ namespace LuaBehaviourTree
         public override void Reset()
         {
             base.Reset();
-            LuaReset.Invoke(InstanceID, UID);
+            LuaReset?.Invoke(InstanceID, UID);
         }
 
         protected override void OnEnter()

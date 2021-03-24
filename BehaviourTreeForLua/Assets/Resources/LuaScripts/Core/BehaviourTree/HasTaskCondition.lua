@@ -10,15 +10,10 @@ print("HasTaskCondition.lua")
 ---@class HasTaskCondition : LuaBTConditionNode @是否有任务条件节点
 local HasTaskCondition = _G.BaseClass("HasTaskCondition", _G.LuaBTConditionNode)
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function HasTaskCondition:__init(csbtnode)
-    print("HasTaskCondition:__init()")
-end
-
 --- 解析参数
 ---@field nodeparams string @节点参数
 function HasTaskCondition:ParseParam(nodeparams)
-    _G.LuaBTConditionNode.ParseParam(self)
+    _G.LuaBTConditionNode.ParseParam(self, nodeparams)
     print(string.format("HasTaskCondition:ParseParam() 节点UID:%s", self.CSBTNode.UID))
 end
 

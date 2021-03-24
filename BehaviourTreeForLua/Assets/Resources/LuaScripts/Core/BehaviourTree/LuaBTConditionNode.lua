@@ -10,9 +10,11 @@ print("LuaBTConditionNode.lua")
 ---@class LuaBTConditionNode : LuaBTNode @行为树条件节点基类
 local LuaBTConditionNode = _G.BaseClass("LuaBTConditionNode", _G.LuaBTNode)
 
+---LuaBTConditionNode出池构造函数
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function LuaBTConditionNode:__init(csbtnode)
-    print("LuaBTConditionNode:__init()")
+---@param instanceid number @实体对象ID
+function LuaBTConditionNode:OnInit(csbtnode, instanceid)
+    _G.LuaBTNode.OnInit(self, csbtnode, instanceid)
 end
 
 --- 执行节点

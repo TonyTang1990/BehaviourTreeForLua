@@ -12,11 +12,6 @@ print("LogAction.lua")
 local LogAction = _G.BaseClass("LogAction", _G.LuaBTActionNode)
 LogAction.LogContent = nil
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function LogAction:__init(csbtnode)
-    print("LogAction:__init()")
-end
-
 --- 解析参数
 ---@field nodeparams string @节点参数
 function LogAction:ParseParam(nodeparams)

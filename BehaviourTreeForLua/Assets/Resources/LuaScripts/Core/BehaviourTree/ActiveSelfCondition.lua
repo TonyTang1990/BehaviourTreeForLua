@@ -12,15 +12,10 @@ print("ActiveSelfCondition.lua")
 local ActiveSelfCondition = _G.BaseClass("ActiveSelfCondition", _G.LuaBTConditionNode)
 ActiveSelfCondition.TargetUID = nil
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function ActiveSelfCondition:__init(csbtnode)
-    print("ActiveSelfCondition:__init()")
-end
-
 --- 解析参数
 ---@field nodeparams string @节点参数
 function ActiveSelfCondition:ParseParam(nodeparams)
-    _G.LuaBTConditionNode.ParseParam(self)
+    _G.LuaBTConditionNode.ParseParam(self, nodeparams)
     self.TargetUID = nodeparams
     print(string.format("ActiveSelfCondition:ParseParam() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
 end

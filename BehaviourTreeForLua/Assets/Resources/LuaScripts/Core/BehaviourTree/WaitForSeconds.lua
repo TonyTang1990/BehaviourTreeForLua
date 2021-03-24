@@ -14,11 +14,6 @@ local WaitForSeconds = _G.BaseClass("WaitForSeconds", _G.LuaBTActionNode)
 WaitForSeconds.TargetPosition = nil
 WaitForSeconds.TimePassed = nil
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function WaitForSeconds:__init(csbtnode)
-    print("WaitForSeconds:__init()")
-end
-
 --- 解析参数
 ---@field nodeparams string @节点参数
 function WaitForSeconds:ParseParam(nodeparams)

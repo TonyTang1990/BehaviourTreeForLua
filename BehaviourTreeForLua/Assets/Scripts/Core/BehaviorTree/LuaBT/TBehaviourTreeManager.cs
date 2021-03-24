@@ -101,16 +101,19 @@ namespace LuaBehaviourTree
 
         private void OnDestroy()
         {
+            Debug.Log($"TBehaviourTreeMaanger:OnDestroy()");
             AllBehaviourTreeList.Clear();
-            LuaCreateLuaBTnode = null;
-            UnbindLuaBTNodeCall = null;
-            BTNode.LuaOnPause = null;
-            BTNode.LuaReset = null;
-            BTNode.LuaOnEnter = null;
-            BTNode.LuaOnExecute = null;
-            BTNode.LuaOnExit = null;
-            BTNode.LuaDispose = null;
-    }
+            // 考虑到Lua静态委托释放时机和Lua虚拟机释放先后问题，
+            // 这里将委托释放放到Lua测的GameMain.Stop里
+            //LuaCreateLuaBTnode = null;
+            //UnbindLuaBTNodeCall = null;
+            //BTNode.LuaOnPause = null;
+            //BTNode.LuaReset = null;
+            //BTNode.LuaOnEnter = null;
+            //BTNode.LuaOnExecute = null;
+            //BTNode.LuaOnExit = null;
+            //BTNode.LuaDispose = null;
+        }
 
     private void Update()
         {

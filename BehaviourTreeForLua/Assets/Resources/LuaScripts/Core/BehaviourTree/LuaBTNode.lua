@@ -10,13 +10,6 @@ local LuaBTNode = BaseClass("LuaBTNode", IRecycle)
 LuaBTNode.CSBTNode = nil
 LuaBTNode.Go = nil
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
----@param instanceid number @实例对象ID
-function LuaBTNode:__init(csbtnode, instanceid)
-    print("LuaBTNode:__init()")
-    self:OnInit(csbtnode, instanceid)
-end
-
 ---LuaBTNode出池构造函数
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
 ---@param instanceid number @实体对象ID

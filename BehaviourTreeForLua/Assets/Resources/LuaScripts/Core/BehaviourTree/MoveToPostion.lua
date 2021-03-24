@@ -12,11 +12,6 @@ print("MoveToPostion.lua")
 local MoveToPostion = _G.BaseClass("MoveToPostion", _G.LuaBTActionNode)
 MoveToPostion.TargetPosition = nil
 
----@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function MoveToPostion:__init(csbtnode)
-    print("MoveToPostion:__init()")
-end
-
 --- 解析参数
 ---@field nodeparams string @节点参数
 function MoveToPostion:ParseParam(nodeparams)

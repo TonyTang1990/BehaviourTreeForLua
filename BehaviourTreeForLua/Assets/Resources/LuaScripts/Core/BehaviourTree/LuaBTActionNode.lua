@@ -10,9 +10,11 @@ print("LuaBTActionNode.lua")
 ---@class LuaBTActionNode : LuaBTNode @Lua行为树行为节点基类
 local LuaBTActionNode = _G.BaseClass("LuaBTActionNode", _G.LuaBTNode)
 
+---LuaBTActionNode出池构造函数
 ---@param csbtnode LuaBehaviourTree.BTNode @CS测节点
-function LuaBTActionNode:__init(csbtnode)
-    print("LuaBTActionNode:__init()")
+---@param instanceid number @实体对象ID
+function LuaBTActionNode:OnInit(csbtnode, instanceid)
+    _G.LuaBTNode.OnInit(self, csbtnode, instanceid)
 end
 
 --- 执行节点
