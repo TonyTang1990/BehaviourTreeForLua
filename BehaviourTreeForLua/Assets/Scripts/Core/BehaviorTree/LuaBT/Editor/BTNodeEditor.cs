@@ -1584,18 +1584,8 @@ namespace LuaBehaviourTree
                     // 拖拽时自动计算同层节点排序Order
                     if (node.HasParentNode())
                     {
-                        var parentnode = btgraph.FindNodeByUID(node.ParentNodeUID);
-                        var parentchildnodelist = new List<BTNode>();
-                        for (int i = 0, length = parentnode.ChildNodesUIDList.Count; i < length; ++i)
-                        {
-                            var childnode = btgraph.FindNodeByUID(parentnode.ChildNodesUIDList[i]);
-                            parentchildnodelist.Add(childnode);
-                        }
-                        parentchildnodelist.Sort(onBTNodeOrderComparison);
-                        for(int i = 0, length = parentchildnodelist.Count; i < length; i++)
-                        {
-                            parentchildnodelist[i].NodeIndex = i;
-                        }
+                        var parentnode = node.GetParentNode();
+                        parentnode.SortAndUpdateChildeNode();
                     }
                 }
                 GUI.color = Color.white;
@@ -1608,17 +1598,6 @@ namespace LuaBehaviourTree
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// BTNode节点Order排序
-        /// </summary>
-        /// <param name="node1"></param>
-        /// <param name="node2"></param>
-        /// <returns></returns>
-        private int onBTNodeOrderComparison(BTNode node1, BTNode node2)
-        {
-            return node1.NodeDisplayRect.x.CompareTo(node2.NodeDisplayRect.x);
         }
 
         /// <summary>

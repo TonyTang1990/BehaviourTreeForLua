@@ -500,7 +500,7 @@ namespace LuaBehaviourTree
             if (ChildNodesUIDList.Contains(childnodeuid) == false)
             {
                 ChildNodesUIDList.Insert((int)insertindex, childnodeuid);
-                UpdateChildNodeIndex(graph);
+                SortAndUpdateChildeNode();
                 return true;
             }
             else
@@ -519,7 +519,7 @@ namespace LuaBehaviourTree
         {
             if (ChildNodesUIDList.Remove(childnodeuid))
             {
-                UpdateChildNodeIndex(graph);
+                SortAndUpdateChildeNode();
                 return true;
             }
             else
@@ -537,16 +537,38 @@ namespace LuaBehaviourTree
         }
 
         /// <summary>
-        /// 更新子节点顺序
+        /// 排序并更新节点子节点ID顺序以及索引顺序
         /// </summary>
-        /// <param name="graph"></param>
-        public void UpdateChildNodeIndex(BTGraph graph)
+        /// <param name="node"></param>
+        public void SortAndUpdateChildeNode()
         {
-            for (int i = 0, length = ChildNodesUIDList.Count; i < length; i++)
+            if(ChildNodesUIDList.Count > 0)
             {
-                var node = graph.FindNodeByUID(ChildNodesUIDList[i]);
-                node.NodeIndex = i;
+                var childnodelist = new List<BTNode>();
+                for (int i = 0, length = ChildNodesUIDList.Count; i < length; ++i)
+                {
+                    var childnode = OwnerBTGraph.FindNodeByUID(ChildNodesUIDList[i]);
+                    childnodelist.Add(childnode);
+                }
+                childnodelist.Sort(onBTNodeOrderComparison);
+                for (int i = 0, length = childnodelist.Count; i < length; i++)
+                {
+                    childnodelist[i].NodeIndex = i;
+                    // 确保ChildNodesUIDList里的顺序和NodeIndex一致
+                    ChildNodesUIDList[i] = childnodelist[i].UID;
+                }
             }
+        }
+        
+        /// <summary>
+        /// BTNode节点Order排序
+        /// </summary>
+        /// <param name="node1"></param>
+        /// <param name="node2"></param>
+        /// <returns></returns>
+        private int onBTNodeOrderComparison(BTNode node1, BTNode node2)
+        {
+            return node1.NodeDisplayRect.x.CompareTo(node2.NodeDisplayRect.x);
         }
 
         /// <summary>
@@ -684,6 +706,23 @@ namespace LuaBehaviourTree
         public bool HasParentNode()
         {
             return ParentNodeUID != 0;
+        }
+
+        /// <summary>
+        /// 获取
+        /// </summary>
+        /// <returns></returns>
+        public BTNode GetParentNode()
+        {
+            if(HasParentNode())
+            {
+                var parentnode = OwnerBTGraph.FindNodeByUID(ParentNodeUID);
+                return parentnode;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>

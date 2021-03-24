@@ -290,8 +290,11 @@
             "ParentNodeUID": 440266860,
             "ChildNodesUIDList": [
                 1448878057,
+                -2089175202,
                 -1828332611,
-                538655227
+                538655227,
+                -473956426,
+                -1364727462
             ],
             "AbortType": 1,
             "IsCSNode": true
@@ -300,8 +303,8 @@
             "UID": 1448878057,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 132.0,
-                "y": 553.0,
+                "x": 91.0,
+                "y": 562.0,
                 "width": 150.0,
                 "height": 150.0
             },
@@ -318,12 +321,12 @@
             "UID": -1828332611,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 334.0,
-                "y": 554.0,
+                "x": 299.0,
+                "y": 555.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 1,
+            "NodeIndex": 2,
             "NodeName": "WaitForSeconds",
             "NodeParams": "5",
             "NodeType": 2,
@@ -336,14 +339,68 @@
             "UID": 538655227,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 577.0,
-                "y": 547.0,
+                "x": 511.0,
+                "y": 559.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 2,
+            "NodeIndex": 3,
             "NodeName": "LogAction",
             "NodeParams": "testparalallsuccesslog",
+            "NodeType": 2,
+            "ParentNodeUID": 1260220197,
+            "ChildNodesUIDList": [],
+            "AbortType": 1,
+            "IsCSNode": false
+        },
+        {
+            "UID": -2089175202,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 297.0,
+                "y": 733.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 1,
+            "NodeName": "LogAction",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": 1260220197,
+            "ChildNodesUIDList": [],
+            "AbortType": 1,
+            "IsCSNode": false
+        },
+        {
+            "UID": -473956426,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 596.0,
+                "y": 727.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 4,
+            "NodeName": "WaitForSeconds",
+            "NodeParams": "",
+            "NodeType": 2,
+            "ParentNodeUID": 1260220197,
+            "ChildNodesUIDList": [],
+            "AbortType": 1,
+            "IsCSNode": false
+        },
+        {
+            "UID": -1364727462,
+            "NodeDisplayRect": {
+                "serializedVersion": "2",
+                "x": 845.0,
+                "y": 755.0,
+                "width": 150.0,
+                "height": 150.0
+            },
+            "NodeIndex": 5,
+            "NodeName": "LogAction",
+            "NodeParams": "",
             "NodeType": 2,
             "ParentNodeUID": 1260220197,
             "ChildNodesUIDList": [],
