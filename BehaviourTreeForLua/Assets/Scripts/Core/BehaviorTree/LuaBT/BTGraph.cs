@@ -589,7 +589,7 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="childnode"></param>
         /// <returns></returns>
-        public bool MoveChildNodeForward(BTNode childnode)
+        public bool MoveNodeForward(BTNode childnode)
         {
             var parentnode = childnode.GetParentNode();
             var childnodeindex = childnode.NodeIndex;
@@ -618,7 +618,7 @@ namespace LuaBehaviourTree
         /// </summary>
         /// <param name="childnode"></param>
         /// <returns></returns>
-        public bool MoveChildNodeBackward(BTNode childnode)
+        public bool MoveNodeBackward(BTNode childnode)
         {
             var parentnode = childnode.GetParentNode();
             var childnodeindex = childnode.NodeIndex;

@@ -2061,7 +2061,7 @@ namespace LuaBehaviourTree
         private void OnMoveForwardBTNode(object moveforwardnode)
         {
             var node = moveforwardnode as BTNode;
-            mCurrentSelectionBTGraph.MoveChildNodeForward(node);
+            mCurrentSelectionBTGraph.MoveNodeForward(node);
             Debug.Log($"OnMoveForwardBTNode({node.NodeName})");
         }
 
@@ -2072,7 +2072,7 @@ namespace LuaBehaviourTree
         private void OnMoveBackwardBTNode(object movebackwardnode)
         {
             var node = movebackwardnode as BTNode;
-            mCurrentSelectionBTGraph.MoveChildNodeBackward(node);
+            mCurrentSelectionBTGraph.MoveNodeBackward(node);
             Debug.Log($"OnMoveBackwardBTNode({node.NodeName})");
         }
 
