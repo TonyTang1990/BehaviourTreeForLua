@@ -557,6 +557,12 @@ namespace LuaBehaviourTree
                     // 确保ChildNodesUIDList里的顺序和NodeIndex一致
                     ChildNodesUIDList[i] = childnodelist[i].UID;
                 }
+                //Debug.Log($"父节点UID:{UID}重新排序后的子字节点顺序以及索引:");
+                //foreach(var childnodeuid in ChildNodesUIDList)
+                //{
+                //    var childnode = OwnerBTGraph.FindNodeByUID(childnodeuid);
+                //    Debug.Log($"ChildUID:{childnodeuid} Index:{childnode.NodeIndex}");
+                //}
             }
         }
         

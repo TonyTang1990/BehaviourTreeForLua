@@ -587,38 +587,28 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 向前移动指定子节点
         /// </summary>
-        /// <param name="parentnodeuid"></param>
-        /// <param name="childnodeuid"></param>
+        /// <param name="childnode"></param>
         /// <returns></returns>
-        public bool MoveChildNodeForward(int parentnodeuid, int childnodeuid)
+        public bool MoveChildNodeForward(BTNode childnode)
         {
-            var parentnode = FindNodeByUID(parentnodeuid);
-            var childnode = FindNodeByUID(childnodeuid);
+            var parentnode = childnode.GetParentNode();
             var childnodeindex = childnode.NodeIndex;
-            if (childnodeindex != -1)
+            if (childnodeindex > 0)
             {
-                if (childnodeindex > 0)
-                {
-                    var forwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex - 1]);
-                    var moveoffset = Vector2.zero;
-                    moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
-                    moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
-                    // 移动当前两个节点及其所有子节点
-                    childnode.Move(this, moveoffset, true);
-                    forwardchild.Move(this, -moveoffset, true);
-                    // 更新排序
-                    parentnode.SortAndUpdateChildeNode();
-                    return true;
-                }
-                else
-                {
-                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是第一个子节点,无法再向前移动!");
-                    return false;
-                }
+                var forwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex - 1]);
+                var moveoffset = Vector2.zero;
+                moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                // 移动当前两个节点及其所有子节点
+                childnode.Move(this, moveoffset, true);
+                forwardchild.Move(this, -moveoffset, true);
+                // 更新排序
+                parentnode?.SortAndUpdateChildeNode();
+                return true;
             }
             else
             {
-                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
+                Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnode}子节点已经是第一个子节点,无法再向前移动!");
                 return false;
             }
         }
@@ -626,38 +616,28 @@ namespace LuaBehaviourTree
         /// <summary>
         /// 向后移动指定子节点
         /// </summary>
-        /// <param name="parentnodeuid"></param>
-        /// <param name="childnodeuid"></param>
+        /// <param name="childnode"></param>
         /// <returns></returns>
-        public bool MoveChildNodeBackward(int parentnodeuid, int childnodeuid)
+        public bool MoveChildNodeBackward(BTNode childnode)
         {
-            var parentnode = FindNodeByUID(parentnodeuid);
-            var childnode = FindNodeByUID(childnodeuid);
+            var parentnode = childnode.GetParentNode();
             var childnodeindex = childnode.NodeIndex;
-            if (childnodeindex != -1)
+            if (childnodeindex < parentnode.ChildNodesUIDList.Count - 1)
             {
-                if (childnodeindex < parentnode.ChildNodesUIDList.Count - 1)
-                {
-                    var backwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex + 1]);
-                    var moveoffset = Vector2.zero;
-                    moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
-                    moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
-                    // 移动当前两个节点及其所有子节点
-                    childnode.Move(this, moveoffset, true);
-                    backwardchild.Move(this, -moveoffset, true);
-                    // 更新排序
-                    parentnode.SortAndUpdateChildeNode();
-                    return true;
-                }
-                else
-                {
-                    Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnodeuid}子节点已经是最后一个子节点,无法再向后移动!");
-                    return false;
-                }
+                var backwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex + 1]);
+                var moveoffset = Vector2.zero;
+                moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
+                moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
+                // 移动当前两个节点及其所有子节点
+                childnode.Move(this, moveoffset, true);
+                backwardchild.Move(this, -moveoffset, true);
+                // 更新排序
+                parentnode?.SortAndUpdateChildeNode();
+                return true;
             }
             else
             {
-                Debug.LogError($"节点名:{parentnode.NodeName}找不到UID:{childnodeuid}的子节点,向前移动失败!");
+                Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnode}子节点已经是最后一个子节点,无法再向后移动!");
                 return false;
             }
         }
