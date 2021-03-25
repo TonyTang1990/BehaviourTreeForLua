@@ -290,11 +290,8 @@
             "ParentNodeUID": 440266860,
             "ChildNodesUIDList": [
                 1448878057,
-                -2089175202,
                 -1828332611,
-                538655227,
-                -473956426,
-                -1364727462
+                -2089175202
             ],
             "AbortType": 1,
             "IsCSNode": true
@@ -326,27 +323,9 @@
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 2,
+            "NodeIndex": 1,
             "NodeName": "WaitForSeconds",
             "NodeParams": "5",
-            "NodeType": 2,
-            "ParentNodeUID": 1260220197,
-            "ChildNodesUIDList": [],
-            "AbortType": 1,
-            "IsCSNode": false
-        },
-        {
-            "UID": 538655227,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 511.0,
-                "y": 559.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 3,
-            "NodeName": "LogAction",
-            "NodeParams": "testparalallsuccesslog",
             "NodeType": 2,
             "ParentNodeUID": 1260220197,
             "ChildNodesUIDList": [],
@@ -357,48 +336,12 @@
             "UID": -2089175202,
             "NodeDisplayRect": {
                 "serializedVersion": "2",
-                "x": 297.0,
-                "y": 733.0,
+                "x": 511.0,
+                "y": 559.0,
                 "width": 150.0,
                 "height": 150.0
             },
-            "NodeIndex": 1,
-            "NodeName": "LogAction",
-            "NodeParams": "",
-            "NodeType": 2,
-            "ParentNodeUID": 1260220197,
-            "ChildNodesUIDList": [],
-            "AbortType": 1,
-            "IsCSNode": false
-        },
-        {
-            "UID": -473956426,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 596.0,
-                "y": 727.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 4,
-            "NodeName": "WaitForSeconds",
-            "NodeParams": "",
-            "NodeType": 2,
-            "ParentNodeUID": 1260220197,
-            "ChildNodesUIDList": [],
-            "AbortType": 1,
-            "IsCSNode": false
-        },
-        {
-            "UID": -1364727462,
-            "NodeDisplayRect": {
-                "serializedVersion": "2",
-                "x": 845.0,
-                "y": 755.0,
-                "width": 150.0,
-                "height": 150.0
-            },
-            "NodeIndex": 5,
+            "NodeIndex": 2,
             "NodeName": "LogAction",
             "NodeParams": "",
             "NodeType": 2,

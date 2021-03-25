@@ -190,7 +190,7 @@ namespace LuaBehaviourTree
             {
                 return variabledata.VariableName == name;
             });
-            if(findboolvariabledata != null)
+            if (findboolvariabledata != null)
             {
                 return false;
             }
@@ -418,7 +418,7 @@ namespace LuaBehaviourTree
             {
                 return variablenodedata.NodeUID == uid;
             });
-            if(boolvariablenodedata != null)
+            if (boolvariablenodedata != null)
             {
                 return boolvariablenodedata;
             }
@@ -426,15 +426,15 @@ namespace LuaBehaviourTree
             {
                 return variablenodedata.NodeUID == uid;
             });
-            if(intvariablenodedata != null)
+            if (intvariablenodedata != null)
             {
                 return intvariablenodedata;
             }
-            var stringvariablenodedata =  AllStringVariableNodeDataList.Find((variablenodedata) =>
+            var stringvariablenodedata = AllStringVariableNodeDataList.Find((variablenodedata) =>
             {
                 return variablenodedata.NodeUID == uid;
             });
-            if(stringvariablenodedata != null)
+            if (stringvariablenodedata != null)
             {
                 return stringvariablenodedata;
             }
@@ -442,7 +442,7 @@ namespace LuaBehaviourTree
             {
                 return variablenodedata.NodeUID == uid;
             });
-            if(floatvariablenodedata != null)
+            if (floatvariablenodedata != null)
             {
                 return floatvariablenodedata;
             }
@@ -594,25 +594,20 @@ namespace LuaBehaviourTree
         {
             var parentnode = FindNodeByUID(parentnodeuid);
             var childnode = FindNodeByUID(childnodeuid);
-            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
-            {
-                return nodeuid == childnodeuid;
-            });
+            var childnodeindex = childnode.NodeIndex;
             if (childnodeindex != -1)
             {
                 if (childnodeindex > 0)
                 {
                     var forwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex - 1]);
-                    parentnode.ChildNodesUIDList[childnodeindex - 1] = childnodeuid;
-                    childnode.NodeIndex = childnodeindex - 1;
-                    parentnode.ChildNodesUIDList[childnodeindex] = forwardchild.UID;
-                    forwardchild.NodeIndex = childnodeindex;
                     var moveoffset = Vector2.zero;
                     moveoffset.x = forwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
                     moveoffset.y = forwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
                     // 移动当前两个节点及其所有子节点
                     childnode.Move(this, moveoffset, true);
                     forwardchild.Move(this, -moveoffset, true);
+                    // 更新排序
+                    parentnode.SortAndUpdateChildeNode();
                     return true;
                 }
                 else
@@ -638,25 +633,20 @@ namespace LuaBehaviourTree
         {
             var parentnode = FindNodeByUID(parentnodeuid);
             var childnode = FindNodeByUID(childnodeuid);
-            var childnodeindex = parentnode.ChildNodesUIDList.FindIndex((nodeuid) =>
-            {
-                return nodeuid == childnodeuid;
-            });
+            var childnodeindex = childnode.NodeIndex;
             if (childnodeindex != -1)
             {
                 if (childnodeindex < parentnode.ChildNodesUIDList.Count - 1)
                 {
                     var backwardchild = FindNodeByUID(parentnode.ChildNodesUIDList[childnodeindex + 1]);
-                    parentnode.ChildNodesUIDList[childnodeindex + 1] = childnodeuid;
-                    childnode.NodeIndex = childnodeindex + 1;
-                    parentnode.ChildNodesUIDList[childnodeindex] = backwardchild.UID;
-                    backwardchild.NodeIndex = childnodeindex;
                     var moveoffset = Vector2.zero;
                     moveoffset.x = backwardchild.NodeDisplayRect.x - childnode.NodeDisplayRect.x;
                     moveoffset.y = backwardchild.NodeDisplayRect.y - childnode.NodeDisplayRect.y;
                     // 移动当前两个节点及其所有子节点
                     childnode.Move(this, moveoffset, true);
                     backwardchild.Move(this, -moveoffset, true);
+                    // 更新排序
+                    parentnode.SortAndUpdateChildeNode();
                     return true;
                 }
                 else
@@ -865,7 +855,7 @@ namespace LuaBehaviourTree
         {
             RootNode = FindNodeByUID(RootNodeUID);
             // 确保反序列化后OwnerGraph指向正确对象
-            foreach(var node in AllNodesList)
+            foreach (var node in AllNodesList)
             {
                 node.OwnerBTGraph = this;
             }
@@ -900,7 +890,7 @@ namespace LuaBehaviourTree
         /// </summary>
         private void InitBlackBoard()
         {
-            foreach(var boolvariabledata in AllBoolVariableDataList)
+            foreach (var boolvariabledata in AllBoolVariableDataList)
             {
                 BTBlackBoard.AddData(boolvariabledata.VariableName, new BlackboardData<bool>(boolvariabledata.VariableValue));
             }
@@ -984,7 +974,7 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public bool AddExecutingNode(BTNode node)
         {
-            if(node != null)
+            if (node != null)
             {
                 if (!ExecutingNodesMap.ContainsKey(node.UID))
                 {
@@ -1012,7 +1002,7 @@ namespace LuaBehaviourTree
         public void ClearAllExecutingNodes()
         {
             //Debug.Log("清除所有执行节点!");
-            if(ExecutingNodesMap.Count > 0)
+            if (ExecutingNodesMap.Count > 0)
             {
                 // 清理已执行节点前重置他们的状态，确保下一次运行状态回到初始状态
                 foreach (var executingnode in ExecutingNodesMap)
@@ -1058,12 +1048,12 @@ namespace LuaBehaviourTree
         protected void ClearAllExectedReevaluatedNodes()
         {
             Debug.Log($"清除所有需要重新评估的节点!");
-            if(ExecutedReevaluatedNodesResultMap.Count > 0)
+            if (ExecutedReevaluatedNodesResultMap.Count > 0)
             {
                 ExecutedReevaluatedNodesResultMap.Clear();
             }
         }
-        
+
         /// <summary>
         /// 检查需要评估的节点状态变化
         /// </summary>
@@ -1099,7 +1089,7 @@ namespace LuaBehaviourTree
             {
                 if (!RootNode.IsTerminated)
                 {
-                    if(!RootNode.IsRunning)
+                    if (!RootNode.IsRunning)
                     {
                         ClearRunningDatas();
                     }
@@ -1137,7 +1127,7 @@ namespace LuaBehaviourTree
                 btnode.Value.OnPause(ispause);
             }
         }
-        
+
         /// <summary>
         /// 执行终止行为树
         /// </summary>
@@ -1147,7 +1137,7 @@ namespace LuaBehaviourTree
             foreach (var executingnode in ExecutingNodesMap)
             {
                 // 只有执行中的节点需要打断(避免执行完成的节点二次打断)
-                if(executingnode.Value.IsRunning)
+                if (executingnode.Value.IsRunning)
                 {
                     executingnode.Value.OnConditionalAbort();
                 }
