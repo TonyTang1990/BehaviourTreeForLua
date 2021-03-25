@@ -608,7 +608,7 @@ namespace LuaBehaviourTree
             }
             else
             {
-                Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnode}子节点已经是第一个子节点,无法再向前移动!");
+                Debug.LogWarning($"节点名:{parentnode.NodeName}的UID:{childnode.UID}子节点已经是第一个子节点,无法再向前移动!");
                 return false;
             }
         }
