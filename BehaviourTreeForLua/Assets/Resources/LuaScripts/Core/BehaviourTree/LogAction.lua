@@ -17,7 +17,7 @@ LogAction.LogContent = nil
 function LogAction:ParseParam(nodeparams)
     _G.LuaBTActionNode.ParseParam(self, nodeparams)
     self.LogContent = nodeparams
-    print(string.format("LogAction:ParseParam() 节点UID:%s LogAction参数:%s", self.CSBTNode.UID, self.LogContent))
+    --print(string.format("LogAction:ParseParam() 节点UID:%s LogAction参数:%s", self.CSBTNode.UID, self.LogContent))
 end
 
 --- 执行节点
@@ -31,7 +31,7 @@ end
 ---行为树节点释放
 function LogAction:Dispose()
     _G.LuaBTActionNode.Dispose(self)
-    print(string.format("LogAction:Dispose() 节点UID:%s LogAction参数:%s", self.CSBTNode.UID, self.LogContent))
+    --print(string.format("LogAction:Dispose() 节点UID:%s LogAction参数:%s", self.CSBTNode.UID, self.LogContent))
     self.LogContent = nil
 end
 

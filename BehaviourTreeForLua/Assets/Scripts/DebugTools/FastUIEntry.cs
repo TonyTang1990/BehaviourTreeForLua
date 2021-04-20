@@ -38,7 +38,7 @@ public class FastUIEntry : MonoBehaviour{
     /// <summary>
     /// Log开关
     /// </summary>
-    public static bool LogSwitch = true;
+    public static bool LogSwitch = false;
 
     /// <summary>
     /// 自定义GUI显示

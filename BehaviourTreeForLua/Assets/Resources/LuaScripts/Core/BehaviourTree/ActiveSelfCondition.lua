@@ -17,7 +17,7 @@ ActiveSelfCondition.TargetUID = nil
 function ActiveSelfCondition:ParseParam(nodeparams)
     _G.LuaBTConditionNode.ParseParam(self, nodeparams)
     self.TargetUID = nodeparams
-    print(string.format("ActiveSelfCondition:ParseParam() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
+    --print(string.format("ActiveSelfCondition:ParseParam() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
 end
 
 --- 执行节点
@@ -25,10 +25,10 @@ end
 function ActiveSelfCondition:OnExecute()
     _G.LuaBTConditionNode.OnExecute(self)
     if self.Go.activeInHierarchy then
-        print(string.format("Success ActiveSelfCondition:OnExecute() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
+        --print(string.format("Success ActiveSelfCondition:OnExecute() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
         return _G.EBTNodeRunningState.Success
     else
-        print(string.format("Failed ActiveSelfCondition:OnExecute() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
+        --print(string.format("Failed ActiveSelfCondition:OnExecute() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
         return _G.EBTNodeRunningState.Failed
     end
 end
@@ -36,7 +36,7 @@ end
 ---行为树节点释放
 function ActiveSelfCondition:Dispose()
     _G.LuaBTConditionNode.Dispose(self)
-    print(string.format("ActiveSelfCondition:Dispose() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
+    --print(string.format("ActiveSelfCondition:Dispose() 节点UID:%s ActiveSelfCondition参数:%s", self.CSBTNode.UID, self.TargetUID))
     self.TargetUID = nil
 end
 

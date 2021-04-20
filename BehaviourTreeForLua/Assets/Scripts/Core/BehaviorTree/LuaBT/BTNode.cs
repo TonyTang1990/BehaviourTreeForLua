@@ -434,7 +434,7 @@ namespace LuaBehaviourTree
         /// </summary>
         public virtual void Reset()
         {
-            Debug.Log(string.Format("重置节点:{0}", NodeName));
+            //Debug.Log(string.Format("重置节点:{0}", NodeName));
             LastNodeRunningState = NodeRunningState;
             NodeRunningState = EBTNodeRunningState.Invalide;
         }

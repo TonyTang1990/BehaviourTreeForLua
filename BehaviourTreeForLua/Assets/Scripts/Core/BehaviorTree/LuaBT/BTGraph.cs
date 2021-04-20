@@ -958,7 +958,7 @@ namespace LuaBehaviourTree
             {
                 if (!ExecutingNodesMap.ContainsKey(node.UID))
                 {
-                    Debug.Log($"添加UID:{node.UID}的执行节点!");
+                    //Debug.Log($"添加UID:{node.UID}的执行节点!");
                     ExecutingNodesMap.Add(node.UID, node);
                     return true;
                 }
@@ -1005,13 +1005,13 @@ namespace LuaBehaviourTree
             {
                 if (!ExecutedReevaluatedNodesResultMap.ContainsKey(node))
                 {
-                    Debug.Log($"添加UID:{node.UID}的已执行条件节点执行结果{result}!");
+                    //Debug.Log($"添加UID:{node.UID}的已执行条件节点执行结果{result}!");
                     ExecutedReevaluatedNodesResultMap.Add(node, result);
                     return true;
                 }
                 else
                 {
-                    Debug.Log($"更新UID:{node.UID}的已执行条件节点执行结果:{result}!");
+                    //Debug.Log($"更新UID:{node.UID}的已执行条件节点执行结果:{result}!");
                     return true;
                 }
             }

@@ -14,7 +14,7 @@ local HasTaskCondition = _G.BaseClass("HasTaskCondition", _G.LuaBTConditionNode)
 ---@field nodeparams string @节点参数
 function HasTaskCondition:ParseParam(nodeparams)
     _G.LuaBTConditionNode.ParseParam(self, nodeparams)
-    print(string.format("HasTaskCondition:ParseParam() 节点UID:%s", self.CSBTNode.UID))
+    --print(string.format("HasTaskCondition:ParseParam() 节点UID:%s", self.CSBTNode.UID))
 end
 
 --- 执行节点
@@ -22,10 +22,10 @@ end
 function HasTaskCondition:OnExecute()
     _G.LuaBTConditionNode.OnExecute(self)
     if CS.GameLauncherLua.Singleton.TgHasTask.isOn then
-        print(string.format("Success HasTaskCondition:OnExecute() 节点UID:%s", self.CSBTNode.UID))
+        --print(string.format("Success HasTaskCondition:OnExecute() 节点UID:%s", self.CSBTNode.UID))
         return _G.EBTNodeRunningState.Success
     else
-        print(string.format("Failed HasTaskCondition:OnExecute() 节点UID:%s", self.CSBTNode.UID))
+        --print(string.format("Failed HasTaskCondition:OnExecute() 节点UID:%s", self.CSBTNode.UID))
         return _G.EBTNodeRunningState.Failed
     end
 end
@@ -33,7 +33,7 @@ end
 ---行为树节点释放
 function HasTaskCondition:Dispose()
     _G.LuaBTConditionNode.Dispose(self)
-    print(string.format("HasTaskCondition:Dispose() 节点UID:%s", self.CSBTNode.UID))
+    --print(string.format("HasTaskCondition:Dispose() 节点UID:%s", self.CSBTNode.UID))
 end
 
 ---@type HasTaskCondition @是否有任务条件节点

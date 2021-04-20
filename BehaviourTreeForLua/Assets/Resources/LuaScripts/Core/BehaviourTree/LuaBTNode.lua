@@ -24,7 +24,7 @@ end
 --- 解析参数(子类重写实现自定义解析)
 ---@field nodeparams string @节点参数
 function LuaBTNode:ParseParam(nodeparams)
-    print(string.format("子类未实现参数解析:%s!", nodeparams))
+    --print(string.format("子类未实现参数解析:%s!", nodeparams))
 end
 
 --- 重置节点状态

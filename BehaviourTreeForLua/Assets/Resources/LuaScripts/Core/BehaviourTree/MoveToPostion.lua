@@ -18,14 +18,14 @@ function MoveToPostion:ParseParam(nodeparams)
     _G.LuaBTActionNode.ParseParam(self, nodeparams)
     local targetpositions = string.split(nodeparams, ",")
     self.TargetPosition = CS.UnityEngine.Vector3(tonumber(targetpositions[1]), tonumber(targetpositions[2]), tonumber(targetpositions[3]))
-    print(string.format("MoveToPostion:ParseParam() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
+    --print(string.format("MoveToPostion:ParseParam() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
 end
 
 --- 执行节点
 ---@return EBTNodeRunningState @执行状态
 function MoveToPostion:OnExecute()
     _G.LuaBTActionNode.OnExecute(self)
-    print(string.format("MoveToPostion:OnExecute() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
+    --print(string.format("MoveToPostion:OnExecute() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
     local distance = CS.UnityEngine.Vector3.Distance(self.Go.transform.position, self.TargetPosition)
     --print(string.format("distance:%s", distance))
     if distance > 0.5 then
@@ -41,7 +41,7 @@ end
 ---行为树节点释放
 function MoveToPostion:Dispose()
     _G.LuaBTActionNode.Dispose(self)
-    print(string.format("MoveToPostion:Dispose() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
+    --print(string.format("MoveToPostion:Dispose() 节点UID:%s MoveToPostion参数:%s", self.CSBTNode.UID, self.TargetPosition:ToString()))
     self.TargetPosition = nil
 end
 
