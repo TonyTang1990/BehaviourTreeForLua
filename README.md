@@ -76,9 +76,11 @@ Lua行为树节点支持实现方案:
 
 ## 行为树框架类图设计
 
-这里考虑项目正在使用，所以不方便放出源码，通过给出行为树的UML类图设计，大家可以参考思路自行实现(因为UML比较大所以分了两张图):
+通过给出行为树的UML类图设计，大家可以参考思路自行实现(因为UML比较大所以分了两张图):
 ![行为树UML类图1](/img/AI/BehaviourTree/BehaviourTreeUML1.png)
 ![行为树UML类图2](/img/AI/BehaviourTree/BehaviourTreeUML2.png)
+
+项目没有继续做了，本项目开源了。
 
 ## 已知还未修复Bug
 
