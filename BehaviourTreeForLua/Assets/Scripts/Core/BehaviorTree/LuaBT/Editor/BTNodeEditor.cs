@@ -2029,17 +2029,26 @@ namespace LuaBehaviourTree
         /// <param name="node"></param>
         private void TryAddCustomVariableNodeData(BTNode node)
         {
-            if (node.NodeType == (int)EBTNodeType.ConditionNodeType && BTUtilities.IsCompareToShareVariableCondition(node.NodeName))
+            if ((node.NodeType == (int)EBTNodeType.ConditionNodeType && BTUtilities.IsCompareToShareVariableCondition(node.NodeName))
+                || (node.NodeType == (int)EBTNodeType.ActionNodeType && BTUtilities.IsSetShareVariableAction(node.NodeName)))
             {
                 var variabletype = BTUtilities.GetNodeVariableType(node.NodeName);
                 var variablenodedata = BTUtilities.GetVariableNodeDefaultValueInEditor(node.UID, string.Empty, variabletype);
                 node.OwnerBTGraph.AddCustomVariableNodeData(variablenodedata);
             }
-            else if (node.NodeType == (int)EBTNodeType.ActionNodeType && BTUtilities.IsSetShareVariableAction(node.NodeName))
+        }
+
+        /// <summary>
+        /// 尝试移除指定节点的自定义变量节点数据
+        /// </summary>
+        /// <param name="node">节点对象</param>
+        private void TryRemoveCustomVariableNodeData(BTNode node)
+        {
+            if ((node.NodeType == (int)EBTNodeType.ConditionNodeType && BTUtilities.IsCompareToShareVariableCondition(node.NodeName))
+                || (node.NodeType == (int)EBTNodeType.ActionNodeType && BTUtilities.IsSetShareVariableAction(node.NodeName)))
             {
-                var variabletype = BTUtilities.GetNodeVariableType(node.NodeName);
-                var variablenodedata = BTUtilities.GetVariableNodeDefaultValueInEditor(node.UID, string.Empty, variabletype);
-                node.OwnerBTGraph.AddCustomVariableNodeData(variablenodedata);
+                var variablenodedata = node.OwnerBTGraph.GetVariableNodeValueInEditor(node.UID);
+                node.OwnerBTGraph.RemoveCustomVariableNodeData(variablenodedata);
             }
         }
 
@@ -2051,7 +2060,35 @@ namespace LuaBehaviourTree
         {
             var nodeinfo = createnodeinfo as CreateNodeInfo;
             Debug.Log($"节点名:{nodeinfo.OperateNode.NodeName}替换为:{nodeinfo.CreateNodeName}");
-            nodeinfo.OperateNode.NodeName = nodeinfo.CreateNodeName;
+            // 如果节点是从非动态变量节点到动态变量节点或者动态变量节点到非动态变量节点
+            // 需要做相关的数据初始化或清理工作来确保动态变量相关数据正确
+            var isprenodesharevariableaction = BTUtilities.IsSetShareVariableAction(nodeinfo.OperateNode.NodeName);
+            var isprenodesharevariablecondition = BTUtilities.IsCompareToShareVariableCondition(nodeinfo.OperateNode.NodeName);
+            var isnewnodesharevariableaction = BTUtilities.IsSetShareVariableAction(nodeinfo.CreateNodeName); ;
+            var isnewnodesharevariablecondition = BTUtilities.IsCompareToShareVariableCondition(nodeinfo.CreateNodeName);
+            if((isprenodesharevariableaction && !isnewnodesharevariableaction)
+                || (isprenodesharevariablecondition && !isnewnodesharevariablecondition))
+            {
+                // 从动态变量行为节点变为非动态变量行为节点 || 从动态变量条件节点变为非动态变量条件节点
+                // 移除老的动态变量相关数据
+                TryRemoveCustomVariableNodeData(nodeinfo.OperateNode);
+                // 必须在移除老的节点数据后才改名，确保之前的数据清理正确
+                nodeinfo.OperateNode.NodeName = nodeinfo.CreateNodeName;
+            }
+            else if((!isprenodesharevariableaction && isnewnodesharevariableaction)
+                || (!isprenodesharevariablecondition && isnewnodesharevariablecondition))
+            {
+                // 从非动态变量行为节点变为动态变量行为节点 || 从非动态变量条件节点变为动态变量条件节点
+                // 添加新的动态变量相关数据
+                // 必须在添加新的动态节点数据前改名，确保动态变量数据添加正确
+                nodeinfo.OperateNode.NodeName = nodeinfo.CreateNodeName;
+                TryAddCustomVariableNodeData(nodeinfo.OperateNode);
+            }
+            else
+            {
+                // 其他情况简单的替换节点名即可
+                nodeinfo.OperateNode.NodeName = nodeinfo.CreateNodeName;
+            }
         }
 
         /// <summary>
