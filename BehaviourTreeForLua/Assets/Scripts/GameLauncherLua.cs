@@ -62,9 +62,14 @@ public class GameLauncherLua : MonoBehaviour {
 
     #region 玩家控制表现部分
     /// <summary>
-    /// 玩家
+    /// 玩家1
     /// </summary>
     public NavMeshAgent Player;
+
+    /// <summary>
+    /// 玩家2
+    /// </summary>
+    public NavMeshAgent Player2;
 
     /// <summary>
     /// 玩家描述
@@ -90,6 +95,11 @@ public class GameLauncherLua : MonoBehaviour {
     /// 玩家行为树组件
     /// </summary>
     private TBehaviourTree mPlayerBT;
+
+    /// <summary>
+    /// 玩家2行为树组件
+    /// </summary>
+    private TBehaviourTree mPlayerBT2;
     #endregion
 
     private void Awake()
@@ -120,6 +130,10 @@ public class GameLauncherLua : MonoBehaviour {
         // 测试Lua版行为树
         mPlayerBT = Player.gameObject.AddComponent<TBehaviourTree>();
         mPlayerBT.LoadBTGraphAsset("DefaultBT");
+
+        // 测试加载相同行为树Asset的缓存机制
+        mPlayerBT2 = Player2.gameObject.AddComponent<TBehaviourTree>();
+        mPlayerBT2.LoadBTGraphAsset("DefaultBT");
     }
 
     /// <summary>

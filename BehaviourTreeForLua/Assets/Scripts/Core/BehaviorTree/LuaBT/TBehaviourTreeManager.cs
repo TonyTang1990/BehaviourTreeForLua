@@ -59,10 +59,17 @@ namespace LuaBehaviourTree
         public static Action<int, int> UnbindLuaBTNodeCall = null;
         #endregion
 
+        /// <summary>
+        /// 行为树Json数据对象缓存Map(优化相同行为树Asset重复反序列化Json对象问题)
+        /// Key为资源路径，Value为行为树BTGraph反序列化对象
+        /// </summary>
+        private Dictionary<string, BTGraph> mBTGraphCacheMap;
+
         public TBehaviourTreeManager()
         {
             AllBehaviourTreeList = new List<TBehaviourTree>();
             IsPauseAll = false;
+            mBTGraphCacheMap = new Dictionary<string, BTGraph>();
             Init();
         }
 
@@ -103,6 +110,7 @@ namespace LuaBehaviourTree
         {
             Debug.Log($"TBehaviourTreeMaanger:OnDestroy()");
             AllBehaviourTreeList.Clear();
+            ClearBTGraphCache();
             // 考虑到Lua静态委托释放时机和Lua虚拟机释放先后问题，
             // 这里将委托释放放到Lua测的GameMain.Stop里
             //LuaCreateLuaBTnode = null;
@@ -115,7 +123,7 @@ namespace LuaBehaviourTree
             //BTNode.LuaDispose = null;
         }
 
-    private void Update()
+        private void Update()
         {
             if (!IsPauseAll)
             {
@@ -193,5 +201,48 @@ namespace LuaBehaviourTree
                 bt.Abort();
             }
         }
+
+        #region 行为树BTGraph缓存部分
+        /// <summary>
+        /// 缓存指定行为树Asset的BTGraph对象
+        /// </summary>
+        /// <param name="assetpath"></param>
+        /// <param name="btgraph"></param>
+        /// <returns></returns>
+        public bool CacheBTGraph(string assetpath, BTGraph btgraph)
+        {
+            if(!mBTGraphCacheMap.ContainsKey(assetpath))
+            {
+                mBTGraphCacheMap.Add(assetpath, btgraph);
+                Debug.Log($"缓存行为树Asset:{assetpath}的BTGraph对象成功!");
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"重复缓存行为树Asset:{assetpath}的BTGraph对象,请检查代码!");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 返回指定行为树Asset的BTGraph对象
+        /// </summary>
+        /// <param name="assetpath"></param>
+        /// <returns></returns>
+        public BTGraph GetCacheBTGraph(string assetpath)
+        {
+            BTGraph btgraph = null;
+            mBTGraphCacheMap.TryGetValue(assetpath, out btgraph);
+            return btgraph;
+        }
+
+        /// <summary>
+        /// 清理行为树反序列化对象缓存Cache(建议切换场景时调用，方便释放老的行为树反序列化对象)
+        /// </summary>
+        public void ClearBTGraphCache()
+        {
+            mBTGraphCacheMap.Clear();
+        }
+        #endregion
     }
 }

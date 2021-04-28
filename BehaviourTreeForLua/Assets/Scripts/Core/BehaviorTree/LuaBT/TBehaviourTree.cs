@@ -18,11 +18,6 @@ namespace LuaBehaviourTree
     public class TBehaviourTree : MonoBehaviour
     {
         /// <summary>
-        /// 行为树图数据
-        /// </summary>
-        public TextAsset BTGraphAsset;
-
-        /// <summary>
         /// 当行为树完成时重新开始判定
         /// </summary>
         [Header("完成时重新开启判定(每帧判定)")]
@@ -77,6 +72,17 @@ namespace LuaBehaviourTree
             get;
             protected set;
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// 行为树资源路径
+        /// </summary>
+        public string BTGraphAssetPath
+        {
+            get;
+            private set;
+        }
+#endif
 
         /// <summary>
         /// 等待加载的行为树Asset(用于解决默认隐藏状态下加载无法正确触发OnDestroy导致无法正确释放资源问题)
@@ -145,9 +151,19 @@ namespace LuaBehaviourTree
                     InstanceID = gameObject.GetInstanceID();
                 }
                 ReleaseBTGraphAsset();
-                BTGraphAsset = Resources.Load<TextAsset>($"{BTData.BTNodeSaveFolderRelativePath}/{assetname}");
-                BTOriginalGraph = JsonUtility.FromJson<BTGraph>(BTGraphAsset.text);
-                BTOriginalGraph.Init();
+                var assetloadpath = $"{BTData.BTNodeSaveFolderRelativePath}/{assetname}";
+#if UNITY_EDITOR
+                BTGraphAssetPath = $"Assets/Resources/{assetloadpath}.json";
+#endif
+                BTOriginalGraph = TBehaviourTreeManager.getInstance().GetCacheBTGraph(assetloadpath);
+                if (BTOriginalGraph == null)
+                {
+                    var btgraphasset = Resources.Load<TextAsset>(assetloadpath);
+                    BTOriginalGraph = JsonUtility.FromJson<BTGraph>(btgraphasset.text);
+                    BTOriginalGraph.Init();
+                    TBehaviourTreeManager.getInstance().CacheBTGraph(assetloadpath, BTOriginalGraph);
+                    // TODO: 上层缓存了反序列化对象，资源管理这里建议采用及时释放
+                }
                 // TODO: 根据原始数据构建运行时BTGraph数据
                 BTRunningGraph = new BTGraph();
                 BTRunningGraph.SetBTOwner(this);
@@ -167,13 +183,16 @@ namespace LuaBehaviourTree
         /// <returns></returns>
         public bool ReleaseBTGraphAsset()
         {
-            if (BTGraphAsset != null)
+            if (BTOriginalGraph != null)
             {
-                BTGraphAsset = null;
-                BTOriginalGraph?.Dispose();
+                // 原Json对象不释放，采用缓存机制优化重复反序列化问题
+                //BTOriginalGraph?.Dispose();
                 BTOriginalGraph = null;
                 BTRunningGraph?.Dispose();
                 BTRunningGraph = null;
+#if UNITY_EDITOR
+                BTGraphAssetPath = null;
+#endif
                 return true;
             }
             else

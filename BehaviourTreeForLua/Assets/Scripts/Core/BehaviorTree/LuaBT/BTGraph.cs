@@ -847,7 +847,7 @@ namespace LuaBehaviourTree
         /// <param name="btowner"></param>
         public void SetBTOwner(TBehaviourTree btowner)
         {
-            Dispose();
+            Debug.Assert(OwnerBT == null, "不允许重置所属行为树对象!");
             // 通过编辑器构建的行为树图数据构建一颗运行时的行为树图数据
             BTFileName = btowner.BTOriginalGraph.BTFileName;
             AllBoolVariableDataList = btowner.BTOriginalGraph.AllBoolVariableDataList;
@@ -933,18 +933,18 @@ namespace LuaBehaviourTree
                     ObjectPool.Singleton.PushAsObj(AllNodesList[i]);
                 }
             }
-            AllNodesList.Clear();
+            AllNodesList = null;
             RootNode = null;
             RootNodeUID = 0;
-            AllBoolVariableDataList.Clear();
-            AllIntVariableDataList.Clear();
-            AllFloatVariableDataList.Clear();
-            AllStringVariableDataList.Clear();
-            AllBoolVariableNodeDataList.Clear();
-            AllIntVariableNodeDataList.Clear();
-            AllFloatVariableNodeDataList.Clear();
-            AllStringVariableNodeDataList.Clear();
-            AllVariableNodeDataMaps.Clear();
+            AllBoolVariableDataList = null;
+            AllIntVariableDataList = null;
+            AllFloatVariableDataList = null;
+            AllStringVariableDataList = null;
+            AllBoolVariableNodeDataList = null;
+            AllIntVariableNodeDataList = null;
+            AllFloatVariableNodeDataList = null;
+            AllStringVariableNodeDataList = null;
+            AllVariableNodeDataMaps = null;
         }
 
         /// <summary>

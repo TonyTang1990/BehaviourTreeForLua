@@ -392,22 +392,22 @@ namespace LuaBehaviourTree
                 {
                     var selectiongameobject = selectionasset as GameObject;
                     var tbt = selectiongameobject.GetComponent<TBehaviourTree>();
-                    if (tbt != null && tbt.BTGraphAsset != null)
+                    if (tbt != null && !string.IsNullOrEmpty(tbt.BTGraphAssetPath))
                     {
                         if (tbt.BTRunningGraph != null)
                         {
                             mCurrentSelectionBTGraph = tbt.BTRunningGraph;
-                            mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(tbt.BTGraphAssetPath);
                             mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                            mCurrentSelectionBTGraphAssetPath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            mCurrentSelectionBTGraphAssetPath = tbt.BTGraphAssetPath;
                             Debug.Log($"选中运行时有行为树数据对象:{selectiongameobject.name} 行为树AssetPath:{mCurrentSelectionBTGraphAssetPath}");
                         }
                         else
                         {
                             mCurrentSelectionBTGraph = tbt.BTOriginalGraph;
-                            mCurrentSelectionBTGraphAsset = tbt.BTGraphAsset;
+                            mCurrentSelectionBTGraphAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(tbt.BTGraphAssetPath);
                             mCurrentSelectionBTGraphAssetOriginalName = mCurrentSelectionBTGraphAsset.name;
-                            mCurrentSelectionBTGraphAssetPath = AssetDatabase.GetAssetPath(mCurrentSelectionBTGraphAsset);
+                            mCurrentSelectionBTGraphAssetPath = tbt.BTGraphAssetPath;
                             Debug.Log($"非运行时选中的场景对象:{Selection.objects[0].name} AssetPath:{mCurrentSelectionBTGraphAssetPath}!");
                         }
                     }
@@ -918,19 +918,19 @@ namespace LuaBehaviourTree
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                for (int i = 0, length = mCurrentSelectionBTGraph.AllBoolVariableDataList.Count; i < length; i++)
+                for (int i = 0; i < mCurrentSelectionBTGraph.AllBoolVariableDataList.Count; i++)
                 {
                     DrawOneCustomVariable(mCurrentSelectionBTGraph.AllBoolVariableDataList[i]);
                 }
-                for (int i = 0, length = mCurrentSelectionBTGraph.AllIntVariableDataList.Count; i < length; i++)
+                for (int i = 0; i < mCurrentSelectionBTGraph.AllIntVariableDataList.Count; i++)
                 {
                     DrawOneCustomVariable(mCurrentSelectionBTGraph.AllIntVariableDataList[i]);
                 }
-                for (int i = 0, length = mCurrentSelectionBTGraph.AllFloatVariableDataList.Count; i < length; i++)
+                for (int i = 0; i < mCurrentSelectionBTGraph.AllFloatVariableDataList.Count; i++)
                 {
                     DrawOneCustomVariable(mCurrentSelectionBTGraph.AllFloatVariableDataList[i]);
                 }
-                for (int i = 0, length = mCurrentSelectionBTGraph.AllStringVariableDataList.Count; i < length; i++)
+                for (int i = 0; i < mCurrentSelectionBTGraph.AllStringVariableDataList.Count; i++)
                 {
                     DrawOneCustomVariable(mCurrentSelectionBTGraph.AllStringVariableDataList[i]);
                 }

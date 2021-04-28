@@ -322,12 +322,6 @@
     ],
     "AllBoolVariableNodeDataList": [
         {
-            "NodeUID": 1290035526,
-            "VariableName": "testbool",
-            "VariableType": 1,
-            "VariableValue": true
-        },
-        {
             "NodeUID": 264671418,
             "VariableName": "testbool",
             "VariableType": 1,
@@ -335,6 +329,12 @@
         },
         {
             "NodeUID": -365263331,
+            "VariableName": "testbool",
+            "VariableType": 1,
+            "VariableValue": false
+        },
+        {
+            "NodeUID": 1290035526,
             "VariableName": "testbool",
             "VariableType": 1,
             "VariableValue": false
